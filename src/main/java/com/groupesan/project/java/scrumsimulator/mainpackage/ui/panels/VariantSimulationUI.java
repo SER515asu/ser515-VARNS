@@ -17,7 +17,7 @@ public class VariantSimulationUI extends JFrame implements BaseComponent {
     public void init() {
         setTitle("Variant Simulation UI");
         setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         mainPanel = new JPanel();
         cardLayout = new CardLayout();
