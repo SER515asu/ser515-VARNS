@@ -54,7 +54,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         JButton potentialBlockersButton = new JButton("Potential Blockers");
         potentialBlockersButton.addActionListener(
                 e -> {
-                    UserStoryListPane form = new UserStoryListPane();
+                    PotentialBlockersPane form = new PotentialBlockersPane();
                     form.setVisible(true);
                 });
 
