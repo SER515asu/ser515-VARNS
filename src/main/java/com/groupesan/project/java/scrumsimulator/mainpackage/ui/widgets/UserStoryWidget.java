@@ -36,6 +36,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
             form.addWindowListener(
                     new java.awt.event.WindowAdapter() {
                         public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                            actionListener.actionPerformed(null);
                             init();
                         }
                     });
@@ -56,14 +57,18 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
 
     public UserStoryWidget(UserStory userStory) {
         this.userStory = userStory;
+    }
 
-        this.init();
+    public UserStoryWidget setCloseEditDialogActionListener(ActionListener actionListener) {
+        this.actionListener = actionListener;
+        return this;
     }
 
     public void init() {
         removeAll();
 
-        this.addMouseListener(openEditDialog);
+        if (this.getMouseListeners().length == 0)
+            this.addMouseListener(openEditDialog);
 
         id = new JLabel(userStory.getId().toString());
         points = new JLabel(Double.toString(userStory.getPointValue()));
@@ -90,5 +95,8 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
                 desc,
                 new CustomConstraints(
                         3, 0, GridBagConstraints.WEST, 0.7, 0.0, GridBagConstraints.HORIZONTAL));
+
+        revalidate();
+        repaint();
     }
 }
