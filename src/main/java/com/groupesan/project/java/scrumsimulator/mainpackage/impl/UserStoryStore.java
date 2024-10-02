@@ -30,6 +30,10 @@ public class UserStoryStore {
         userStories.add(userStory);
     }
 
+    public void removeUserStory(UserStory userStory) {
+        userStories.remove(userStory);
+    }
+
     public List<UserStory> getUserStories() {
         return new ArrayList<>(userStories);
     }
