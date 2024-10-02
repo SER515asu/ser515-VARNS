@@ -1,6 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.GridBagConstraintsBuilder;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.GridBagConstraints;
@@ -26,6 +27,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
     private SimulationManager simulationManager;
     private JTextField simulationNameField;
     private JTextField numberOfSprintsField;
+    private JTextField sprintLengthCycleField;
     private JTextArea simulationIdDisplay;
 
     public ModifySimulationPane(SimulationManager manager) {
@@ -48,9 +50,11 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
 
         simulationNameField = new JTextField(20);
         numberOfSprintsField = new JTextField(20);
+        sprintLengthCycleField = new JTextField(20);
 
         JLabel nameLabel = new JLabel("Simulation Name:");
         JLabel sprintsLabel = new JLabel("Number of Sprints:");
+        JLabel sprintLengthLabel = new JLabel("Length of Sprint:");
 
         panel.add(
                 nameLabel,
@@ -69,6 +73,14 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 numberOfSprintsField,
                 new CustomConstraints(
                         1, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+        panel.add(
+                sprintLengthLabel,
+                new CustomConstraints(
+                        0, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+        panel.add(
+                sprintLengthCycleField,
+                new CustomConstraints(
+                        1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         JButton submitButton = new JButton("Create Simulation");
         submitButton.addActionListener(
@@ -78,7 +90,8 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                         String simId = UUID.randomUUID().toString();
                         String simName = simulationNameField.getText();
                         String numberOfSprints = numberOfSprintsField.getText();
-                        simulationManager.createSimulation(simId, simName, numberOfSprints);
+                        String sprintLengthCycle = sprintLengthCycleField.getText();
+                        simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
 
                         // Prepare a JTextField to display the Simulation ID
                         JTextField simIdField = new JTextField(simId);
@@ -97,6 +110,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                         // Reset fields and simulation ID display to blank
                         simulationNameField.setText("");
                         numberOfSprintsField.setText("");
+                        sprintLengthCycleField.setText("");
                         simulationIdDisplay.setText("");
                     }
                 });
@@ -104,11 +118,11 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
         panel.add(
                 submitButton,
                 new CustomConstraints(
-                        0, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                        0, 3, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
         panel.add(
                 simulationIdDisplay,
                 new CustomConstraints(
-                        1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                        1, 3, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         add(panel);
     }

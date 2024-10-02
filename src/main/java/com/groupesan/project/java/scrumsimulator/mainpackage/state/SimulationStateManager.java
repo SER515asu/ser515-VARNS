@@ -56,7 +56,7 @@ public class SimulationStateManager {
      * @param numberOfSprints The number of sprints in the simulation.
      */
     public static void saveNewSimulationDetails(
-            String simId, String simName, String numberOfSprints) {
+            String simId, String simName, String numberOfSprints, String sprintLengthCycle) {
         JSONObject simulationData = getSimulationData();
         if (simulationData == null) {
             simulationData = new JSONObject();
@@ -67,6 +67,7 @@ public class SimulationStateManager {
         newSimulation.put("Name", simName);
         newSimulation.put("Status", "New");
         newSimulation.put("NumberOfSprints", numberOfSprints);
+        newSimulation.put("sprintLength", sprintLengthCycle);
         newSimulation.put("Sprints", new JSONArray());
         newSimulation.put("Events", new JSONArray());
         newSimulation.put("Users", new JSONArray());
