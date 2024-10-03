@@ -104,9 +104,10 @@ public class SimulationStateManager {
         }
 
         setRunning(true);
-        JOptionPane.showMessageDialog(null, "Simulation started!");
 
         new Thread(() -> runSimulation()).start();
+
+        JOptionPane.showMessageDialog(null, "Simulation started!");
     }
 
     /** Method to set the simulation state to not running. */
