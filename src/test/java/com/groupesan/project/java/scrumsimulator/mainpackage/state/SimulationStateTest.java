@@ -13,7 +13,7 @@ public class SimulationStateTest {
 
     @BeforeEach
     public void setUp() {
-        simulationStateManager = new SimulationStateManager();
+        simulationStateManager = SimulationStateManager.getInstance();
     }
 
     @AfterEach
