@@ -8,10 +8,9 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnse
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -36,9 +35,9 @@ public class SprintUIPane extends JFrame implements BaseComponent {
         this.init();
     }
 
-    private List<UserStoryWidget> widgets = new ArrayList<>();
+    private final List<UserStoryWidget> widgets = new ArrayList<>();
 
-    private Player currentPlayer;
+    private final Player currentPlayer;
 
     public void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -60,7 +59,7 @@ public class SprintUIPane extends JFrame implements BaseComponent {
             // only display unselected states
             if (userStory.getUserStoryState() instanceof UserStoryUnselectedState) {
                 selectComboBox.addItem(userStory.toString());
-                widgets.add(new UserStoryWidget(userStory));
+                widgets.add(new UserStoryWidget(userStory, false));
             }
         }
 
@@ -92,7 +91,7 @@ public class SprintUIPane extends JFrame implements BaseComponent {
             if (userStory.getUserStoryState() instanceof UserStorySelectedState
                     && currentPlayer.equals(userStory.getOwner())) {
                 selectedSubPanel.add(
-                        new UserStoryWidget(userStory),
+                        new UserStoryWidget(userStory, false),
                         new CustomConstraints(
                                 0,
                                 i++,
@@ -116,67 +115,64 @@ public class SprintUIPane extends JFrame implements BaseComponent {
 
         JButton SelectUSButton = new JButton("Select");
         SelectUSButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int ownedUS = 0;
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            if (currentPlayer.equals(userStory.getOwner())) {
-                                ownedUS++;
-                            }
+                e -> {
+                    int ownedUS = 0;
+                    for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+                        if (currentPlayer.equals(userStory.getOwner())) {
+                            ownedUS++;
                         }
+                    }
 
-                        if (ownedUS >= MAX_IN_PROGRESS) {
-                            warningLabel.setText("Only 2 US can be in progress at once!");
-                            return;
-                        }
+                    if (ownedUS >= MAX_IN_PROGRESS) {
+                        warningLabel.setText("Only 2 US can be in progress at once!");
+                        return;
+                    }
 
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            if (userStory.toString().equals(selectComboBox.getSelectedItem())) {
-                                userStory.setOwner(currentPlayer);
-                                userStory.changeState(new UserStorySelectedState(userStory));
-                            }
+                    for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+                        if (userStory.toString().equals(selectComboBox.getSelectedItem())) {
+                            userStory.setOwner(currentPlayer);
+                            userStory.changeState(new UserStorySelectedState(userStory));
                         }
-                        selectComboBox.removeAllItems();
-                        widgets.clear();
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            // only display unselected states
-                            if (userStory.getUserStoryState() instanceof UserStoryUnselectedState) {
-                                selectComboBox.addItem(userStory.toString());
-                                widgets.add(new UserStoryWidget(userStory));
-                            }
+                    }
+                    selectComboBox.removeAllItems();
+                    widgets.clear();
+                    for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+                        // only display unselected states
+                        if (userStory.getUserStoryState() instanceof UserStoryUnselectedState) {
+                            selectComboBox.addItem(userStory.toString());
+                            widgets.add(new UserStoryWidget(userStory, false));
                         }
+                    }
 
-                        availableSubPanel.removeAll();
-                        int i = 0;
-                        for (UserStoryWidget widget : widgets) {
-                            availableSubPanel.add(
-                                    widget,
+                    availableSubPanel.removeAll();
+                    int i1 = 0;
+                    for (UserStoryWidget widget : widgets) {
+                        availableSubPanel.add(
+                                widget,
+                                new CustomConstraints(
+                                        0,
+                                        i1++,
+                                        GridBagConstraints.WEST,
+                                        1.0,
+                                        0.1,
+                                        GridBagConstraints.HORIZONTAL));
+                    }
+
+                    selectedSubPanel.removeAll();
+                    i1 = 0;
+                    for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+                        // only display unselected states
+                        if (userStory.getUserStoryState() instanceof UserStorySelectedState
+                                && currentPlayer.equals(userStory.getOwner())) {
+                            selectedSubPanel.add(
+                                    new UserStoryWidget(userStory, false),
                                     new CustomConstraints(
                                             0,
-                                            i++,
+                                            i1++,
                                             GridBagConstraints.WEST,
                                             1.0,
                                             0.1,
                                             GridBagConstraints.HORIZONTAL));
-                        }
-
-                        selectedSubPanel.removeAll();
-                        i = 0;
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            // only display unselected states
-                            if (userStory.getUserStoryState() instanceof UserStorySelectedState
-                                    && currentPlayer.equals(userStory.getOwner())) {
-                                selectedSubPanel.add(
-                                        new UserStoryWidget(userStory),
-                                        new CustomConstraints(
-                                                0,
-                                                i++,
-                                                GridBagConstraints.WEST,
-                                                1.0,
-                                                0.1,
-                                                GridBagConstraints.HORIZONTAL));
-                            }
                         }
                     }
                 });

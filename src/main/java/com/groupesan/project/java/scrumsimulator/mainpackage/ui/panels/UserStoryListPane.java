@@ -2,7 +2,6 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +23,16 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
         this.init();
     }
 
-    private List<UserStoryWidget> widgets = new ArrayList<>();
-    private JPanel subPanel = new JPanel();
+    private final List<UserStoryWidget> widgets = new ArrayList<>();
+    private final JPanel subPanel = new JPanel();
 
     private void reloadUserStories() {
         widgets.clear();
         subPanel.removeAll();
 
         for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-            UserStoryWidget userStoryWidget = new UserStoryWidget(userStory).setCloseEditDialogActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            reloadUserStories();
-                        }
-                    });
+            UserStoryWidget userStoryWidget = new UserStoryWidget(userStory, true).setCloseEditDialogActionListener(
+                    e -> reloadUserStories());
             userStoryWidget.init();
             widgets.add(userStoryWidget);
         }
@@ -61,22 +55,19 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
     }
 
     private ActionListener handleNewUserStoryAction() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                NewUserStoryForm form = new NewUserStoryForm();
-                form.setVisible(true);
+        return e -> {
+            NewUserStoryForm form = new NewUserStoryForm();
+            form.setVisible(true);
 
-                form.addWindowListener(
-                        new java.awt.event.WindowAdapter() {
-                            public void windowClosed(
-                                    java.awt.event.WindowEvent windowEvent) {
-                                UserStory userStory = form.getUserStoryObject();
-                                UserStoryStore.getInstance().addUserStory(userStory);
-                                reloadUserStories();
-                            }
-                        });
-            }
+            form.addWindowListener(
+                    new java.awt.event.WindowAdapter() {
+                        public void windowClosed(
+                                java.awt.event.WindowEvent windowEvent) {
+                            UserStory userStory = form.getUserStoryObject();
+                            UserStoryStore.getInstance().addUserStory(userStory);
+                            reloadUserStories();
+                        }
+                    });
         };
     }
 
