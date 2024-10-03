@@ -3,7 +3,6 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumRole;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationManager;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import java.awt.GridBagLayout;
@@ -48,8 +47,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                     form.setVisible(true);
                 });
 
-        SimulationStateManager simulationStateManager = new SimulationStateManager();
-        SimulationPanel simulationPanel = new SimulationPanel(simulationStateManager);
+        SimulationPanel simulationPanel = new SimulationPanel();
 
         JButton potentialBlockersButton = new JButton("Potential Blockers");
         potentialBlockersButton.addActionListener(

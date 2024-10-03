@@ -5,18 +5,15 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class SimulationPanel extends JPanel implements BaseComponent {
 
-    private SimulationStateManager simulationStateManager;
     private JButton startSimulationButton;
     private JButton stopSimulationButton;
 
     /** Simulation Panel Initialization. */
-    protected SimulationPanel(SimulationStateManager simulationStateManager) {
-        this.simulationStateManager = simulationStateManager;
+    protected SimulationPanel() {
         this.init();
     }
 
@@ -31,8 +28,7 @@ public class SimulationPanel extends JPanel implements BaseComponent {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        simulationStateManager.startSimulation();
-                        JOptionPane.showMessageDialog(null, "Simulation started!");
+                        SimulationStateManager.getInstance().startSimulation();
                         updateButtonVisibility();
                     }
                 });
@@ -41,8 +37,7 @@ public class SimulationPanel extends JPanel implements BaseComponent {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        simulationStateManager.stopSimulation();
-                        JOptionPane.showMessageDialog(null, "Simulation stopped!");
+                        SimulationStateManager.getInstance().stopSimulation();
                         updateButtonVisibility();
                     }
                 });
@@ -52,8 +47,7 @@ public class SimulationPanel extends JPanel implements BaseComponent {
     }
 
     private void updateButtonVisibility() {
-        // Show/hide buttons based on the simulation state
-        if (simulationStateManager.isRunning()) {
+        if (SimulationStateManager.getInstance().isRunning()) {
             stopSimulationButton.setVisible(true);
             startSimulationButton.setVisible(false);
         } else {

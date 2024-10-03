@@ -1,5 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationWizard;
 
 public class WizardManager {
@@ -17,7 +18,7 @@ public class WizardManager {
     public void showSimulationWizard() {
         new SimulationWizard(
                         simulation -> {
-                            System.out.println(simulation);
+                            SimulationStateManager.getInstance().setCurrentSimulation(simulation);
                         })
                 .setVisible(true);
     }

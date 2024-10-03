@@ -38,7 +38,7 @@ public class SimulationWizard extends Wizard<Simulation> {
     @Override
     protected Simulation process() {
         Simulation simulation =
-                new Simulation(simulationName.getData(), null, (Integer) sprintCount.getData());
+                new Simulation(simulationName.getData(), (Integer) sprintCount.getData(), 2); //TODO: Fix hardcoded value for sprint duration
         for (Player player : users.getData()) {
             player.doRegister();
             simulation.addPlayer(player);
