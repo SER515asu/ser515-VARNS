@@ -1,5 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.SprintFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +13,16 @@ public class Simulation {
     private final List<Player> players = new ArrayList<>();
     private int sprintCount;
     private int sprintDuration; // In days
+    private final List<Sprint> sprints = new ArrayList<>();
 
     public Simulation(String simulationName, int sprintCount, int sprintDurationWeeks) {
         this.simulationName = simulationName;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationWeeks * 7;
+
+        for (int i = 0; i < sprintCount; i++) {
+            sprints.add(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
+        }
     }
 
     public void addPlayer(Player player) {
@@ -59,6 +67,10 @@ public class Simulation {
 
     public int getSprintDuration() {
         return sprintDuration;
+    }
+
+    public List<Sprint> getSprints() {
+        return this.sprints;
     }
 
     @Override

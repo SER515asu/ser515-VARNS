@@ -53,6 +53,15 @@ public class SimulationStateManager {
     }
 
     /**
+     * Gets the current simulation
+     *
+     * @return current simulation
+     */
+    public Simulation getCurrentSimulation() {
+        return this.currentSimultation;
+    }
+
+    /**
      * Returns the current state of the simulation.
      *
      * @return boolean running

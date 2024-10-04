@@ -56,12 +56,6 @@ public class Sprint {
     }
 
     public String toString() {
-        String header = "Sprint " + this.id + ": " + this.name + "\n";
-        StringBuilder USes = new StringBuilder();
-
-        for (UserStory us : userStories) {
-            USes.append(us.toString()).append("\n");
-        }
-        return header + USes;
+        return "Sprint " + this.id + "\n";
     }
 }

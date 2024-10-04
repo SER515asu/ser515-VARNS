@@ -1,8 +1,10 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
@@ -28,8 +30,6 @@ import javax.swing.border.EmptyBorder;
  */
 public class SprintUIPane extends JFrame implements BaseComponent {
 
-    private static final int MAX_IN_PROGRESS = 2;
-
     public SprintUIPane(Player player) {
         this.currentPlayer = player;
         this.init();
@@ -42,12 +42,24 @@ public class SprintUIPane extends JFrame implements BaseComponent {
     public void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Select UserStories");
-        setSize(400, 300);
+        setSize(800, 600);
 
         GridBagLayout myGridbagLayout = new GridBagLayout();
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(myGridbagLayout);
+
+        JPanel sprintSelectionPanel = new JPanel();
+        sprintSelectionPanel.setLayout(new GridBagLayout());
+
+        JComboBox<String> selectSprintComboBox = new JComboBox<>();
+        myJpanel.add(selectSprintComboBox,
+                new CustomConstraints(
+                        2, 0, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+        for (Sprint sprint : SimulationStateManager.getInstance().getCurrentSimulation().getSprints()) {
+            selectSprintComboBox.addItem(sprint.toString());
+        }
 
         JComboBox<String> selectComboBox = new JComboBox<>();
         myJpanel.add(
@@ -113,6 +125,16 @@ public class SprintUIPane extends JFrame implements BaseComponent {
                 new CustomConstraints(
                         0, 2, GridBagConstraints.WEST, 1.0, 0.1, GridBagConstraints.HORIZONTAL));
 
+        JButton SelectUSButton = getjButton(selectComboBox, availableSubPanel, selectedSubPanel);
+        myJpanel.add(
+                SelectUSButton,
+                new CustomConstraints(
+                        0, 3, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+        add(myJpanel);
+    }
+
+    private JButton getjButton(JComboBox<String> selectComboBox, JPanel availableSubPanel, JPanel selectedSubPanel) {
         JButton SelectUSButton = new JButton("Select");
         SelectUSButton.addActionListener(
                 e -> {
@@ -121,11 +143,6 @@ public class SprintUIPane extends JFrame implements BaseComponent {
                         if (currentPlayer.equals(userStory.getOwner())) {
                             ownedUS++;
                         }
-                    }
-
-                    if (ownedUS >= MAX_IN_PROGRESS) {
-                        warningLabel.setText("Only 2 US can be in progress at once!");
-                        return;
                     }
 
                     for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
@@ -176,11 +193,6 @@ public class SprintUIPane extends JFrame implements BaseComponent {
                         }
                     }
                 });
-        myJpanel.add(
-                SelectUSButton,
-                new CustomConstraints(
-                        0, 3, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
-
-        add(myJpanel);
+        return SelectUSButton;
     }
 }
