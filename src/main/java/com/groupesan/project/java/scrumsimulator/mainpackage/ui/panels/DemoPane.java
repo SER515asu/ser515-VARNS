@@ -3,12 +3,11 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumRole;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
@@ -105,6 +104,10 @@ public class DemoPane extends JFrame implements BaseComponent {
         JButton sprintUIButton = new JButton("US Selection UI");
         sprintUIButton.addActionListener(
                 e -> {
+                    if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+                        JOptionPane.showMessageDialog(null, "Please create and join a simulation before adding user stories to sprint backlog");
+                    }
+
                     // Load SprintUIPane
                     SprintUIPane sprintUIPane = new SprintUIPane(player);
                     sprintUIPane.setVisible(true);
