@@ -31,6 +31,8 @@ public class SimulationStateManager {
     private Integer day = 1;
     private Integer sprint = 1;
 
+    private Integer progressValue;
+
     private static SimulationStateManager instance;
 
     private SimulationStateManager() {
@@ -88,8 +90,11 @@ public class SimulationStateManager {
 
         // Logic of running the simulation goes here
         // I've tailored the logic to display the progress of the simulation through these lines.
-        jimPan.setText("Running simulation for day " + day + " of sprint " + sprint);
-        jimProg.setValue(day/currentSimultation.getSprintCount());
+        progressValue = (int)Math.round(100.0 / currentSimultation.getSprintDuration() * day );
+        jimPan.setText("Running simulation for day " + day + " of " + currentSimultation.getSprintDuration() + " of sprint " + sprint + " %" + progressValue);
+
+        System.out.println(progressValue);
+        jimProg.setValue(progressValue);
 
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
@@ -111,6 +116,7 @@ public class SimulationStateManager {
             return;
         }
 
+        progressValue = 0;
         /**
          * This is the part where the UI for the progress bar pops up. - Suparno
          */
