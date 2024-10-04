@@ -1,6 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.BorderLayout;
@@ -109,12 +110,28 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
                     }
                 });
 
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.setForeground(java.awt.Color.RED);
+
+        deleteButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        UserStoryStore.getInstance().removeUserStory(userStory);
+                        dispose();
+                    }
+                });
+
         myJpanel.add(
                 cancelButton,
                 new CustomConstraints(0, 3, GridBagConstraints.EAST, GridBagConstraints.NONE));
         myJpanel.add(
                 submitButton,
                 new CustomConstraints(1, 3, GridBagConstraints.WEST, GridBagConstraints.NONE));
+        myJpanel.add(
+                deleteButton,
+                new CustomConstraints(4, 3, GridBagConstraints.WEST, GridBagConstraints.NONE));
+
 
         add(myJpanel);
     }

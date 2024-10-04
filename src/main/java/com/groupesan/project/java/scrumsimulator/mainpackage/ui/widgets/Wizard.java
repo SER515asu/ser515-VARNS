@@ -11,10 +11,10 @@ import javax.swing.border.EmptyBorder;
 public abstract class Wizard<T> extends JFrame implements BaseComponent {
     private final List<WizardPage> pages;
     private int pageNum;
-    private WizardHandler<T> handler;
+    private final WizardHandler<T> handler;
 
     public Wizard(WizardHandler<T> handler) {
-        this.pageNum = 1;
+        this.pageNum = 0;
         this.handler = handler;
         this.initDataModels();
         this.pages = new ArrayList<>(this.build());

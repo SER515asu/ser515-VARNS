@@ -27,16 +27,18 @@ public class SimulationWizard extends Wizard<Simulation> {
     }
 
     protected List<WizardPage> build() {
+        this.roles.getData().add(new ScrumRole("Developer"));
+        this.roles.getData().add(new ScrumRole("Scrum Master"));
+        this.roles.getData().add(new ScrumRole("Product Owner"));
         return List.of(
                 new GeneralPage(simulationName, sprintCount),
-                new RolesPage(roles),
                 new ParticipantsPage(users, roles));
     }
 
     @Override
     protected Simulation process() {
         Simulation simulation =
-                new Simulation(simulationName.getData(), null, (Integer) sprintCount.getData());
+                new Simulation(simulationName.getData(), (Integer) sprintCount.getData(), 2); //TODO: Fix hardcoded value for sprint duration
         for (Player player : users.getData()) {
             player.doRegister();
             simulation.addPlayer(player);
