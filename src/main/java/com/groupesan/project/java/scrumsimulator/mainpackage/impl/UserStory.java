@@ -38,6 +38,7 @@ public class UserStory extends ScrumObject {
         this.pointValue = pointValue;
         this.businessValuePoint = businessValuePoint; // added buisness value point
         this.state = new UserStoryUnselectedState(this);
+        // added buisness value point to the constructor
     }
 
     /**
