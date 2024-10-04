@@ -9,11 +9,21 @@ public class Simulation {
     private Teacher teacher;
     private final List<Player> players = new ArrayList<>();
     private int sprintCount;
+    private int sprintLength;
 
-    public Simulation(String simulationName, Teacher teacher, int sprintCount) {
+    public Simulation(String simulationName, Teacher teacher, int sprintCount, int sprintLength) {
         this.simulationName = simulationName;
         this.teacher = teacher;
         this.sprintCount = sprintCount;
+        this.sprintLength = sprintLength;
+    }
+
+    public int getSprintLength() {
+        return sprintLength;
+    }
+    
+    public void setSprintLength(int sprintLength) {
+        this.sprintLength = sprintLength;
     }
 
     public void addPlayer(Player player) {
@@ -50,11 +60,12 @@ public class Simulation {
 
     @Override
     public String toString() {
-        String result = "[Simulation] " + getSimulationName() + "\n";
-        result += "Sprints: " + sprintCount + "\n";
-        for (Player player : players) {
-            result += player + "\n";
-        }
-        return result;
+    String result = "[Simulation] " + getSimulationName() + "\n";
+    result += "Sprints: " + sprintCount + "\n";
+    result += "Sprint Length: " + sprintLength + " days\n";
+    for (Player player : players) {
+        result += player + "\n";
     }
+    return result;
+}
 }

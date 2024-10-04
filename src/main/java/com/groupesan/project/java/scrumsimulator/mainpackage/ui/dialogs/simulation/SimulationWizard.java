@@ -10,6 +10,7 @@ import java.util.List;
 public class SimulationWizard extends Wizard<Simulation> {
     private DataModel<String> simulationName;
     private DataModel<Object> sprintCount;
+    private DataModel<Object> sprintLength;
     private DataModel<List<ScrumRole>> roles;
     private DataModel<List<Player>> users;
 
@@ -22,13 +23,14 @@ public class SimulationWizard extends Wizard<Simulation> {
     protected void initDataModels() {
         this.simulationName = new DataModel<>("New Simulation");
         this.sprintCount = new DataModel<>(1);
+        this.sprintLength = new DataModel<>(14);
         this.roles = new DataModel<>(new ArrayList<>());
         this.users = new DataModel<>(new ArrayList<>());
     }
 
     protected List<WizardPage> build() {
         return List.of(
-                new GeneralPage(simulationName, sprintCount),
+                new GeneralPage(simulationName, sprintCount, sprintLength),
                 new RolesPage(roles),
                 new ParticipantsPage(users, roles));
     }
@@ -36,7 +38,7 @@ public class SimulationWizard extends Wizard<Simulation> {
     @Override
     protected Simulation process() {
         Simulation simulation =
-                new Simulation(simulationName.getData(), null, (Integer) sprintCount.getData());
+                new Simulation(simulationName.getData(), null, (Integer) sprintCount.getData(), (Integer) sprintLength.getData());
         for (Player player : users.getData()) {
             player.doRegister();
             simulation.addPlayer(player);
