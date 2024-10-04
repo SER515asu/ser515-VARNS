@@ -15,16 +15,13 @@ public class App {
         this.loadTheme();
         WizardManager.get().showSimulationWizard();
         SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        // Initialize User Stories in helper function now
-                        initializeUserStories();
+                () -> {
+                    // Initialize User Stories in helper function now
+                    initializeUserStories();
 
-                        // Load DemoPane
-                        DemoPane form = new DemoPane();
-                        form.setVisible(true);
-                    }
+                    // Load DemoPane
+                    DemoPane form = new DemoPane();
+                    form.setVisible(true);
                 });
     }
 

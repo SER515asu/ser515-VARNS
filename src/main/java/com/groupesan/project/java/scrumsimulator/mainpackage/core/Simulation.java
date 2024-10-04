@@ -9,21 +9,12 @@ public class Simulation {
     private Teacher teacher;
     private final List<Player> players = new ArrayList<>();
     private int sprintCount;
-    private int sprintLength;
+    private int sprintDuration; // In days
 
-    public Simulation(String simulationName, Teacher teacher, int sprintCount, int sprintLength) {
+    public Simulation(String simulationName, int sprintCount, int sprintDurationWeeks) {
         this.simulationName = simulationName;
-        this.teacher = teacher;
         this.sprintCount = sprintCount;
-        this.sprintLength = sprintLength;
-    }
-
-    public int getSprintLength() {
-        return sprintLength;
-    }
-    
-    public void setSprintLength(int sprintLength) {
-        this.sprintLength = sprintLength;
+        this.sprintDuration = sprintDurationWeeks * 7;
     }
 
     public void addPlayer(Player player) {
@@ -58,11 +49,23 @@ public class Simulation {
         this.sprintCount = sprintCount;
     }
 
+    public int getSprintCount() {
+        return sprintCount;
+    }
+
+    public void setSprintDuration(int sprintDuration) {
+        this.sprintDuration = sprintDuration;
+    }
+
+    public int getSprintDuration() {
+        return sprintDuration;
+    }
+
     @Override
     public String toString() {
     String result = "[Simulation] " + getSimulationName() + "\n";
     result += "Sprints: " + sprintCount + "\n";
-    result += "Sprint Length: " + sprintLength + " days\n";
+    result += "Sprint Length: " + sprintDuration + " days\n";
     for (Player player : players) {
         result += player + "\n";
     }

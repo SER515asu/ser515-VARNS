@@ -3,9 +3,13 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.HeadlessException;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 
 public class SimulationStateTest {
 
@@ -13,12 +17,12 @@ public class SimulationStateTest {
 
     @BeforeEach
     public void setUp() {
-        simulationStateManager = new SimulationStateManager();
+        simulationStateManager = SimulationStateManager.getInstance();
     }
 
     @AfterEach
     public void tearDown() {
-        simulationStateManager = null;
+        simulationStateManager.setRunning(false);
     }
 
     @Test
@@ -28,13 +32,30 @@ public class SimulationStateTest {
 
     @Test
     public void testStartSimulation() {
-        simulationStateManager.startSimulation();
+        simulationStateManager.setCurrentSimulation(
+                new Simulation("Test Simulation", 0, 0));
+        try {
+            simulationStateManager.startSimulation();
+        } catch (HeadlessException e) {
+            // Expected exception
+        }
         assertTrue(simulationStateManager.isRunning());
     }
 
     @Test
     public void testStopSimulation() {
+        simulationStateManager.setCurrentSimulation(
+                new Simulation("Test Simulation", 0, 14)); // Set a current simulation
+    
+        try {
+            simulationStateManager.startSimulation();
+        } catch (HeadlessException e) {
+            simulationStateManager.setRunning(true);
+        }
+    
+        assertTrue(simulationStateManager.isRunning(), "Simulation should be running before stopping");
+    
         simulationStateManager.stopSimulation();
-        assertFalse(simulationStateManager.isRunning());
+        assertFalse(simulationStateManager.isRunning(), "Simulation should not be running after stopping");
     }
 }

@@ -6,8 +6,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,7 +17,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 /**
- * ModifySimulationPane is a UI component used by teachers to create or modify simulations. It
+ * ModifySimulationPane is a UI component used by teachers to create or modify
+ * simulations. It
  * allows the generation of a new simulation ID and displays it on the UI.
  */
 public class ModifySimulationPane extends JFrame implements BaseComponent {
@@ -30,10 +29,10 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
     private JTextField sprintLengthCycleField;
     private JTextArea simulationIdDisplay;
 
-    public ModifySimulationPane(SimulationManager manager) {
-        this.simulationManager = manager;
-        this.init();
-    }
+        public ModifySimulationPane(SimulationManager manager) {
+                this.simulationManager = manager;
+                this.init();
+        }
 
     /** Initializes the UI components of the ModifySimulationPane. */
     @Override
@@ -83,14 +82,31 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                         1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         JButton submitButton = new JButton("Create Simulation");
-        submitButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+        submitButton.addActionListener( e -> {
                         String simId = UUID.randomUUID().toString();
                         String simName = simulationNameField.getText();
-                        String numberOfSprints = numberOfSprintsField.getText();
-                        String sprintLengthCycle = sprintLengthCycleField.getText();
+                        Integer sprintLengthCycle = 0;
+                        try {
+                                sprintLengthCycle = sprintLengthCycleField.getText().isEmpty() ? 0 : Integer.parseInt(sprintLengthCycleField.getText());
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(
+                                    ModifySimulationPane.this,
+                                    "Length of a sprint must be an integer.",
+                                    "Invalid Input",
+                                    JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        Integer numberOfSprints = 0;
+                        try {
+                                numberOfSprints = numberOfSprintsField.getText().isEmpty() ? 0 : Integer.parseInt(numberOfSprintsField.getText());
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(
+                                    ModifySimulationPane.this,
+                                    "Number of sprints must be an integer.",
+                                    "Invalid Input",
+                                    JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                         simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
 
                         // Prepare a JTextField to display the Simulation ID
@@ -112,8 +128,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                         numberOfSprintsField.setText("");
                         sprintLengthCycleField.setText("");
                         simulationIdDisplay.setText("");
-                    }
-                });
+                    });
 
         panel.add(
                 submitButton,
