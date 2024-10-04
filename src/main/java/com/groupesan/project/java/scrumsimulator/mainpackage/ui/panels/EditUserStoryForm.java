@@ -118,10 +118,13 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
                                                 String name = nameField.getText();
                                                 String description = descArea.getText();
                                                 Double points = (Double) pointsCombo.getSelectedItem();
+                                                Integer businessValuePoints = (Integer) pointsCombobusinessValue
+                                                                .getSelectedItem();
 
                                                 userStory.setName(name);
                                                 userStory.setDescription(description);
                                                 userStory.setPointValue(points);
+                                                userStory.setBusinessValuePoint(businessValuePoints);
                                                 dispose();
                                         }
                                 });
