@@ -35,8 +35,6 @@ public class SimulationPanel extends JPanel implements BaseComponent {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //JOptionPane.showMessageDialog(null, "Simulation started!");
-                        System.out.println("Am being pressed!");
                         SimulationStateManager.getInstance().startSimulation();
 
                         updateButtonVisibility();

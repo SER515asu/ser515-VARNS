@@ -3,7 +3,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.awt.HeadlessException;
+import java.awt.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ public class SimulationStateTest {
     @BeforeEach
     public void setUp() {
         simulationStateManager = SimulationStateManager.getInstance();
+
     }
 
     @AfterEach
@@ -40,6 +41,7 @@ public class SimulationStateTest {
             // Expected exception
         }
         assertTrue(simulationStateManager.isRunning());
+
     }
 
     @Test
@@ -49,4 +51,5 @@ public class SimulationStateTest {
         simulationStateManager.stopSimulation();
         assertFalse(simulationStateManager.isRunning());
     }
+
 }
