@@ -27,50 +27,43 @@ public class SimulationStateTest {
 
     @AfterEach
     public void tearDown() {
-        try{
+        if (simulationStateManager != null) {
             simulationStateManager.setRunning(false);
-        } catch (NullPointerException npe) {
-            // Expected NPE error.
         }
     }
 
     @Test
     public void testInitialState() {
-        try{
+        if (simulationStateManager != null) {
             assertFalse(simulationStateManager.isRunning());
-        } catch (NullPointerException npe) {
-            // Exepcted NPE error
+        } else {
+            System.out.println("simulationStateManager is null");
         }
     }
 
     @Test
     public void testStartSimulation() {
-
-        try {
-            simulationStateManager.setCurrentSimulation(
-                    new Simulation("Test Simulation", 0, 0));
-            simulationStateManager.startSimulation();
-            assertTrue(simulationStateManager.isRunning());
-        } catch (NullPointerException npe) {
-            // Expected exception
+        if (simulationStateManager != null) {
+            try {
+                simulationStateManager.setCurrentSimulation(
+                        new Simulation("Test Simulation", 0, 0));
+                simulationStateManager.startSimulation();
+                assertTrue(simulationStateManager.isRunning());
+            } catch (HeadlessException e) {
+                // Expected exception
+            }
         }
-        catch (HeadlessException e) {
-            // Expected exception
-        }
-
-
     }
-
     @Test
     public void testStopSimulation() {
-        try{
+
+        if (simulationStateManager != null) {
             simulationStateManager.setCurrentSimulation(
                     new Simulation("Test Simulation", 0, 0));
             simulationStateManager.stopSimulation();
             assertFalse(simulationStateManager.isRunning());
-        } catch (NullPointerException npe) {
-            // Expected NPE error.
         }
+
     }
 
 }
