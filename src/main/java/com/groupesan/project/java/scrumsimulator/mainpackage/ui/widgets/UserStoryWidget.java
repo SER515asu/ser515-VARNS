@@ -18,6 +18,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
     JLabel points;
     JLabel name;
     JLabel desc;
+    JLabel businessValuePoint; // added buisness value point
 
     // TODO: This is a non transient field and this class is supposed to be
     // serializable. this needs to be dealt with before this object can be
@@ -77,6 +78,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         points = new JLabel(Double.toString(userStory.getPointValue()));
         name = new JLabel(userStory.getName());
         desc = new JLabel(userStory.getDescription());
+        businessValuePoint = new JLabel(Integer.toString(userStory.getBusinessValuePoint()));
 
         GridBagLayout myGridBagLayout = new GridBagLayout();
 
@@ -98,6 +100,9 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
                 desc,
                 new CustomConstraints(
                         3, 0, GridBagConstraints.WEST, 0.7, 0.0, GridBagConstraints.HORIZONTAL));
+        add(businessValuePoint,
+                new CustomConstraints(
+                        4, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
 
         revalidate();
         repaint();
