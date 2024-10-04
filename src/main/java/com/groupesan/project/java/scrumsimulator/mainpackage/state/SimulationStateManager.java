@@ -95,11 +95,10 @@ public class SimulationStateManager {
                 + day
                 + " of " + currentSimultation.getSprintDuration()
                 + " of sprint " + sprint
+                + " "
                 + progressValue + " %");
 
         // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
-
-        System.out.println(progressValue);
         jimProg.setValue(progressValue);
 
 
