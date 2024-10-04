@@ -114,7 +114,7 @@ public class SimulationStateManager {
 
         setRunning(true);
 
-        new Thread(() -> runSimulation()).start();
+        new Thread(this::runSimulation).start();
 
         JOptionPane.showMessageDialog(null, "Simulation started!");
     }

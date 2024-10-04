@@ -138,13 +138,6 @@ public class SprintUIPane extends JFrame implements BaseComponent {
         JButton SelectUSButton = new JButton("Select");
         SelectUSButton.addActionListener(
                 e -> {
-                    int ownedUS = 0;
-                    for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                        if (currentPlayer.equals(userStory.getOwner())) {
-                            ownedUS++;
-                        }
-                    }
-
                     for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
                         if (userStory.toString().equals(selectComboBox.getSelectedItem())) {
                             userStory.setOwner(currentPlayer);

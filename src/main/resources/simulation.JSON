@@ -16,5 +16,15 @@
         "ID": "7e68e55e-d739-492f-8195-439d6e175633",
         "Users": [],
         "Name": "foo"
+    },
+    {
+        "Status": "New",
+        "Sprints": [],
+        "Events": [],
+        "NumberOfSprints": 5,
+        "ID": "34913cfa-1779-4075-97fd-eeeba6b327d4",
+        "Users": [],
+        "SprintDuration": 2,
+        "Name": "Test"
     }
 ]}
