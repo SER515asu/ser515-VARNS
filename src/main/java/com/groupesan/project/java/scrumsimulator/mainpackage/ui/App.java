@@ -9,7 +9,8 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.WizardMana
 import javax.swing.*;
 
 public class App {
-    public App() {}
+    public App() {
+    }
 
     public void start() {
         this.loadTheme();
@@ -26,21 +27,18 @@ public class App {
     }
 
     private void initializeUserStories() {
-        UserStory a =
-                UserStoryFactory.getInstance()
-                        .createNewUserStory("predefinedUS1", "description1", 1.0);
+        UserStory a = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS1", "description1", 1.0, 1);
         a.doRegister();
         UserStoryStore.getInstance().addUserStory(a);
 
-        UserStory b =
-                UserStoryFactory.getInstance()
-                        .createNewUserStory("predefinedUS2", "description2", 2.0);
+        UserStory b = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS2", "description2", 2.0, 8);
         b.doRegister();
         UserStoryStore.getInstance().addUserStory(b);
 
-        UserStory c =
-                UserStoryFactory.getInstance()
-                        .createNewUserStory("predefinedUS3", "description3", 3.0);
+        UserStory c = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS3", "description3", 3.0, 13);
         c.doRegister();
         UserStoryStore.getInstance().addUserStory(c);
     }

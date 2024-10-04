@@ -21,33 +21,40 @@ public class UserStory extends ScrumObject {
 
     private Player owner;
 
-    // private ArrayList<Task> tasks;  TODO: implement tasks
+    private int businessValuePoint;
+
+    // private ArrayList<Task> tasks; TODO: implement tasks
 
     /**
      * Creates a user story. Leaves the description as an empty string.
      *
-     * @param name the name for the user story
-     * @param pointValue the point value for the story as a way of estimating required effort.
+     * @param name       the name for the user story
+     * @param pointValue the point value for the story as a way of estimating
+     *                   required effort.
      */
-    public UserStory(String name, double pointValue) {
+    public UserStory(String name, double pointValue, int businessValuePoint) {
         this.name = name;
         this.description = "";
         this.pointValue = pointValue;
+        this.businessValuePoint = businessValuePoint; // added buisness value point
         this.state = new UserStoryUnselectedState(this);
     }
 
     /**
      * Creates a user story.
      *
-     * @param name the name for the user story
-     * @param description the description for the user story for better understanding of the
-     *     requirements.
-     * @param pointValue the point value for the story as a way of estimating required effort.
+     * @param name        the name for the user story
+     * @param description the description for the user story for better
+     *                    understanding of the
+     *                    requirements.
+     * @param pointValue  the point value for the story as a way of estimating
+     *                    required effort.
      */
-    public UserStory(String name, String description, double pointValue) {
+    public UserStory(String name, String description, double pointValue, int businessValuePoint) {
         this.name = name;
         this.description = description;
         this.pointValue = pointValue;
+        this.businessValuePoint = businessValuePoint; // added buisness value point
         this.state = new UserStoryUnselectedState(this);
     }
 
@@ -56,7 +63,8 @@ public class UserStory extends ScrumObject {
     }
 
     /**
-     * Gets the identifier object for this UserStory. **This will throw an exception if register()
+     * Gets the identifier object for this UserStory. **This will throw an exception
+     * if register()
      * has not been called yet.**
      *
      * @return The ScrumIdentifier for this user story
@@ -117,14 +125,16 @@ public class UserStory extends ScrumObject {
     /**
      * Set the point value of the User Story to the specified value
      *
-     * @param pointValue the point value as a double. Usually an element of the fibonacci sequence.
+     * @param pointValue the point value as a double. Usually an element of the
+     *                   fibonacci sequence.
      */
     public void setPointValue(double pointValue) {
         this.pointValue = pointValue;
     }
 
     /**
-     * [NOT IMPLEMENTED] return all child scrum objects of this object. Usually this would be tasks.
+     * [NOT IMPLEMENTED] return all child scrum objects of this object. Usually this
+     * would be tasks.
      *
      * @return a List containing all child ScrumObjects of this UserStory
      */
@@ -133,7 +143,8 @@ public class UserStory extends ScrumObject {
     }
 
     /**
-     * returns this user story's ID and name as text in the following format: US #3 - foo
+     * returns this user story's ID and name as text in the following format: US #3
+     * - foo
      *
      * @return a string of the following format: "US #3 - foo"
      */
@@ -147,7 +158,8 @@ public class UserStory extends ScrumObject {
 
     // State Management, need Player class to implement final selection logic
     /**
-     * Change the state of this UserStory. Usually called when a Player picks up the task or
+     * Change the state of this UserStory. Usually called when a Player picks up the
+     * task or
      * finishes it.
      *
      * @param state the new UserStoryState for this UserStory
@@ -166,7 +178,8 @@ public class UserStory extends ScrumObject {
     }
 
     /**
-     * Sets the owner of this UserStory to the specified player. This should be called whenever a
+     * Sets the owner of this UserStory to the specified player. This should be
+     * called whenever a
      * Player picks up this task and assigns themselves to it.
      *
      * @param player the Player object who is assigned to this UserStory
@@ -182,5 +195,14 @@ public class UserStory extends ScrumObject {
      */
     public Player getOwner() {
         return this.owner;
+    }
+
+    // added buisness value point getter and setter
+    public int getBusinessValuePoint() {
+        return businessValuePoint;
+    }
+
+    public void setBusinessValuePoint(int businessValuePoint) {
+        this.businessValuePoint = businessValuePoint;
     }
 }
