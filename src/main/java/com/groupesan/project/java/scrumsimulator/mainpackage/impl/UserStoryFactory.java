@@ -11,10 +11,11 @@ public class UserStoryFactory {
         return userStoryFactory;
     }
 
-    private UserStoryFactory() {}
+    private UserStoryFactory() {
+    }
 
-    public UserStory createNewUserStory(String name, String description, double pointValue) {
-        UserStory newUS = new UserStory(name, description, pointValue);
+    public UserStory createNewUserStory(String name, String description, double pointValue, int businessValuePoint) {
+        UserStory newUS = new UserStory(name, description, pointValue, businessValuePoint);
         return newUS;
     }
 }
