@@ -4,6 +4,9 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSta
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
+
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -24,12 +27,18 @@ public class SimulationPanel extends JPanel implements BaseComponent {
 
         stopSimulationButton.setVisible(false);
 
+
+
         startSimulationButton.addActionListener(
+
+
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         SimulationStateManager.getInstance().startSimulation();
+
                         updateButtonVisibility();
+
                     }
                 });
 

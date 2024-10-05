@@ -31,8 +31,8 @@ public class SimulationWizard extends Wizard<Simulation> {
         this.roles.getData().add(new ScrumRole("Scrum Master"));
         this.roles.getData().add(new ScrumRole("Product Owner"));
         return List.of(
-                new GeneralPage(simulationName, sprintCount),
-                new ParticipantsPage(users, roles));
+                new GeneralPage(simulationName, sprintCount)
+        );
     }
 
     @Override
