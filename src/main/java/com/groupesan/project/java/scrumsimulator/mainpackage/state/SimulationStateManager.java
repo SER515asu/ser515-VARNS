@@ -189,8 +189,6 @@ public class SimulationStateManager {
                 updateSimulationData(simulationData);
             }
         }
-
-        SimulationPanel.getSimInstance().updateButtonVisibility();
         JOptionPane.showMessageDialog(null, "Simulation completed!");
     }
 

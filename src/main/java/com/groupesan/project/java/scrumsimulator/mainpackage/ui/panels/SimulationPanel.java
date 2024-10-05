@@ -20,7 +20,7 @@ public class SimulationPanel extends JPanel implements BaseComponent {
     private JButton startSimulationButton;
     private JButton stopSimulationButton;
 
-    
+
     /** Simulation Panel Initialization. */
     protected SimulationPanel() {
         this.init();
