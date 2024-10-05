@@ -190,6 +190,7 @@ public class SimulationStateManager {
             }
         }
 
+        SimulationPanel.getSimInstance().updateButtonVisibility();
         JOptionPane.showMessageDialog(null, "Simulation completed!");
     }
 
@@ -227,7 +228,7 @@ public class SimulationStateManager {
         updateSimulationData(simulationData);
     }
 
-    public static JSONObject getSimulationData() {
+    private static JSONObject getSimulationData() {
         try (FileInputStream fis = new FileInputStream(JSON_FILE_PATH)) {
             JSONTokener tokener = new JSONTokener(fis);
             return new JSONObject(tokener);
