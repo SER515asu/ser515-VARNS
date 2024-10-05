@@ -1,5 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +27,8 @@ public class SimulationStateManager {
     private JPanel simPan = new JPanel();
     private JLabel jimPan = new JLabel("This is the UI!");
     private JProgressBar jimProg = new JProgressBar();
+
+    private JButton manualStopButton = new JButton("Finish sprint");
 
     JFrame framePan = new JFrame();
 
@@ -102,6 +106,7 @@ public class SimulationStateManager {
         jimProg.setValue(progressValue);
 
 
+
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
             completeSimulation();
         } else {
@@ -128,8 +133,16 @@ public class SimulationStateManager {
         setRunning(true);
         simPan.add(jimPan);
         simPan.add(jimProg); // progress bar is added here - Suparno
+        simPan.add(manualStopButton);
         framePan.add(simPan);
         framePan.setSize(300,300);
+        manualStopButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        completeSimulation();
+                    }
+                });
         framePan.setVisible(true);
 
 
