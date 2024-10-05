@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import javax.swing.*;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.SimulationPanel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -51,6 +53,7 @@ public class SimulationStateManager {
     public static synchronized SimulationStateManager getInstance() {
         if (instance == null) {
             instance = new SimulationStateManager();
+
         }
         return instance;
     }
@@ -105,10 +108,20 @@ public class SimulationStateManager {
         // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
         jimProg.setValue(progressValue);
 
+        manualStopButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        day = currentSimultation.getSprintDuration();
+                    }
+                });
+
 
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
+            framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING)); // close the frame when done.
             completeSimulation();
+
         } else {
             day++;
             if (day > currentSimultation.getSprintDuration()) {
@@ -123,6 +136,7 @@ public class SimulationStateManager {
     public void startSimulation() {
         if (currentSimultation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
+
             return;
         }
 
@@ -136,13 +150,7 @@ public class SimulationStateManager {
         simPan.add(manualStopButton);
         framePan.add(simPan);
         framePan.setSize(300,300);
-        manualStopButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        completeSimulation();
-                    }
-                });
+
         framePan.setVisible(true);
 
 
@@ -219,7 +227,7 @@ public class SimulationStateManager {
         updateSimulationData(simulationData);
     }
 
-    private static JSONObject getSimulationData() {
+    public static JSONObject getSimulationData() {
         try (FileInputStream fis = new FileInputStream(JSON_FILE_PATH)) {
             JSONTokener tokener = new JSONTokener(fis);
             return new JSONObject(tokener);
