@@ -30,7 +30,7 @@ public class SimulationStateManager {
     private JLabel jimPan = new JLabel("This is the UI!");
     private JProgressBar jimProg = new JProgressBar();
 
-    private JButton manualStopButton = new JButton("Finish sprint");
+    private JButton manualStopButton = new JButton("Stop sprints");
 
     JFrame framePan = new JFrame();
 
@@ -108,18 +108,22 @@ public class SimulationStateManager {
         // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
         jimProg.setValue(progressValue);
 
+        // Sets day automatically to the last day of the sprint.
         manualStopButton.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        day = currentSimultation.getSprintDuration();
+
+                        stopSimulation();
+                        JOptionPane.showMessageDialog(null, "Simulation stopped!");
+                        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
                     }
                 });
 
 
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
-            framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING)); // close the frame when done.
+             // close the frame when done.
             completeSimulation();
 
         } else {
