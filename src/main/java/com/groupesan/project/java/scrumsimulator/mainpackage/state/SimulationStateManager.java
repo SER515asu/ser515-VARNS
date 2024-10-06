@@ -17,11 +17,19 @@ import org.json.JSONTokener;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 
+
+
 /**
  * SimulationStateManager manages the state of a simulation, including whether
  * it is running and saving its ID.
  */
 public class SimulationStateManager {
+
+    private enum sprintState {
+        START_SPRINT, // Start a sprint without any hitch
+        STOP_SPRINT, // Full stop to all sprints.
+        PAUSE_SPRINT // Pause to all sprints.
+    }
     private boolean running;
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
 
@@ -31,6 +39,9 @@ public class SimulationStateManager {
     private JProgressBar jimProg = new JProgressBar();
 
     private JButton manualStopButton = new JButton("Stop sprints");
+
+    private sprintState state; // use this enum to determine state of sprint simulations.
+
 
     JFrame framePan = new JFrame();
 
@@ -85,6 +96,7 @@ public class SimulationStateManager {
         try {
             // Instead of sleeping for the full second, we sleep for 100ms and check if the simulation is still running
             // This allows the simulation to be stopped more responsively
+
             for (int i = 0; i < 10; i++) {
                 Thread.sleep(100);
                 if (!isRunning()) {
@@ -93,6 +105,10 @@ public class SimulationStateManager {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+
+        if(state == sprintState.STOP_SPRINT) {
+            return;
         }
 
         // Logic of running the simulation goes here
@@ -115,7 +131,6 @@ public class SimulationStateManager {
                     public void actionPerformed(ActionEvent e) {
 
                         stopSimulation();
-                        JOptionPane.showMessageDialog(null, "Simulation stopped!");
                         framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
                     }
                 });
@@ -157,10 +172,14 @@ public class SimulationStateManager {
 
         framePan.setVisible(true);
 
-
-        new Thread(() -> runSimulation()).start();
-
-        JOptionPane.showMessageDialog(null, "Simulation started!");
+        if(state == sprintState.STOP_SPRINT) {
+            JOptionPane.showMessageDialog(null, "All sprints simulations have been stopped.");
+            framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
+        } else {
+            state = sprintState.START_SPRINT;
+            new Thread(() -> runSimulation()).start();
+            JOptionPane.showMessageDialog(null, "Simulation started!");
+        }
     }
 
     /** Method to set the simulation state to not running. */
@@ -169,8 +188,29 @@ public class SimulationStateManager {
             JOptionPane.showMessageDialog(null, "No simulation selected");
             return;
         }
+        if(state != sprintState.STOP_SPRINT) {
+            state = sprintState.STOP_SPRINT; // stop state is assigned here.
+            setRunning(false);
+        } else {
+            return;
+        }
+        
+        JSONObject simulationData = getSimulationData();
 
-        setRunning(false);
+        if (simulationData != null) {
+            JSONArray simulations = simulationData.optJSONArray("Simulations");
+            if (simulations != null) {
+                for (int i = 0; i < simulations.length(); i++) {
+                    JSONObject simulation = simulations.getJSONObject(i);
+                    if (simulation.getString("Status").equals("Running")) {
+                        simulation.put("Status", "Stopped");
+                        break;
+                    }
+                }
+                updateSimulationData(simulationData);
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Simulation stopped!");
         // Add other logic for stopping the simulation
     }
 
