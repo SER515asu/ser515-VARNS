@@ -38,8 +38,6 @@ public class SimulationStateManager {
     private JLabel jimPan = new JLabel("This is the UI!");
     private JProgressBar jimProg = new JProgressBar();
 
-    private JButton manualStopButton = new JButton("Stop sprints");
-
     private sprintState state; // use this enum to determine state of sprint simulations.
 
 
