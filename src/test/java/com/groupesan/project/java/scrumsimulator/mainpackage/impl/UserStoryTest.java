@@ -13,9 +13,8 @@ public class UserStoryTest {
 
     @BeforeEach
     public void setup() {
-        myUserStory =
-                UserStoryFactory.getInstance()
-                        .createNewUserStory("predefinedUS1", "description1", 1.0);
+        myUserStory = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS1", "description1", 1.0, 1);
     }
 
     @Test
@@ -23,12 +22,11 @@ public class UserStoryTest {
         // modified from example code from Baeldung
         // https://www.baeldung.com/junit-assert-exception
 
-        Exception exception =
-                assertThrows(
-                        IllegalStateException.class,
-                        () -> {
-                            ScrumIdentifier id = myUserStory.getId();
-                        });
+        Exception exception = assertThrows(
+                IllegalStateException.class,
+                () -> {
+                    ScrumIdentifier id = myUserStory.getId();
+                });
 
         String actualMessage = exception.getMessage();
 
