@@ -63,11 +63,12 @@ public class Simulation {
 
     @Override
     public String toString() {
-        String result = "[Simulation] " + getSimulationName() + "\n";
-        result += "Sprints: " + sprintCount + "\n";
-        for (Player player : players) {
-            result += player + "\n";
-        }
-        return result;
+    String result = "[Simulation] " + getSimulationName() + "\n";
+    result += "Sprints: " + sprintCount + "\n";
+    result += "Sprint Length: " + sprintDuration + " days\n";
+    for (Player player : players) {
+        result += player + "\n";
     }
+    return result;
+}
 }
