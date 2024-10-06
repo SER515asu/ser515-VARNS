@@ -111,17 +111,17 @@ public class SimulationStateManager {
 
         // Logic of running the simulation goes here
         // I've tailored the logic to display the progress of the simulation through these lines.
-        progressValue = (int)Math.round(100.0 / currentSimultation.getSprintDuration() * day );
+        progressValue = (int)Math.round(100.0 / (currentSimultation.getSprintDuration()/7.0) * day ); // Needed to divide by 7 here for progress tracking. Crude solution for now.
         jimPan.setText("Running simulation for day "
                 + day
-                + " of " + currentSimultation.getSprintDuration()
+                + " of " + currentSimultation.getSprintDuration() / 7
                 + " of sprint " + sprint
                 + " "
                 + progressValue + " %");
 
         // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
         jimProg.setValue(progressValue);
-
+        
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
              // close the frame when done.
