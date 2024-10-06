@@ -1,5 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import javax.swing.*;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.SimulationPanel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -18,6 +22,12 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
  * it is running and saving its ID.
  */
 public class SimulationStateManager {
+
+    private enum sprintState {
+        START_SPRINT, // Start a sprint without any hitch
+        STOP_SPRINT, // Full stop to all sprints.
+        PAUSE_SPRINT // Pause to all sprints.
+    }
     private boolean running;
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
 
@@ -25,6 +35,9 @@ public class SimulationStateManager {
     private JPanel simPan = new JPanel();
     private JLabel jimPan = new JLabel("This is the UI!");
     private JProgressBar jimProg = new JProgressBar();
+
+    private sprintState state; // use this enum to determine state of sprint simulations.
+
 
     JFrame framePan = new JFrame();
 
@@ -97,12 +110,16 @@ public class SimulationStateManager {
             e.printStackTrace();
         }
 
+        if(!isRunning()) {
+            return;
+        }
+
         // Logic of running the simulation goes here
         // I've tailored the logic to display the progress of the simulation through these lines.
-        progressValue = (int)Math.round(100.0 / currentSimultation.getSprintDuration() * day );
+        progressValue = (int)Math.round(100.0 / (currentSimultation.getSprintDuration()/7.0) * day ); // Needed to divide by 7 here for progress tracking. Crude solution for now.
         jimPan.setText("Running simulation for day "
                 + day
-                + " of " + currentSimultation.getSprintDuration()
+                + " of " + currentSimultation.getSprintDuration() / 7
                 + " of sprint " + sprint
                 + " "
                 + progressValue + " %");
@@ -112,7 +129,9 @@ public class SimulationStateManager {
 
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
+             // close the frame when done.
             completeSimulation();
+
         } else {
             day++;
             if (day > currentSimultation.getSprintDuration()) {
@@ -141,6 +160,8 @@ public class SimulationStateManager {
         framePan.setSize(300,300);
         framePan.setVisible(true);
 
+        state = sprintState.START_SPRINT;
+
 
         new Thread(this::runSimulation).start();
 
@@ -148,13 +169,53 @@ public class SimulationStateManager {
     }
 
     /** Method to set the simulation state to not running. */
+    public void resetSimulation() {
+        setRunning(false);
+        if (currentSimultation == null) {
+            JOptionPane.showMessageDialog(null, "No simulation selected");
+            return;
+        }
+        state = sprintState.STOP_SPRINT;
+        JOptionPane.showMessageDialog(null, "Simulation stopped!");
+        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
+
+        day = 1; // reset days to the start
+        sprint = 1; // reset sprint to 1.
+        progressValue = 0; // reset progress.
+
+
+    }
     public void stopSimulation() {
         if (currentSimultation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
             return;
         }
+        if(state != sprintState.STOP_SPRINT) {
+            state = sprintState.STOP_SPRINT; // stop state is assigned here.
+            setRunning(false);
+        } else {
+            return;
+        }
 
-        setRunning(false);
+
+
+        // Included JSON code to indicate stopped simulations.
+        JSONObject simulationData = getSimulationData();
+        if (simulationData != null) {
+            JSONArray simulations = simulationData.optJSONArray("Simulations");
+            if (simulations != null) {
+                for (int i = 0; i < simulations.length(); i++) {
+                    JSONObject simulation = simulations.getJSONObject(i);
+                    if (simulation.getString("Status").equals("Running")) {
+                        simulation.put("Status", "Stopped");
+                        break;
+                    }
+                }
+                updateSimulationData(simulationData);
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Simulation stopped!");
+        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
         // Add other logic for stopping the simulation
     }
 
