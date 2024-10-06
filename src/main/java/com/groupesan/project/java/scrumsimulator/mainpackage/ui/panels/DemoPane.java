@@ -109,8 +109,8 @@ public class DemoPane extends JFrame implements BaseComponent {
                     }
 
                     // Load SprintUIPane
-                    SprintUIPane sprintUIPane = new SprintUIPane(player);
-                    sprintUIPane.setVisible(true);
+                    SprintBacklogPane sprintBacklogPane = new SprintBacklogPane();
+                    sprintBacklogPane.setVisible(true);
                 });
 
         new DemoPaneBuilder(myJpanel)

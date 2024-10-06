@@ -1,9 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.SprintFactory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.SprintStore;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +79,32 @@ public class Simulation {
         if (!userStories.isEmpty()) {
             userStories.forEach(sprint::addUserStory);
         }
+    }
+
+    public void removeUserStory(Sprint sprint, String userStory) {
+        if (userStory == null || sprint == null) return;
+        UserStory userStoryToBeRemoved = UserStoryStore
+                .getInstance()
+                .getUserStories()
+                .stream()
+                .filter(us -> us.toString().equals(userStory))
+                .toList()
+                .getFirst();
+        userStoryToBeRemoved.changeState(new UserStoryUnselectedState(userStoryToBeRemoved));
+        sprint.removeUserStory(userStoryToBeRemoved);
+    }
+
+    public void addUserStory(Sprint sprint, String userStory) {
+        if (userStory == null || sprint == null) return;
+        UserStory userStoryToBeAdded = UserStoryStore
+                .getInstance()
+                .getUserStories()
+                .stream()
+                .filter(us -> us.toString().equals(userStory))
+                .toList()
+                .getFirst();
+        userStoryToBeAdded.changeState(new UserStoryAddedState(userStoryToBeAdded));
+        sprint.addUserStory(userStoryToBeAdded);
     }
 
     @Override
