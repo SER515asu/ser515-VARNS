@@ -55,7 +55,7 @@ public class SimulationPanel extends JPanel implements BaseComponent {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        SimulationStateManager.getInstance().stopSimulation();
+                        SimulationStateManager.getInstance().resetSimulation();
                         updateButtonVisibility();
                     }
                 });

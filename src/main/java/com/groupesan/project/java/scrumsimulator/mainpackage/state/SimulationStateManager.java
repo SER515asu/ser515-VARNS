@@ -107,7 +107,7 @@ public class SimulationStateManager {
             e.printStackTrace();
         }
 
-        if(state == sprintState.STOP_SPRINT) {
+        if(!isRunning()) {
             return;
         }
 
@@ -124,18 +124,6 @@ public class SimulationStateManager {
         // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
         jimProg.setValue(progressValue);
 
-        // Sets day automatically to the last day of the sprint.
-        manualStopButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-
-                        stopSimulation();
-                        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
-                    }
-                });
-
-
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
              // close the frame when done.
@@ -147,7 +135,9 @@ public class SimulationStateManager {
                 day = 1;
                 sprint++;
             }
+
             runSimulation();
+
         }
     }
 
@@ -166,23 +156,36 @@ public class SimulationStateManager {
         setRunning(true);
         simPan.add(jimPan);
         simPan.add(jimProg); // progress bar is added here - Suparno
-        simPan.add(manualStopButton);
         framePan.add(simPan);
         framePan.setSize(300,300);
 
         framePan.setVisible(true);
 
-        if(state == sprintState.STOP_SPRINT) {
-            JOptionPane.showMessageDialog(null, "All sprints simulations have been stopped.");
-            framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
-        } else {
-            state = sprintState.START_SPRINT;
-            new Thread(() -> runSimulation()).start();
-            JOptionPane.showMessageDialog(null, "Simulation started!");
-        }
+        state = sprintState.START_SPRINT;
+
+
+        new Thread(() -> runSimulation()).start();
+        JOptionPane.showMessageDialog(null, "Simulation started!");
+
     }
 
     /** Method to set the simulation state to not running. */
+    public void resetSimulation() {
+        setRunning(false);
+        if (currentSimultation == null) {
+            JOptionPane.showMessageDialog(null, "No simulation selected");
+            return;
+        }
+        state = sprintState.STOP_SPRINT;
+        JOptionPane.showMessageDialog(null, "Simulation stopped!");
+        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
+
+        day = 1; // reset days to the start
+        sprint = 1; // reset sprint to 1.
+        progressValue = 0; // reset progress.
+
+
+    }
     public void stopSimulation() {
         if (currentSimultation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
@@ -194,9 +197,11 @@ public class SimulationStateManager {
         } else {
             return;
         }
-        
-        JSONObject simulationData = getSimulationData();
 
+
+
+        // Included JSON code to indicate stopped simulations.
+        JSONObject simulationData = getSimulationData();
         if (simulationData != null) {
             JSONArray simulations = simulationData.optJSONArray("Simulations");
             if (simulations != null) {
@@ -211,6 +216,7 @@ public class SimulationStateManager {
             }
         }
         JOptionPane.showMessageDialog(null, "Simulation stopped!");
+        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
         // Add other logic for stopping the simulation
     }
 
