@@ -109,12 +109,12 @@ public class Simulation {
 
     @Override
     public String toString() {
-    String result = "[Simulation] " + getSimulationName() + "\n";
-    result += "Sprints: " + sprintCount + "\n";
-    result += "Sprint Length: " + sprintDuration + " days\n";
+    StringBuilder result = new StringBuilder("[Simulation] " + getSimulationName() + "\n");
+    result.append("Sprints: ").append(sprintCount).append("\n");
+    result.append("Sprint Length: ").append(sprintDuration).append(" days\n");
     for (Player player : players) {
-        result += player + "\n";
+        result.append(player).append("\n");
     }
-    return result;
+    return result.toString();
 }
 }
