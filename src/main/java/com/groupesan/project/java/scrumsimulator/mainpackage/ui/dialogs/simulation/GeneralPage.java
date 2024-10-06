@@ -12,10 +12,12 @@ import javax.swing.*;
 class GeneralPage extends Wizard.WizardPage {
     private final DataModel<String> simulationModel;
     private final DataModel<Object> sprintModel;
+    private final DataModel<Object> sprintLengthModel;
 
-    public GeneralPage(DataModel<String> simulationModel, DataModel<Object> sprintModel) {
+    public GeneralPage(DataModel<String> simulationModel, DataModel<Object> sprintModel, DataModel<Object> sprintLengthModel) {
         this.simulationModel = simulationModel;
         this.sprintModel = sprintModel;
+        this.sprintLengthModel = sprintLengthModel;
     }
 
     @Override
@@ -38,6 +40,11 @@ class GeneralPage extends Wizard.WizardPage {
                         "Sprints: ",
                         new JSpinner(new SpinnerNumberModel(1, 1, 20, 1)),
                         sprintModel);
+        SpinnerInput sprintLengthInput =
+        new SpinnerInput(
+                "Sprint Length (days): ",
+                new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
+                sprintLengthModel);
 
         inputs.add(
                 resuableHeader,
@@ -61,6 +68,13 @@ class GeneralPage extends Wizard.WizardPage {
                         .setGridY(2)
                         .setWeightX(1)
                         .setFill(GridBagConstraints.HORIZONTAL));
+        inputs.add(
+        sprintLengthInput,
+        new GridBagConstraintsBuilder()
+                .setGridX(0)
+                .setGridY(3)
+                .setWeightX(1)
+                .setFill(GridBagConstraints.HORIZONTAL));
 
         container.add(inputs, BorderLayout.NORTH);
         return container;
