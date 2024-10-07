@@ -158,6 +158,7 @@ public class SimulationStateManager {
                         sprint++;
                     }
                     //runSimulation();
+                    runSimulation();
 
                 }
             }
