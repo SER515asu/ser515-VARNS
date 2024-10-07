@@ -25,7 +25,7 @@ public class SprintBacklogPane extends JFrame {
 
     public void init(Container myContainer) {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Allocate Sprint Backlog");
+        setTitle("Assign Sprint Backlogs");
         setSize(800, 600);
 
         JList<String> userStories = new JList<>();
@@ -47,8 +47,10 @@ public class SprintBacklogPane extends JFrame {
                         .setWeightX(1)
                         .setFill(GridBagConstraints.HORIZONTAL));
 
-        for (Sprint sprint : SimulationStateManager.getInstance().getCurrentSimulation().getSprints()) {
-            selectSprintComboBox.addItem(sprint.toString());
+        if (SimulationStateManager.getInstance().getCurrentSimulation() != null) {
+            for (Sprint sprint : SimulationStateManager.getInstance().getCurrentSimulation().getSprints()) {
+                selectSprintComboBox.addItem(sprint.toString());
+            }
         }
 
         JList<String> sprintUserStories = new JList<>();

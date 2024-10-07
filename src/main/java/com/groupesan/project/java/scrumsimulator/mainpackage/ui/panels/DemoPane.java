@@ -25,7 +25,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     public void init() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Demo");
-        setSize(1200, 300);
+        setSize(1400, 500);
 
         GridBagLayout myGridbagLayout = new GridBagLayout();
         JPanel myJpanel = new JPanel();
@@ -39,7 +39,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                     form.setVisible(true);
                 });
 
-        JButton userStoriesButton = new JButton("User Stories");
+        JButton userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
                 e -> {
                     UserStoryListPane form = new UserStoryListPane();
@@ -101,32 +101,38 @@ public class DemoPane extends JFrame implements BaseComponent {
                     variantSimulationUI.setVisible(true);
                 });
 
-        JButton sprintUIButton = new JButton("US Selection UI");
-        sprintUIButton.addActionListener(
+        JButton sprintBacklogsButton = getSprintBacklogsButton();
+
+        new DemoPaneBuilder(myJpanel)
+                .addComponent(sprintsButton, 0, 0)
+                .addComponent(userStoriesButton, 1, 0)
+                .addComponent(simulationPanel, 2, 0)
+                .addComponent(sprintBacklogsButton, 3, 0)
+                .addComponent(updateStoryStatusButton, 4, 0)
+                .addComponent(modifySimulationButton, 5, 0)
+                .addComponent(joinSimulationButton, 6, 0)
+                .addComponent(simulationButton,7, 0)
+                .addComponent(potentialBlockersButton, 9, 0)
+                .addComponent(simulationSwitchRoleButton, 1, 1)
+                .addComponent(variantSimulationUIButton, 2, 1)
+                .buildPanel();
+
+        add(myJpanel);
+    }
+
+    private static JButton getSprintBacklogsButton() {
+        JButton sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
+        sprintBacklogsButton.addActionListener(
                 e -> {
                     if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
                         JOptionPane.showMessageDialog(null, "Please create and join a simulation before adding user stories to sprint backlog");
+                        return;
                     }
 
                     // Load SprintUIPane
                     SprintBacklogPane sprintBacklogPane = new SprintBacklogPane();
                     sprintBacklogPane.setVisible(true);
                 });
-
-        new DemoPaneBuilder(myJpanel)
-                .addComponent(sprintsButton, 0, 0)
-                .addComponent(userStoriesButton, 1, 0)
-                .addComponent(simulationPanel, 2, 0)
-                .addComponent(potentialBlockersButton, 3, 0)
-                .addComponent(updateStoryStatusButton, 4, 0)
-                .addComponent(modifySimulationButton, 5, 0)
-                .addComponent(joinSimulationButton, 6, 0)
-                .addComponent(simulationButton,7, 0)
-                .addComponent(sprintUIButton, 9, 0)
-                .addComponent(simulationSwitchRoleButton, 1, 1)
-                .addComponent(variantSimulationUIButton, 2, 1)
-                .buildPanel();
-
-        add(myJpanel);
+        return sprintBacklogsButton;
     }
 }
