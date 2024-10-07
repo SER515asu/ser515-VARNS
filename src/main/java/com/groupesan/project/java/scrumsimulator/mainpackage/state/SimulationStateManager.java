@@ -33,8 +33,10 @@ public class SimulationStateManager {
 
     private Simulation currentSimultation;
     private JPanel simPan = new JPanel();
-    private JLabel jimPan = new JLabel("This is the UI!");
+    private JLabel jimPan = new JLabel("Loaded Simulator!");
     private JProgressBar jimProg = new JProgressBar();
+
+    private JButton pauseSimulationButton = new JButton("Pause Simulation");
 
     private sprintState state; // use this enum to determine state of sprint simulations.
 
@@ -96,7 +98,6 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
-
         try {
             // Instead of sleeping for the full second, we sleep for 100ms and check if the simulation is still running
             // This allows the simulation to be stopped more responsively
@@ -110,37 +111,61 @@ public class SimulationStateManager {
             e.printStackTrace();
         }
 
-        if(!isRunning()) {
+        if (!isRunning()) {
             return;
         }
 
-        // Logic of running the simulation goes here
-        // I've tailored the logic to display the progress of the simulation through these lines.
-        progressValue = (int)Math.round(100.0 / (currentSimultation.getSprintDuration()/7.0) * day ); // Needed to divide by 7 here for progress tracking. Crude solution for now.
-        jimPan.setText("Running simulation for day "
-                + day
-                + " of " + currentSimultation.getSprintDuration() / 7
-                + " of sprint " + sprint
-                + " "
-                + progressValue + " %");
+        while (true) {
+            // Logic of running the simulation goes here
+            // I've tailored the logic to display the progress of the simulation through these lines.
 
-        // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
-        jimProg.setValue(progressValue);
+            if(state == sprintState.PAUSE_SPRINT) {
 
-
-        if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
-             // close the frame when done.
-            completeSimulation();
-
-        } else {
-            day++;
-            if (day > currentSimultation.getSprintDuration()) {
-                day = 1;
-                sprint++;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            runSimulation();
+
+            if (state == sprintState.START_SPRINT) {
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration() / 7.0) * day); // Needed to divide by 7 here for progress tracking. Crude solution for now.
+                jimPan.setText("Running simulation for day "
+                        + day
+                        + " of " + currentSimultation.getSprintDuration() / 7
+                        + " of sprint " + sprint
+                        + " "
+                        + progressValue + " %");
+
+                // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
+                jimProg.setValue(progressValue);
+
+
+                if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()/7) {
+                    completeSimulation();
+                    break;
+                } else {
+                    day++;
+                    if (day > currentSimultation.getSprintDuration()/7) {
+                        day = 1;
+                        sprint++;
+                    }
+                    //runSimulation();
+
+                }
+            }
+
         }
     }
+
+
 
     /** Method to set the simulation state to running. */
     public void startSimulation() {
@@ -156,14 +181,30 @@ public class SimulationStateManager {
         setRunning(true);
         simPan.add(jimPan);
         simPan.add(jimProg); // progress bar is added here - Suparno
+        simPan.add(pauseSimulationButton); // pause button is added here.
         framePan.add(simPan);
         framePan.setSize(300,300);
         framePan.setVisible(true);
 
+
+
+        pauseSimulationButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(state == sprintState.START_SPRINT) {
+                            state = sprintState.PAUSE_SPRINT;
+                        } else if (state == sprintState.PAUSE_SPRINT){
+                            state = sprintState.START_SPRINT;
+                        }
+                    }
+                });
+
         state = sprintState.START_SPRINT;
 
-
         new Thread(this::runSimulation).start();
+
+
 
         JOptionPane.showMessageDialog(null, "Simulation started!");
     }
