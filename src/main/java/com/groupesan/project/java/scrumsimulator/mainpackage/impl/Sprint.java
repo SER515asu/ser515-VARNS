@@ -62,4 +62,8 @@ public class Sprint {
     public String toString() {
         return "Sprint " + this.id + "\n";
     }
+
+    public void clearUserStories() {
+        userStories.clear();
+    }
 }
