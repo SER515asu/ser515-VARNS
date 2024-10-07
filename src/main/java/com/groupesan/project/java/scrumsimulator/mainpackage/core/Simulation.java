@@ -7,6 +7,8 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnse
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JList;
+
 public class Simulation {
 
     private String simulationName;
@@ -22,7 +24,8 @@ public class Simulation {
         this.sprintDuration = sprintDurationWeeks * 7;
 
         for (int i = 0; i < sprintCount; i++) {
-            SprintStore.getInstance().addSprint(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
+            SprintStore.getInstance()
+                    .addSprint(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
         }
         this.sprints = SprintStore.getInstance().getSprints();
     }
@@ -82,7 +85,8 @@ public class Simulation {
     }
 
     public void removeUserStory(Sprint sprint, String userStory) {
-        if (userStory == null || sprint == null) return;
+        if (userStory == null || sprint == null)
+            return;
         UserStory userStoryToBeRemoved = UserStoryStore
                 .getInstance()
                 .getUserStories()
@@ -95,7 +99,8 @@ public class Simulation {
     }
 
     public void addUserStory(Sprint sprint, String userStory) {
-        if (userStory == null || sprint == null) return;
+        if (userStory == null || sprint == null)
+            return;
         UserStory userStoryToBeAdded = UserStoryStore
                 .getInstance()
                 .getUserStories()
@@ -109,12 +114,31 @@ public class Simulation {
 
     @Override
     public String toString() {
-    StringBuilder result = new StringBuilder("[Simulation] " + getSimulationName() + "\n");
-    result.append("Sprints: ").append(sprintCount).append("\n");
-    result.append("Sprint Length: ").append(sprintDuration).append(" days\n");
-    for (Player player : players) {
-        result.append(player).append("\n");
+        StringBuilder result = new StringBuilder("[Simulation] " + getSimulationName() + "\n");
+        result.append("Sprints: ").append(sprintCount).append("\n");
+        result.append("Sprint Length: ").append(sprintDuration).append(" days\n");
+        for (Player player : players) {
+            result.append(player).append("\n");
+        }
+        return result.toString();
     }
-    return result.toString();
-}
+
+    public void randomizeSprintBacklog(JList<String> userStories) {
+        List<UserStory> userStoriesList = UserStoryStore.getInstance().getUserStories();
+        for (UserStory userStory : userStoriesList) {
+            userStory.changeState(new UserStoryUnselectedState(userStory));
+        }
+        for (Sprint sprint : sprints) {
+            sprint.clearUserStories();
+        }
+
+        int numberOfSprints = sprints.size();
+
+        for (UserStory userStory : userStoriesList) {
+            int sprintIndex = (int) (Math.random() * numberOfSprints);
+            Sprint sprint = sprints.get(sprintIndex);
+            sprint.addUserStory(userStory);
+            userStory.changeState(new UserStoryAddedState(userStory));
+        }
+    }
 }
