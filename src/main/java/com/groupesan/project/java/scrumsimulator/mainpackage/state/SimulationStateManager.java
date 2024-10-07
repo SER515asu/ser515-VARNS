@@ -15,24 +15,22 @@ import org.json.JSONTokener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 
-
-
 /**
  * SimulationStateManager manages the state of a simulation, including whether
  * it is running and saving its ID.
  */
 public class SimulationStateManager {
 
-    private enum sprintState {
-        START_SPRINT, // Start a sprint without any hitch
-        STOP_SPRINT, // Full stop to all sprints.
-        PAUSE_SPRINT // Pause to all sprints.
+    public enum SprintStateEnum {
+        START_SPRINT,
+        STOP_SPRINT,
+        PAUSE_SPRINT
     }
 
     private boolean running;
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
     private Simulation currentSimultation;
-    private sprintState state;
+    private SprintStateEnum state;
     private Integer day = 1;
     private Integer sprint = 1;
     private Integer progressValue;
@@ -90,19 +88,8 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
-        try {
-            for (int i = 0; i < 10; i++) {
-                Thread.sleep(100);
-                if (!isRunning()) {
-                    return;
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        while (isRunning()) {
             try {
-                // Instead of sleeping for the full second, we sleep for 100ms and check if the simulation is still running
-                // This allows the simulation to be stopped more responsively
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
                     if (!isRunning()) {
@@ -113,38 +100,28 @@ public class SimulationStateManager {
                 e.printStackTrace();
             }
 
-        if (!isRunning()) {
-            return;
-        }
             if (!isRunning()) {
                 return;
             }
 
-        progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration()) * day);
-        progressPane.updateProgress(progressValue, day, sprint, currentSimultation.getSprintDuration());
+            if (state == SprintStateEnum.PAUSE_SPRINT) {
+                continue;
+            }
 
-        if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
-            stopSimulation();
-        } else {
-            day++;
-            if (day > currentSimultation.getSprintDuration()) {
-                day = 1;
-                sprint++;
-                if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()/7) {
-                    completeSimulation();
-                    break;
-                } else {
-                    day++;
-                    if (day > currentSimultation.getSprintDuration()/7) {
-                        day = 1;
-                        sprint++;
-                    }
+            progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration()) * day);
+            progressPane.updateProgress(progressValue, day, sprint, currentSimultation.getSprintDuration());
+
+            if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
+                stopSimulation();
+            } else {
+                day++;
+                if (day > currentSimultation.getSprintDuration()) {
+                    day = 1;
+                    sprint++;
                 }
             }
         }
     }
-
-
 
     /** Method to set the simulation state to running. */
     public void startSimulation() {
@@ -163,7 +140,7 @@ public class SimulationStateManager {
         framePan.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                if (state == sprintState.STOP_SPRINT) {
+                if (state == SprintStateEnum.STOP_SPRINT) {
                     return;
                 }
 
@@ -177,29 +154,8 @@ public class SimulationStateManager {
             }
         });
 
-
-
-        pauseSimulationButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if(state == sprintState.START_SPRINT) {
-                            state = sprintState.PAUSE_SPRINT;
-                            pauseSimulationButton.setText("Start Simulation");
-                        } else if (state == sprintState.PAUSE_SPRINT){
-                            state = sprintState.START_SPRINT;
-                            pauseSimulationButton.setText("Pause Simulation");
-
-                        }
-                    }
-                });
-
-        state = sprintState.START_SPRINT;
+        state = SprintStateEnum.START_SPRINT;
         new Thread(this::runSimulation).start();
-
-
-
-        JOptionPane.showMessageDialog(null, "Simulation started!");
     }
 
     /** Method to set the simulation state to not running. */
@@ -210,7 +166,7 @@ public class SimulationStateManager {
             return;
         }
 
-        state = sprintState.STOP_SPRINT;
+        state = SprintStateEnum.STOP_SPRINT;
         JOptionPane.showMessageDialog(null, "Simulation stopped!");
         framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
 
@@ -226,8 +182,8 @@ public class SimulationStateManager {
             JOptionPane.showMessageDialog(null, "No simulation selected");
             return;
         }
-        if (state != sprintState.STOP_SPRINT) {
-            state = sprintState.STOP_SPRINT;
+        if (state != SprintStateEnum.STOP_SPRINT) {
+            state = SprintStateEnum.STOP_SPRINT;
             setRunning(false);
         } else {
             return;
@@ -306,5 +262,13 @@ public class SimulationStateManager {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error writing to simulation.JSON");
         }
+    }
+
+    public SprintStateEnum getState() {
+        return state;
+    }
+
+    public void setState(SprintStateEnum state) {
+        this.state = state;
     }
 }
