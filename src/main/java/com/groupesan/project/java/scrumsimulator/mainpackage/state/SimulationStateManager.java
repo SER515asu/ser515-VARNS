@@ -98,44 +98,36 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
-        try {
-            // Instead of sleeping for the full second, we sleep for 100ms and check if the simulation is still running
-            // This allows the simulation to be stopped more responsively
-            for (int i = 0; i < 10; i++) {
-                Thread.sleep(100);
-                if (!isRunning()) {
-                    return;
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        if (!isRunning()) {
-            return;
-        }
 
         while (true) {
             // Logic of running the simulation goes here
             // I've tailored the logic to display the progress of the simulation through these lines.
 
-            if(state == sprintState.PAUSE_SPRINT) {
-
-                try {
+            try {
+                // Instead of sleeping for the full second, we sleep for 100ms and check if the simulation is still running
+                // This allows the simulation to be stopped more responsively
+                for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if (!isRunning()) {
+                        return;
+                    }
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (!isRunning()) {
+                return;
+            }
+
+
+            if(state == sprintState.PAUSE_SPRINT) {
+                // Pause state, does nothing.
             }
 
             if (state == sprintState.START_SPRINT) {
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+                
                 progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration() / 7.0) * day); // Needed to divide by 7 here for progress tracking. Crude solution for now.
                 jimPan.setText("Running simulation for day "
                         + day
@@ -157,12 +149,8 @@ public class SimulationStateManager {
                         day = 1;
                         sprint++;
                     }
-                    //runSimulation();
-                    runSimulation();
-
                 }
             }
-
         }
     }
 
