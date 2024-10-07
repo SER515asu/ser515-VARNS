@@ -17,8 +17,6 @@ import org.json.JSONTokener;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 
-
-
 /**
  * SimulationStateManager manages the state of a simulation, including whether
  * it is running and saving its ID.
@@ -62,7 +60,6 @@ public class SimulationStateManager {
     public static synchronized SimulationStateManager getInstance() {
         if (instance == null) {
             instance = new SimulationStateManager();
-
         }
         return instance;
     }
@@ -74,6 +71,15 @@ public class SimulationStateManager {
      */
     public void setCurrentSimulation(Simulation simulation) {
         this.currentSimultation = simulation;
+    }
+
+    /**
+     * Gets the current simulation
+     *
+     * @return current simulation
+     */
+    public Simulation getCurrentSimulation() {
+        return this.currentSimultation;
     }
 
     /**
@@ -94,7 +100,6 @@ public class SimulationStateManager {
         try {
             // Instead of sleeping for the full second, we sleep for 100ms and check if the simulation is still running
             // This allows the simulation to be stopped more responsively
-
             for (int i = 0; i < 10; i++) {
                 Thread.sleep(100);
                 if (!isRunning()) {
@@ -121,7 +126,7 @@ public class SimulationStateManager {
 
         // Extremely long message, changed them to be in new lines with each for clarity's sake + - Suparno
         jimProg.setValue(progressValue);
-        
+
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
              // close the frame when done.
@@ -133,9 +138,7 @@ public class SimulationStateManager {
                 day = 1;
                 sprint++;
             }
-
             runSimulation();
-
         }
     }
 
@@ -143,7 +146,6 @@ public class SimulationStateManager {
     public void startSimulation() {
         if (currentSimultation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
-
             return;
         }
 
@@ -156,15 +158,14 @@ public class SimulationStateManager {
         simPan.add(jimProg); // progress bar is added here - Suparno
         framePan.add(simPan);
         framePan.setSize(300,300);
-
         framePan.setVisible(true);
 
         state = sprintState.START_SPRINT;
 
 
-        new Thread(() -> runSimulation()).start();
-        JOptionPane.showMessageDialog(null, "Simulation started!");
+        new Thread(this::runSimulation).start();
 
+        JOptionPane.showMessageDialog(null, "Simulation started!");
     }
 
     /** Method to set the simulation state to not running. */
@@ -237,6 +238,7 @@ public class SimulationStateManager {
                 updateSimulationData(simulationData);
             }
         }
+
         JOptionPane.showMessageDialog(null, "Simulation completed!");
     }
 

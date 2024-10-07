@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sprint {
-    private ArrayList<UserStory> userStories = new ArrayList<>();
-    private String name;
+    private final ArrayList<UserStory> userStories = new ArrayList<>();
+    private final String name;
 
-    private String description;
+    private final String description;
 
-    private int length;
+    private final int length;
 
     private int remainingDays;
 
-    private int id;
+    private final int id;
 
     public Sprint(String name, String description, int length, int id) {
         this.name = name;
@@ -25,6 +25,10 @@ public class Sprint {
 
     public void addUserStory(UserStory us) {
         userStories.add(us);
+    }
+
+    public void removeUserStory(UserStory us) {
+       userStories.remove(us);
     }
 
     public List<UserStory> getUserStories() {
@@ -56,12 +60,6 @@ public class Sprint {
     }
 
     public String toString() {
-        String header = "Sprint " + this.id + ": " + this.name + "\n";
-        StringBuilder USes = new StringBuilder();
-
-        for (UserStory us : userStories) {
-            USes.append(us.toString()).append("\n");
-        }
-        return header + USes;
+        return "Sprint " + this.id + "\n";
     }
 }

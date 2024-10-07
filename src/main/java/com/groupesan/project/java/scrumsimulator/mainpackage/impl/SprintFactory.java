@@ -18,7 +18,6 @@ public class SprintFactory {
     }
 
     public Sprint createNewSprint(String name, String description, int length) {
-        Sprint newSprint = new Sprint(name, description, length, ++numSprints);
-        return newSprint;
+        return new Sprint(name, description, length, ++numSprints);
     }
 }

@@ -13,7 +13,7 @@ public class SprintStore {
         return sprintStore;
     }
 
-    private List<Sprint> sprints;
+    private final List<Sprint> sprints;
 
     private SprintStore() {
         sprints = new ArrayList<>();
@@ -25,5 +25,9 @@ public class SprintStore {
 
     public List<Sprint> getSprints() {
         return new ArrayList<>(sprints);
+    }
+
+    public Sprint getSprintByString(String sprintString) {
+        return sprints.stream().filter(s -> s.toString().equals(sprintString)).toList().getFirst();
     }
 }

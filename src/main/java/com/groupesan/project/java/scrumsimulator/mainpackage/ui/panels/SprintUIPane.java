@@ -1,19 +1,23 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.SprintStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -29,26 +33,27 @@ import javax.swing.border.EmptyBorder;
  */
 public class SprintUIPane extends JFrame implements BaseComponent {
 
-    private static final int MAX_IN_PROGRESS = 2;
-
     public SprintUIPane(Player player) {
         this.currentPlayer = player;
         this.init();
     }
 
-    private List<UserStoryWidget> widgets = new ArrayList<>();
+    private final List<UserStoryWidget> widgets = new ArrayList<>();
 
-    private Player currentPlayer;
+    private final Player currentPlayer;
 
     public void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Select UserStories");
-        setSize(400, 300);
+        setSize(800, 600);
 
         GridBagLayout myGridbagLayout = new GridBagLayout();
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(myGridbagLayout);
+
+        JPanel sprintSelectionPanel = new JPanel();
+        sprintSelectionPanel.setLayout(new GridBagLayout());
 
         JComboBox<String> selectComboBox = new JComboBox<>();
         myJpanel.add(
@@ -60,7 +65,7 @@ public class SprintUIPane extends JFrame implements BaseComponent {
             // only display unselected states
             if (userStory.getUserStoryState() instanceof UserStoryUnselectedState) {
                 selectComboBox.addItem(userStory.toString());
-                widgets.add(new UserStoryWidget(userStory));
+                widgets.add(new UserStoryWidget(userStory, false));
             }
         }
 
@@ -92,7 +97,7 @@ public class SprintUIPane extends JFrame implements BaseComponent {
             if (userStory.getUserStoryState() instanceof UserStorySelectedState
                     && currentPlayer.equals(userStory.getOwner())) {
                 selectedSubPanel.add(
-                        new UserStoryWidget(userStory),
+                        new UserStoryWidget(userStory, false),
                         new CustomConstraints(
                                 0,
                                 i++,
@@ -114,77 +119,116 @@ public class SprintUIPane extends JFrame implements BaseComponent {
                 new CustomConstraints(
                         0, 2, GridBagConstraints.WEST, 1.0, 0.1, GridBagConstraints.HORIZONTAL));
 
-        JButton SelectUSButton = new JButton("Select");
-        SelectUSButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int ownedUS = 0;
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            if (currentPlayer.equals(userStory.getOwner())) {
-                                ownedUS++;
-                            }
-                        }
-
-                        if (ownedUS >= MAX_IN_PROGRESS) {
-                            warningLabel.setText("Only 2 US can be in progress at once!");
-                            return;
-                        }
-
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            if (userStory.toString().equals(selectComboBox.getSelectedItem())) {
-                                userStory.setOwner(currentPlayer);
-                                userStory.changeState(new UserStorySelectedState(userStory));
-                            }
-                        }
-                        selectComboBox.removeAllItems();
-                        widgets.clear();
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            // only display unselected states
-                            if (userStory.getUserStoryState() instanceof UserStoryUnselectedState) {
-                                selectComboBox.addItem(userStory.toString());
-                                widgets.add(new UserStoryWidget(userStory));
-                            }
-                        }
-
-                        availableSubPanel.removeAll();
-                        int i = 0;
-                        for (UserStoryWidget widget : widgets) {
-                            availableSubPanel.add(
-                                    widget,
-                                    new CustomConstraints(
-                                            0,
-                                            i++,
-                                            GridBagConstraints.WEST,
-                                            1.0,
-                                            0.1,
-                                            GridBagConstraints.HORIZONTAL));
-                        }
-
-                        selectedSubPanel.removeAll();
-                        i = 0;
-                        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-                            // only display unselected states
-                            if (userStory.getUserStoryState() instanceof UserStorySelectedState
-                                    && currentPlayer.equals(userStory.getOwner())) {
-                                selectedSubPanel.add(
-                                        new UserStoryWidget(userStory),
-                                        new CustomConstraints(
-                                                0,
-                                                i++,
-                                                GridBagConstraints.WEST,
-                                                1.0,
-                                                0.1,
-                                                GridBagConstraints.HORIZONTAL));
-                            }
-                        }
-                    }
-                });
+        JButton SelectUSButton = getjButton(selectComboBox, availableSubPanel, selectedSubPanel);
         myJpanel.add(
                 SelectUSButton,
                 new CustomConstraints(
                         0, 3, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
 
+        JComboBox<String> selectSprintComboBox = new JComboBox<>();
+        myJpanel.add(selectSprintComboBox,
+                new CustomConstraints(
+                        2, 0, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+        for (Sprint sprint : SimulationStateManager.getInstance().getCurrentSimulation().getSprints()) {
+            selectSprintComboBox.addItem(sprint.toString());
+        }
+
+
+        JButton moveUserStoriesToSprintButton = new JButton("Move Selected User Stories into %s backlog".formatted((selectSprintComboBox.getSelectedItem())));
+        myJpanel.add(moveUserStoriesToSprintButton,
+                new CustomConstraints(
+                        2, 2, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+        moveUserStoriesToSprintButton.addActionListener(
+                e -> {
+                    List<UserStory> selectedUserStories = UserStoryStore.getInstance().getUserStories()
+                            .stream()
+                            .filter(userStory -> userStory.getUserStoryState() instanceof UserStorySelectedState)
+                            .toList();
+
+                    SimulationStateManager
+                            .getInstance()
+                            .getCurrentSimulation()
+                            .addUserStories(SprintStore.getInstance().getSprintByString((String) selectSprintComboBox.getSelectedItem()), selectedUserStories);
+
+                    selectedUserStories.forEach(userStory -> userStory.changeState(new UserStoryAddedState(userStory)));
+                    redrawSelectedSubPanel(selectedSubPanel);
+                }
+        );
+
+        selectSprintComboBox.addActionListener(
+                e -> moveUserStoriesToSprintButton.setText("Move Selected User Stories into %s backlog".formatted(Objects.requireNonNull(selectSprintComboBox.getSelectedItem()).toString()))
+        );
+
         add(myJpanel);
+    }
+
+    private JButton getjButton(JComboBox<String> selectComboBox, JPanel availableSubPanel, JPanel selectedSubPanel) {
+        JButton SelectUSButton = new JButton("Select");
+        SelectUSButton.addActionListener(
+                e -> {
+                    redrawSelectComboBox(selectComboBox);
+                    redrawAvailableSubPanel(availableSubPanel);
+                    redrawSelectedSubPanel(selectedSubPanel);
+                });
+        return SelectUSButton;
+    }
+
+    private void redrawSelectComboBox(JComboBox<String> selectComboBox) {
+        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+            if (userStory.toString().equals(selectComboBox.getSelectedItem())) {
+                userStory.setOwner(currentPlayer);
+                userStory.changeState(new UserStorySelectedState(userStory));
+            }
+        }
+        selectComboBox.removeAllItems();
+        widgets.clear();
+        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+            // only display unselected states
+            if (userStory.getUserStoryState() instanceof UserStoryUnselectedState) {
+                selectComboBox.addItem(userStory.toString());
+                widgets.add(new UserStoryWidget(userStory, false));
+            }
+        }
+        repaint();
+    }
+
+    private void redrawAvailableSubPanel(JPanel availableSubPanel) {
+        availableSubPanel.removeAll();
+        int i1 = 0;
+        for (UserStoryWidget widget : widgets) {
+            availableSubPanel.add(
+                    widget,
+                    new CustomConstraints(
+                            0,
+                            i1++,
+                            GridBagConstraints.WEST,
+                            1.0,
+                            0.1,
+                            GridBagConstraints.HORIZONTAL));
+        }
+        repaint();
+    }
+
+    private void redrawSelectedSubPanel(JPanel selectedSubPanel) {
+        selectedSubPanel.removeAll();
+        int i1 = 0;
+        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+            // only display unselected states
+            if (userStory.getUserStoryState() instanceof UserStorySelectedState
+                    && currentPlayer.equals(userStory.getOwner())) {
+                selectedSubPanel.add(
+                        new UserStoryWidget(userStory, false),
+                        new CustomConstraints(
+                                0,
+                                i1++,
+                                GridBagConstraints.WEST,
+                                1.0,
+                                0.1,
+                                GridBagConstraints.HORIZONTAL));
+            }
+        }
+        repaint();
     }
 }

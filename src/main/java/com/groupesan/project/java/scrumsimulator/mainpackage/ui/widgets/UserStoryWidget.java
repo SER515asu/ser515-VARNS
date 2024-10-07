@@ -23,7 +23,8 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
     // TODO: This is a non transient field and this class is supposed to be
     // serializable. this needs to be dealt with before this object can be
     // serialized
-    private UserStory userStory;
+    private final UserStory userStory;
+    private final boolean reactToMouseHover;
 
     ActionListener actionListener = e -> {
     };
@@ -56,8 +57,10 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         }
     };
 
-    public UserStoryWidget(UserStory userStory) {
+    public UserStoryWidget(UserStory userStory, boolean reactToMouseHover) {
         this.userStory = userStory;
+        this.reactToMouseHover = reactToMouseHover;
+        this.init();
     }
 
     public UserStoryWidget setCloseEditDialogActionListener(ActionListener actionListener) {
@@ -68,7 +71,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
     public void init() {
         removeAll();
 
-        if (this.getMouseListeners().length == 0)
+        if (this.getMouseListeners().length == 0 && reactToMouseHover)
             this.addMouseListener(openEditDialog);
 
         id = new JLabel(userStory.getId().toString());
