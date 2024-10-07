@@ -5,10 +5,8 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAdde
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JList;
 
@@ -21,10 +19,10 @@ public class Simulation {
     private int sprintDuration; // In days
     private final List<Sprint> sprints;
 
-    public Simulation(String simulationName, int sprintCount, int sprintDurationWeeks) {
+    public Simulation(String simulationName, int sprintCount, int sprintDurationDays) {
         this.simulationName = simulationName;
         this.sprintCount = sprintCount;
-        this.sprintDuration = sprintDurationWeeks * 7;
+        this.sprintDuration = sprintDurationDays;
 
         for (int i = 0; i < sprintCount; i++) {
             SprintStore.getInstance()
