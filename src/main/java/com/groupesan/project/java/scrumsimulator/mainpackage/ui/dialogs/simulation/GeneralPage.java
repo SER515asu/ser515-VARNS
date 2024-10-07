@@ -7,7 +7,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SpinnerI
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.TextInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.Wizard;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
-import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.AutoFillToggleButton;
 
 import java.awt.*;
 import javax.swing.*;
@@ -76,28 +75,28 @@ class GeneralPage extends Wizard.WizardPage {
                                                 .setWeightX(1)
                                                 .setFill(GridBagConstraints.HORIZONTAL));
 
-                // // Toggle Button for manual or auto fill the range of sprint length.
-                // JLabel autoFillLabel = new JLabel("Auto Fill:");
-                // JToggleButton toggleButton = new JToggleButton("OFF");
+                // Toggle Button for manual or auto fill the range of sprint length.
+                JLabel autoFillLabel = new JLabel("Auto Fill:");
+                JToggleButton toggleButton = new JToggleButton("OFF");
 
-                // toggleButton.addActionListener(e -> {
-                // // we will Call the random range function here later on
-                // if (toggleButton.isSelected()) {
-                // toggleButton.setText("ON");
-                // } else {
-                // toggleButton.setText("OFF");
-                // }
-                // });
+                toggleButton.addActionListener(e -> {
+                        // we will Call the random range function here later on
+                        if (toggleButton.isSelected()) {
+                                toggleButton.setText("ON");
+                        } else {
+                                toggleButton.setText("OFF");
+                        }
+                });
 
-                // Use the AutoFillToggleButton class
-                AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton();
-                JPanel togglePanel = autoFillToggleButton.getPanel();
+                inputs.add(
+                                autoFillLabel,
+                                new CustomConstraints(
+                                                2, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL));
 
-                inputs.add(togglePanel, new GridBagConstraintsBuilder()
-                                .setGridX(2)
-                                .setGridY(4)
-                                .setWeightX(1)
-                                .setFill(GridBagConstraints.HORIZONTAL));
+                inputs.add(
+                                toggleButton,
+                                new CustomConstraints(
+                                                3, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL));
 
                 container.add(inputs, BorderLayout.NORTH);
                 return container;
