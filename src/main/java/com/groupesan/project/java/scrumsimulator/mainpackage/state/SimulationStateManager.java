@@ -13,6 +13,9 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
+
+
 
 /**
  * SimulationStateManager manages the state of a simulation, including whether
@@ -28,23 +31,16 @@ public class SimulationStateManager {
 
     private boolean running;
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
-
     private Simulation currentSimultation;
-    private JPanel simPan = new JPanel();
-    private JLabel jimPan = new JLabel();
-    private JLabel currentProgressValue = new JLabel();
-    private JProgressBar jimProg = new JProgressBar();
-
-    private sprintState state; // use this enum to determine state of sprint simulations.
-
-    JFrame framePan = new JFrame();
-
+    private sprintState state;
     private Integer day = 1;
     private Integer sprint = 1;
-
     private Integer progressValue;
 
     private static SimulationStateManager instance;
+
+    private SimulationProgressPane progressPane = new SimulationProgressPane();
+    private JFrame framePan = new JFrame();
 
     private SimulationStateManager() {
         this.running = false;
@@ -94,11 +90,7 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
-
         try {
-            // Instead of sleeping for the full second, we sleep for 100ms and check if the
-            // simulation is still running
-            // This allows the simulation to be stopped more responsively
             for (int i = 0; i < 10; i++) {
                 Thread.sleep(100);
                 if (!isRunning()) {
@@ -113,18 +105,8 @@ public class SimulationStateManager {
             return;
         }
 
-        // Logic of running the simulation goes here
-        // I've tailored the logic to display the progress of the simulation through
-        // these lines.
         progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration()) * day);
-        jimPan.setText("Running simulation for day "
-                + day
-                + " of " + currentSimultation.getSprintDuration()
-                + " of sprint " + sprint);
-
-        currentProgressValue.setText("Progress: " + progressValue + "%");
-
-        jimProg.setValue(progressValue);
+        progressPane.updateProgress(progressValue, day, sprint, currentSimultation.getSprintDuration());
 
         if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
             stopSimulation();
@@ -146,19 +128,15 @@ public class SimulationStateManager {
         }
 
         progressValue = 0;
-
         setRunning(true);
-        simPan.add(jimPan);
-        simPan.add(currentProgressValue);
-        simPan.add(jimProg);
-        framePan.add(simPan);
+
+        framePan.add(progressPane.getSimPan());
         framePan.setSize(300, 300);
         framePan.setVisible(true);
 
         framePan.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-
+            public void windowClosing(WindowEvent evt) {
                 if (state == sprintState.STOP_SPRINT) {
                     return;
                 }
@@ -174,7 +152,6 @@ public class SimulationStateManager {
         });
 
         state = sprintState.START_SPRINT;
-
         new Thread(this::runSimulation).start();
     }
 
@@ -185,14 +162,16 @@ public class SimulationStateManager {
             JOptionPane.showMessageDialog(null, "No simulation selected");
             return;
         }
+
         state = sprintState.STOP_SPRINT;
         JOptionPane.showMessageDialog(null, "Simulation stopped!");
         framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
 
-        day = 1; // reset days to the start
-        sprint = 1; // reset sprint to 1.
-        progressValue = 0; // reset progress.
+        day = 1;
+        sprint = 1;
+        progressValue = 0;
 
+        progressPane.resetProgress();
     }
 
     public void stopSimulation() {
