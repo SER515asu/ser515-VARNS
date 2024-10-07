@@ -127,7 +127,7 @@ public class SimulationStateManager {
             }
 
             if (state == sprintState.START_SPRINT) {
-                
+
                 progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration() / 7.0) * day); // Needed to divide by 7 here for progress tracking. Crude solution for now.
                 jimPan.setText("Running simulation for day "
                         + day
@@ -183,8 +183,11 @@ public class SimulationStateManager {
                     public void actionPerformed(ActionEvent e) {
                         if(state == sprintState.START_SPRINT) {
                             state = sprintState.PAUSE_SPRINT;
+                            pauseSimulationButton.setText("Start Simulation");
                         } else if (state == sprintState.PAUSE_SPRINT){
                             state = sprintState.START_SPRINT;
+                            pauseSimulationButton.setText("Pause Simulation");
+
                         }
                     }
                 });
