@@ -3,9 +3,12 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JList;
 
@@ -135,7 +138,7 @@ public class Simulation {
         int numberOfSprints = sprints.size();
 
         for (UserStory userStory : userStoriesList) {
-            int sprintIndex = (int) (Math.random() * numberOfSprints);
+            int sprintIndex = RandomUtils.getRandomInt(numberOfSprints);
             Sprint sprint = sprints.get(sprintIndex);
             sprint.addUserStory(userStory);
             userStory.changeState(new UserStoryAddedState(userStory));
