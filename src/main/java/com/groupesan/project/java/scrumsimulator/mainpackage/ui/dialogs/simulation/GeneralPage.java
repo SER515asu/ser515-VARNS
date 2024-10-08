@@ -75,9 +75,8 @@ class GeneralPage extends Wizard.WizardPage {
                                                 .setWeightX(1)
                                                 .setFill(GridBagConstraints.HORIZONTAL));
 
-                // Toggle Button for manual or auto fill the range of sprint length.
-                JLabel autoFillLabel = new JLabel("Auto Fill:");
-                JToggleButton toggleButton = new JToggleButton("OFF");
+                AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton(sprintModel, sprintLengthModel);
+                JPanel togglePanel = autoFillToggleButton.getPanel();
 
                 toggleButton.addActionListener(e -> {
                         // we will Call the random range function here later on
