@@ -6,8 +6,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.Resuable
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SpinnerInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.TextInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.Wizard;
-import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
-import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.AutoFillToggleButton;
 
 import java.awt.*;
 import javax.swing.*;
@@ -76,20 +74,6 @@ class GeneralPage extends Wizard.WizardPage {
                                                 .setWeightX(1)
                                                 .setFill(GridBagConstraints.HORIZONTAL));
 
-                // // Toggle Button for manual or auto fill the range of sprint length.
-                // JLabel autoFillLabel = new JLabel("Auto Fill:");
-                // JToggleButton toggleButton = new JToggleButton("OFF");
-
-                // toggleButton.addActionListener(e -> {
-                // // we will Call the random range function here later on
-                // if (toggleButton.isSelected()) {
-                // toggleButton.setText("ON");
-                // } else {
-                // toggleButton.setText("OFF");
-                // }
-                // });
-
-                // Use the AutoFillToggleButton class
                 AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton();
                 JPanel togglePanel = autoFillToggleButton.getPanel();
 
