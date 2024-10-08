@@ -24,12 +24,14 @@ public class AutoFillToggleButton {
     private final SecureRandom random = new SecureRandom();
     private final DataModel<Object> sprintModel;
     private final DataModel<Object> sprintLengthModel;
+    private final GeneralPage generalPage;
 
 
 
-    public AutoFillToggleButton(DataModel<Object> sprintModel, DataModel<Object> sprintLengthModel) {
+    public AutoFillToggleButton(DataModel<Object> sprintModel, DataModel<Object> sprintLengthModel, GeneralPage generalPage) {
         this.sprintModel = sprintModel;
         this.sprintLengthModel = sprintLengthModel;
+        this.generalPage = generalPage;
         JLabel autoFillLabel = new JLabel("Auto Fill:");
         toggleButton = new JToggleButton("OFF");
         toggleButton.addActionListener(e -> {
@@ -115,6 +117,7 @@ public class AutoFillToggleButton {
         
             sprintLengthModel.setData(randomSprintLength);  // Update sprint length model
             sprintModel.setData(randomSprintNumber);        // Update sprint number model
+            generalPage.updateUI();
         
             JOptionPane.showMessageDialog(rangeSelectionFrame,
                     "Randomly selected values:\n" +
