@@ -14,6 +14,8 @@ class GeneralPage extends Wizard.WizardPage {
         private final DataModel<String> simulationModel;
         private final DataModel<Object> sprintModel;
         private final DataModel<Object> sprintLengthModel;
+        private SpinnerInput sprintInput;
+        private SpinnerInput sprintLengthInput;
 
         public GeneralPage(DataModel<String> simulationModel, DataModel<Object> sprintModel,
                         DataModel<Object> sprintLengthModel) {
@@ -35,14 +37,15 @@ class GeneralPage extends Wizard.WizardPage {
                 JPanel inputs = new JPanel(new GridBagLayout());
                 TextInput simulationInput = new TextInput(
                                 "Name: ", new JTextField(simulationModel.getData(), 5), simulationModel);
-                SpinnerInput sprintInput = new SpinnerInput(
-                                "Sprints: ",
-                                new JSpinner(new SpinnerNumberModel(1, 1, 20, 1)),
-                                sprintModel);
-                SpinnerInput sprintLengthInput = new SpinnerInput(
-                                "Sprint Length (days): ",
-                                new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
-                                sprintLengthModel);
+                sprintInput = new SpinnerInput(
+                        "Sprints: ",
+                        new JSpinner(new SpinnerNumberModel(1, 1, 20, 1)),
+                        sprintModel);
+                sprintLengthInput = new SpinnerInput(
+                        "Sprint Length (days): ",
+                        new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
+                        sprintLengthModel);
+
 
                 inputs.add(
                                 resuableHeader,
@@ -74,7 +77,7 @@ class GeneralPage extends Wizard.WizardPage {
                                                 .setWeightX(1)
                                                 .setFill(GridBagConstraints.HORIZONTAL));
 
-                AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton(sprintModel, sprintLengthModel);
+                AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton(sprintModel, sprintLengthModel, this);
                 JPanel togglePanel = autoFillToggleButton.getPanel();
 
                 inputs.add(togglePanel, new GridBagConstraintsBuilder()
@@ -86,4 +89,12 @@ class GeneralPage extends Wizard.WizardPage {
                 container.add(inputs, BorderLayout.NORTH);
                 return container;
         }
+        public void updateUI() {
+                if (sprintInput != null) {
+                    sprintInput.updateFromModel();
+                }
+                if (sprintLengthInput != null) {
+                    sprintLengthInput.updateFromModel();
+                }
+            }
 }
