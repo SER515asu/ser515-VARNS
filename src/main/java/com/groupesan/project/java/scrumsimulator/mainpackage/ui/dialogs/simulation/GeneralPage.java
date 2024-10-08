@@ -74,7 +74,7 @@ class GeneralPage extends Wizard.WizardPage {
                                                 .setWeightX(1)
                                                 .setFill(GridBagConstraints.HORIZONTAL));
 
-                AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton();
+                AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton(sprintModel, sprintLengthModel);
                 JPanel togglePanel = autoFillToggleButton.getPanel();
 
                 inputs.add(togglePanel, new GridBagConstraintsBuilder()

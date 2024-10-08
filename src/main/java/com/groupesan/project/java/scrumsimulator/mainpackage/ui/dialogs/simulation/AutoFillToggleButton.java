@@ -3,9 +3,13 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.DataModel;
+
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.security.SecureRandom;
 
 public class AutoFillToggleButton {
     private final JToggleButton toggleButton;
@@ -17,8 +21,15 @@ public class AutoFillToggleButton {
     private JLabel sprintNumberRangeLabel;
     private JButton submitButton;
     private JFrame rangeSelectionFrame;
+    private final SecureRandom random = new SecureRandom();
+    private final DataModel<Object> sprintModel;
+    private final DataModel<Object> sprintLengthModel;
 
-    public AutoFillToggleButton() {
+
+
+    public AutoFillToggleButton(DataModel<Object> sprintModel, DataModel<Object> sprintLengthModel) {
+        this.sprintModel = sprintModel;
+        this.sprintLengthModel = sprintLengthModel;
         JLabel autoFillLabel = new JLabel("Auto Fill:");
         toggleButton = new JToggleButton("OFF");
         toggleButton.addActionListener(e -> {
@@ -37,6 +48,12 @@ public class AutoFillToggleButton {
         panel.add(autoFillLabel);
         panel.add(toggleButton);
     }
+
+    private int getRandomValue(int start, int end) {
+    return random.nextInt(end - start + 1) + start;
+    }
+
+
 
     private void showRangeSelectionWindow() {
         rangeSelectionFrame = new JFrame("Select Ranges");
@@ -93,16 +110,21 @@ public class AutoFillToggleButton {
         submitButton = new JButton("Submit");
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         submitButton.addActionListener(e -> {
+            int randomSprintLength = getRandomValue(sprintLengthStartSlider.getValue(), sprintLengthEndSlider.getValue());
+            int randomSprintNumber = getRandomValue(sprintNumberStartSlider.getValue(), sprintNumberEndSlider.getValue());
+        
+            sprintLengthModel.setData(randomSprintLength);  // Update sprint length model
+            sprintModel.setData(randomSprintNumber);        // Update sprint number model
+        
             JOptionPane.showMessageDialog(rangeSelectionFrame,
-                    "Ranges submitted:\n" +
-                            "Sprint Length Range: " + sprintLengthStartSlider.getValue() + " - "
-                            + sprintLengthEndSlider.getValue() + " weeks\n" +
-                            "Sprint Number Range: " + sprintNumberStartSlider.getValue() + " - "
-                            + sprintNumberEndSlider.getValue());
+                    "Randomly selected values:\n" +
+                            "Sprint Length: " + randomSprintLength + " weeks\n" +
+                            "Sprint Number: " + randomSprintNumber);
             toggleButton.setSelected(false);
             toggleButton.setText("OFF");
             rangeSelectionFrame.dispose();
         });
+        
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(submitButton);
 
