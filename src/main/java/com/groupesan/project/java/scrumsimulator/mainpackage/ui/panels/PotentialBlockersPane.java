@@ -1,13 +1,13 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
-import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PotentialBlockersPane extends JFrame implements BaseComponent {
     public PotentialBlockersPane() {
@@ -17,47 +17,34 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
     @Override
     public void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Potential Blocker list");
-        setSize(400, 300);
+        setTitle("Potential Blocker List");
+        setSize(600, 400);
 
-        GridBagLayout myGridbagLayout = new GridBagLayout();
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        myJpanel.setLayout(myGridbagLayout);
+        myJpanel.setLayout(new BorderLayout());
 
-        JPanel subPanel = new JPanel();
-        subPanel.setLayout(new GridBagLayout());
+        String[] columnNames = {"Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)"};
+        
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable blockersTable = new JTable(tableModel);
 
-        List<JPanel> panels = new ArrayList<>();
+        BlockerTypeStore.get().getBlockerTypes().forEach(blockerType -> {
+            Object[] rowData = {
+                blockerType.getName(),
+                blockerType.getEncounterChance(),
+                blockerType.getResolveChance()
+            };
+            tableModel.addRow(rowData);
+        });
 
-        for(int i = 0; i < 3; i++) {
-            JPanel panel = new JPanel();
-            GridBagLayout myGridBagLayout = new GridBagLayout();
-            panel.setLayout(myGridBagLayout);
-            panels.add(panel);
-        }
+        blockersTable.setFillsViewportHeight(true);
+        blockersTable.setAutoCreateRowSorter(true);
+        blockersTable.getTableHeader().setReorderingAllowed(false);
 
-        panels.getFirst().add(new JLabel("10% Chance of System Failure"), new CustomConstraints(
-                0, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
-        panels.get(1).add(new JLabel("5% Chance of Architecture Failure"), new CustomConstraints(
-                0, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
-        panels.get(2).add(new JLabel("1% of Total Failure"), new CustomConstraints(
-                0, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
+        JScrollPane scrollPane = new JScrollPane(blockersTable);
 
-        for (int i = 0; i < panels.size(); i++) {
-            subPanel.add(panels.get(i), new CustomConstraints(
-                    0,
-                    i,
-                    GridBagConstraints.WEST,
-                    1.0,
-                    0.1,
-                    GridBagConstraints.HORIZONTAL));
-        }
-
-        myJpanel.add(
-                new JScrollPane(subPanel),
-                new CustomConstraints(
-                        0, 0, GridBagConstraints.WEST, 1.0, 0.8, GridBagConstraints.HORIZONTAL));
+        myJpanel.add(scrollPane, BorderLayout.CENTER);
 
         add(myJpanel);
     }
