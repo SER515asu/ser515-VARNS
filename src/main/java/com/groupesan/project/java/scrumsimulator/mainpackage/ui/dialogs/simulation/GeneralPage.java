@@ -6,7 +6,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.Resuable
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SpinnerInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.TextInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.Wizard;
-import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
 import java.awt.*;
 import javax.swing.*;
@@ -81,24 +80,11 @@ class GeneralPage extends Wizard.WizardPage {
                 AutoFillToggleButton autoFillToggleButton = new AutoFillToggleButton(sprintModel, sprintLengthModel, this);
                 JPanel togglePanel = autoFillToggleButton.getPanel();
 
-                toggleButton.addActionListener(e -> {
-                        // we will Call the random range function here later on
-                        if (toggleButton.isSelected()) {
-                                toggleButton.setText("ON");
-                        } else {
-                                toggleButton.setText("OFF");
-                        }
-                });
-
-                inputs.add(
-                                autoFillLabel,
-                                new CustomConstraints(
-                                                2, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL));
-
-                inputs.add(
-                                toggleButton,
-                                new CustomConstraints(
-                                                3, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL));
+                inputs.add(togglePanel, new GridBagConstraintsBuilder()
+                                .setGridX(2)
+                                .setGridY(4)
+                                .setWeightX(1)
+                                .setFill(GridBagConstraints.HORIZONTAL));
 
                 container.add(inputs, BorderLayout.NORTH);
                 return container;
