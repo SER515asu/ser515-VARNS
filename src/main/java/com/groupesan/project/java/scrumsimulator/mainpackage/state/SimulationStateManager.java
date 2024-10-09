@@ -12,7 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 
 /**
@@ -111,6 +113,10 @@ public class SimulationStateManager {
             progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration()) * day);
             progressPane.updateProgress(progressValue, day, sprint, currentSimultation.getSprintDuration());
 
+            System.out.println("Day: " + day + " Sprint: " + sprint);
+            resolveBlockers();
+            detectBlockers();
+
             if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
                 stopSimulation();
             } else {
@@ -119,6 +125,26 @@ public class SimulationStateManager {
                     day = 1;
                     sprint++;
                 }
+            }
+        }
+    }
+
+    private void resolveBlockers() {
+        for (int i = 0; i < currentSimultation.getSprints().get(sprint - 1).getUserStories().size(); i++) {
+            currentSimultation.getSprints().get(sprint - 1).getUserStories().get(i).resolveBlockers();
+        }
+    }
+
+    private void detectBlockers() {
+        BlockerTypeStore blockerStore = BlockerTypeStore.get();
+
+        // For every unresolved user story in the current sprint, roll for blocker
+        for (int i = 0; i < currentSimultation.getSprints().get(sprint - 1).getUserStories().size(); i++) {
+            BlockerObject blocker = blockerStore.rollForBlocker();
+
+            if (blocker != null) {
+                System.out.println("Blocker detected: " + blocker.getType().getName());
+                currentSimultation.getSprints().get(sprint - 1).getUserStories().get(i).setBlocker(blocker);
             }
         }
     }

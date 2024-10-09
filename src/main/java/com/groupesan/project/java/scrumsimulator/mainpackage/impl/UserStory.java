@@ -1,5 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumIdentifier;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumObject;
@@ -22,6 +23,8 @@ public class UserStory extends ScrumObject {
     private Player owner;
 
     private int businessValuePoint;
+
+    private ArrayList<BlockerObject> blockers = new ArrayList<>();
 
     // private ArrayList<Task> tasks; TODO: implement tasks
 
@@ -205,5 +208,28 @@ public class UserStory extends ScrumObject {
 
     public void setBusinessValuePoint(int businessValuePoint) {
         this.businessValuePoint = businessValuePoint;
+    }
+
+    // using this to add blocker to the user story
+    public void setBlocker(BlockerObject blocker) {
+        blockers.clear();
+        blockers.add(blocker);
+    }
+
+    public void resolveBlockers() {
+        if (blockers.size() == 0) {
+            return;
+        }
+
+        List<BlockerObject> resolvedBlockers = new ArrayList<>();
+
+        for (BlockerObject blocker : blockers) {
+            if (blocker.attemptResolve()) {
+                resolvedBlockers.add(blocker);
+                System.out.println("Blocker resolved: " + blocker.getType().getName());
+            }
+        }
+
+        blockers.removeAll(resolvedBlockers);
     }
 }
