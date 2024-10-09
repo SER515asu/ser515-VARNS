@@ -75,7 +75,7 @@ public class AutoFillToggleButton {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // Sprint Length Range
-        sprintLengthRangeLabel = new JLabel("Sprint Length Range (weeks):");
+        sprintLengthRangeLabel = new JLabel("Sprint Length Range (Days):");
         mainPanel.add(sprintLengthRangeLabel);
         sprintLengthStartSlider = new JSlider(JSlider.HORIZONTAL, 1, 99, 1);
         sprintLengthEndSlider = new JSlider(JSlider.HORIZONTAL, 2, 100, 100);
@@ -121,7 +121,7 @@ public class AutoFillToggleButton {
         
             JOptionPane.showMessageDialog(rangeSelectionFrame,
                     "Randomly selected values:\n" +
-                            "Sprint Length: " + randomSprintLength + " weeks\n" +
+                            "Sprint Length: " + randomSprintLength + " Days\n" +
                             "Sprint Number: " + randomSprintNumber);
             toggleButton.setSelected(false);
             toggleButton.setText("OFF");
