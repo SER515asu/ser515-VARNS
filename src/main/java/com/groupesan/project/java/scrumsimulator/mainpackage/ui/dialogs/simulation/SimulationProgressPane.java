@@ -17,7 +17,7 @@ public class SimulationProgressPane {
 
     private JScrollPane blockerScrollPane;
 
-    private JPanel blockerContainer;
+    private static final JPanel blockerContainer = new JPanel();
 
     public SimulationProgressPane() {
         simPan = new JPanel();
@@ -33,7 +33,6 @@ public class SimulationProgressPane {
 
 
 
-        blockerContainer = new JPanel();
         blockerContainer.setLayout(new BoxLayout(blockerContainer, BoxLayout.Y_AXIS));
 
         blockerScrollPane = new JScrollPane(blockerContainer);
