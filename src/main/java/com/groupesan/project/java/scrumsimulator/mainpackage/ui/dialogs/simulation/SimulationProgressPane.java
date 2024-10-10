@@ -9,7 +9,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSta
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
 
 public class SimulationProgressPane {
-    private static JPanel simPan; // changed to static retrieve and place text values of blockers detected.
+    private JPanel simPan; // changed to static retrieve and place text values of blockers detected.
     private JLabel jimPan;
     private JLabel currentProgressValue;
     private JProgressBar jimProg;
@@ -17,7 +17,7 @@ public class SimulationProgressPane {
 
     private JScrollPane blockerScrollPane;
 
-    private static JPanel blockerContainer;
+    private JPanel blockerContainer;
 
     public SimulationProgressPane() {
         simPan = new JPanel();
