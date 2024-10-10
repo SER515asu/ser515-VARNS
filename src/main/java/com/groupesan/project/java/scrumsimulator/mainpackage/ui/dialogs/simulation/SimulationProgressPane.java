@@ -50,13 +50,13 @@ public class SimulationProgressPane {
 
     public static void addBlocker(String blocker) {
         JPanel blockerTextPanel = new JPanel();
-        blockerTextPanel.setLayout(new BoxLayout(blockerTextPanel, BoxLayout.LINE_AXIS));
+        blockerTextPanel.setLayout(new BorderLayout());
 
         JLabel blockerText = new JLabel(blocker);
         JToggleButton toggleButton = new JToggleButton("Toggle");
 
-        blockerTextPanel.add(blockerText);
-        blockerTextPanel.add(toggleButton);
+        blockerTextPanel.add(blockerText, BorderLayout.WEST);
+        blockerTextPanel.add(toggleButton, BorderLayout.EAST);
 
         blockerContainer.add(blockerTextPanel);
         blockerContainer.revalidate();
