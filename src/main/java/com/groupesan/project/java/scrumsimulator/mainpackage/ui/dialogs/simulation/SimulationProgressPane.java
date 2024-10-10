@@ -1,5 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;
@@ -8,24 +9,62 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSta
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
 
 public class SimulationProgressPane {
-    private JPanel simPan;
+    private static JPanel simPan; // changed to static retrieve and place text values of blockers detected.
     private JLabel jimPan;
     private JLabel currentProgressValue;
     private JProgressBar jimProg;
     private JButton pauseSimulationButton;
 
+    private JScrollPane blockerScrollPane;
+
+    private static JPanel blockerContainer;
+
     public SimulationProgressPane() {
         simPan = new JPanel();
+        simPan.setLayout(new BoxLayout(simPan, BoxLayout.Y_AXIS));
+
+
+        simPan.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         jimPan = new JLabel();
         currentProgressValue = new JLabel();
         jimProg = new JProgressBar();
         pauseSimulationButton = new JButton("Pause Simulation");
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
 
+
+
+        blockerContainer = new JPanel();
+        blockerContainer.setLayout(new BoxLayout(blockerContainer, BoxLayout.Y_AXIS));
+
+        blockerScrollPane = new JScrollPane(blockerContainer);
+        blockerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+
+
         simPan.add(jimPan);
         simPan.add(currentProgressValue);
         simPan.add(jimProg);
         simPan.add(pauseSimulationButton);
+        simPan.add(blockerScrollPane);
+
+    }
+
+    public static void addBlocker(String blocker) {
+        JPanel blockerTextPanel = new JPanel();
+        blockerTextPanel.setLayout(new BoxLayout(blockerTextPanel, BoxLayout.LINE_AXIS));
+
+        JLabel blockerText = new JLabel(blocker);
+        JToggleButton toggleButton = new JToggleButton("Toggle");
+
+        blockerTextPanel.add(blockerText);
+        blockerTextPanel.add(toggleButton);
+
+        blockerContainer.add(blockerTextPanel);
+        blockerContainer.revalidate();
+        blockerContainer.repaint();
+
+        //JLabel blockerText = new JLabel(blocker);
+        //blockerContainer.add(blockerText);
     }
 
 
@@ -52,8 +91,10 @@ public class SimulationProgressPane {
         jimProg.setValue(progressValue);
     }
 
+
     public void resetProgress() {
         currentProgressValue.setText("Progress: 0%");
         jimProg.setValue(0);
     }
 }
+

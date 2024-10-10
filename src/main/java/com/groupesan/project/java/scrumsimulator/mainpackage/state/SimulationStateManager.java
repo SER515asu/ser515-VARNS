@@ -144,10 +144,13 @@ public class SimulationStateManager {
 
             if (blocker != null) {
                 System.out.println("Blocker detected: " + blocker.getType().getName());
+                SimulationProgressPane.addBlocker(blocker.getType().getName());
                 currentSimultation.getSprints().get(sprint - 1).getUserStories().get(i).setBlocker(blocker);
             }
         }
     }
+
+
 
     /** Method to set the simulation state to running. */
     public void startSimulation() {
