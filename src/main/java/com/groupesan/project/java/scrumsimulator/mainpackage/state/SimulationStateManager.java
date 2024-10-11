@@ -17,6 +17,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 
+
 /**
  * SimulationStateManager manages the state of a simulation, including whether
  * it is running and saving its ID.
@@ -106,6 +107,8 @@ public class SimulationStateManager {
                 return;
             }
 
+
+
             if (state == SprintStateEnum.PAUSE_SPRINT) {
                 continue;
             }
@@ -118,10 +121,13 @@ public class SimulationStateManager {
             detectBlockers();
 
             if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
+                blockerCheck();
                 stopSimulation();
             } else {
                 day++;
                 if (day > currentSimultation.getSprintDuration()) {
+                    blockerCheck();
+                    SimulationProgressPane.resetPanel();
                     day = 1;
                     sprint++;
                 }
@@ -129,6 +135,14 @@ public class SimulationStateManager {
         }
     }
 
+    private void blockerCheck() {
+        if(!SimulationProgressPane.checkResolved()) {
+            JOptionPane.showMessageDialog(null, "There are unresolved issues! Resolve them before the sprint can proceed");
+            while(!SimulationProgressPane.checkResolved()) {
+                continue;
+            }
+        }
+    }
     private void resolveBlockers() {
         for (int i = 0; i < currentSimultation.getSprints().get(sprint - 1).getUserStories().size(); i++) {
             currentSimultation.getSprints().get(sprint - 1).getUserStories().get(i).resolveBlockers();
@@ -218,6 +232,7 @@ public class SimulationStateManager {
             return;
         }
 
+        SimulationProgressPane.resetPanel();
         // Included JSON code to indicate stopped simulations.
         JSONObject simulationData = getSimulationData();
         if (simulationData != null) {

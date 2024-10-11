@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -17,7 +18,11 @@ public class SimulationProgressPane {
 
     private JScrollPane blockerScrollPane;
 
-    private static final JPanel blockerContainer = new JPanel();
+    private static volatile JPanel checkboxGroup = new JPanel();
+
+    private static volatile JPanel blockerContainer = new JPanel();
+
+    private static ArrayList<JCheckBox> checkBoxList = new ArrayList<>();
 
     public SimulationProgressPane() {
         simPan = new JPanel();
@@ -34,6 +39,7 @@ public class SimulationProgressPane {
 
 
         blockerContainer.setLayout(new BoxLayout(blockerContainer, BoxLayout.Y_AXIS));
+
 
         blockerScrollPane = new JScrollPane(blockerContainer);
         blockerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -53,17 +59,35 @@ public class SimulationProgressPane {
         blockerTextPanel.setLayout(new BorderLayout());
 
         JLabel blockerText = new JLabel(blocker);
-        JToggleButton toggleButton = new JToggleButton("Toggle");
+        JCheckBox checkBoxButton = new JCheckBox();
 
+        checkBoxList.add(checkBoxButton);
         blockerTextPanel.add(blockerText, BorderLayout.WEST);
-        blockerTextPanel.add(toggleButton, BorderLayout.EAST);
+        blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
 
         blockerContainer.add(blockerTextPanel);
         blockerContainer.revalidate();
         blockerContainer.repaint();
 
-        //JLabel blockerText = new JLabel(blocker);
-        //blockerContainer.add(blockerText);
+    }
+
+    public static void resetPanel() {
+        blockerContainer.removeAll();
+        checkBoxList.clear();
+        blockerContainer.revalidate();
+        blockerContainer.repaint();
+    }
+
+    public static boolean checkResolved(){
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+
+        for(JCheckBox checkBox : checkBoxList) {
+            if(!checkBox.isSelected()) {
+                stateManager.setState(SprintStateEnum.START_SPRINT);
+                return false;
+            }
+        }
+        return true;
     }
 
 
