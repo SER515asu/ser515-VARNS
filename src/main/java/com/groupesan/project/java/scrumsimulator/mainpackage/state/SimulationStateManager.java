@@ -1,5 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,9 +40,10 @@ public class SimulationStateManager {
     private Integer progressValue;
 
     private static SimulationStateManager instance;
+    private static SimulationProgressPane progressPane = null;
+    private static JFrame framePan = null;
 
-    private final SimulationProgressPane progressPane;
-    private final JFrame framePan;
+    private static boolean testMode = false;
 
     private SimulationStateManager() {
         progressPane = new SimulationProgressPane();
@@ -59,6 +61,10 @@ public class SimulationStateManager {
             instance = new SimulationStateManager();
         }
         return instance;
+    }
+
+    public static void setTestMode(boolean testMode) {
+        SimulationStateManager.testMode = testMode;
     }
 
     /**
@@ -182,7 +188,7 @@ public class SimulationStateManager {
         framePan.setSize(300, 300);
         framePan.setVisible(true);
 
-        framePan.addWindowListener(new java.awt.event.WindowAdapter() {
+        framePan.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (state == SprintStateEnum.STOP_SPRINT) {
@@ -250,7 +256,7 @@ public class SimulationStateManager {
                 updateSimulationData(simulationData);
             }
         }
-        JOptionPane.showMessageDialog(null, "Simulation stopped!");
+        if (!testMode) JOptionPane.showMessageDialog(framePan, "Simulation stopped!");
         framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
     }
 

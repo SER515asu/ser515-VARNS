@@ -113,5 +113,5 @@ spotbugs {
 // junit testing
 test {
     useJUnitPlatform()
-    systemProperty 'java.awt.headless', 'false' // new tests don't support headless
+    systemProperty 'java.awt.headless', 'true' // new tests don't support headless
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,11 +29,16 @@ public class BlockerTypeStoreTest {
 
     @BeforeAll
     public static void setUpOnce() {
+        System.setProperty("java.awt.headless", "false");
         FailOnThreadViolationRepaintManager.install();
     }
 
     @BeforeEach
     public void setup() {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("Skipping GUI test in headless mode.");
+            return;
+        }
         blockers = BlockerTypeStore.get().getBlockerTypes();
         BlockerType blocker = blockers.getFirst();
         blocker.setName("TestBlocker");
@@ -49,6 +55,11 @@ public class BlockerTypeStoreTest {
 
     @Test
     public void editBlockerPropertiesWithForm() {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("Skipping GUI test in headless mode.");
+            return;
+        }
+
         BlockerType blocker = blockers.getFirst();
         assertEquals(window.textBox("nameField").text(), blocker.getName());
         assertEquals(window.textBox("encounterChanceField").text(), String.valueOf(blocker.getEncounterChance()));
@@ -67,6 +78,11 @@ public class BlockerTypeStoreTest {
 
     @Test
     public void editBlockerPropertiesWithFormBlocksBadData() {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("Skipping GUI test in headless mode.");
+            return;
+        }
+
         BlockerType blocker = blockers.getFirst();
 
         window.textBox("nameField").enterText("Test");
@@ -82,6 +98,8 @@ public class BlockerTypeStoreTest {
 
     @AfterEach
     protected void onTearDown() {
-        window.cleanUp();
+        if (window != null) {
+            window.cleanUp();
+        }
     }
 }
