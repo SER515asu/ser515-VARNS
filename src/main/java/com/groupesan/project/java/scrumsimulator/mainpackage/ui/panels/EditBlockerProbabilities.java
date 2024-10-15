@@ -35,10 +35,14 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         JLabel resolveLabel = new JLabel("Resolve Chance (%):");
 
         JTextField nameField = new JTextField(blockerName, 20);
+        nameField.setName("nameField");
         JTextField encounterChanceField = new JTextField(String.valueOf(encounterChance), 5);
+        encounterChanceField.setName("encounterChanceField");
         JTextField resolveChanceField = new JTextField(String.valueOf(resolveChance), 5);
+        resolveChanceField.setName("resolveChanceField");
 
         JButton saveButton = getSaveButton(encounterChanceField, resolveChanceField, nameField);
+        saveButton.setName("saveButton");
 
         myPanel.add(nameLabel,
                 new CustomConstraints(0, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));

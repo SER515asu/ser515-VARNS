@@ -35,6 +35,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
+
+    // https://mvnrepository.com/artifact/org.assertj/assertj-swing
+    implementation group: 'org.assertj', name: 'assertj-swing', version: '3.17.1'
+
 }
 
 version = "0.1"
@@ -109,5 +113,5 @@ spotbugs {
 // junit testing
 test {
     useJUnitPlatform()
-    systemProperty 'java.awt.headless', 'true' // headless for gui
+    systemProperty 'java.awt.headless', 'false' // new tests don't support headless
 }
