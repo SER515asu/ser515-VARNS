@@ -40,10 +40,12 @@ public class SimulationStateManager {
 
     private static SimulationStateManager instance;
 
-    private SimulationProgressPane progressPane = new SimulationProgressPane();
-    private JFrame framePan = new JFrame();
+    private final SimulationProgressPane progressPane;
+    private final JFrame framePan;
 
     private SimulationStateManager() {
+        progressPane = new SimulationProgressPane();
+        framePan = new JFrame();
         this.running = false;
     }
 
