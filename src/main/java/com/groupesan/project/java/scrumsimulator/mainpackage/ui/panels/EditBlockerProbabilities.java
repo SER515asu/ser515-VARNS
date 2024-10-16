@@ -71,49 +71,58 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
     private JButton getSaveButton(JTextField encounterChanceField, JTextField resolveChanceField, JTextField nameField) {
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
-            int newEncounterChance;
-            try {
-                newEncounterChance = encounterChanceField.getText().isEmpty() ? 0 : Integer.parseInt(encounterChanceField.getText());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(
-                        EditBlockerProbabilities.this,
-                        "Probability of encounter chance must be an integer.",
-                        "Invalid Input",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            int newResolveChance;
-            try {
-                newResolveChance = resolveChanceField.getText().isEmpty() ? 0 : Integer.parseInt(resolveChanceField.getText());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(
-                        EditBlockerProbabilities.this,
-                        "Probability of resolve chance must be an integer.",
-                        "Invalid Input",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (chanceNotInRange(newEncounterChance) || chanceNotInRange(newResolveChance)) {
-                JOptionPane.showMessageDialog(
-                        EditBlockerProbabilities.this,
-                        "Probability must be an integer between 0 and 100.",
-                        "Invalid Input",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            EncounterResolveProbabilities result = getEncounterResolveProbabilities(encounterChanceField, resolveChanceField);
+            if (result == null) return;
 
             BlockerType blocker = BlockerTypeStore.get().getBlockerType(blockerName);
             blocker.setName(nameField.getText());
-            blocker.setEncounterChance(newEncounterChance);
-            blocker.setResolveChance(newResolveChance);
+            blocker.setEncounterChance(result.newEncounterChance());
+            blocker.setResolveChance(result.newResolveChance());
             dispose();
         });
         return saveButton;
     }
 
-    private boolean chanceNotInRange(int chance) {
+    public static EncounterResolveProbabilities getEncounterResolveProbabilities(JTextField encounterChanceField, JTextField resolveChanceField) {
+        int newEncounterChance;
+        try {
+            newEncounterChance = encounterChanceField.getText().isEmpty() ? 0 : Integer.parseInt(encounterChanceField.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Probability of encounter chance must be an integer.",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+        int newResolveChance;
+        try {
+            newResolveChance = resolveChanceField.getText().isEmpty() ? 0 : Integer.parseInt(resolveChanceField.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Probability of resolve chance must be an integer.",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+        if (chanceNotInRange(newEncounterChance) || chanceNotInRange(newResolveChance)) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Probability must be an integer between 0 and 100.",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        return new EncounterResolveProbabilities(newEncounterChance, newResolveChance);
+    }
+
+    public record EncounterResolveProbabilities(int newEncounterChance, int newResolveChance) {
+    }
+
+    private static boolean chanceNotInRange(int chance) {
         return chance > 100 || chance < 0;
     }
 }

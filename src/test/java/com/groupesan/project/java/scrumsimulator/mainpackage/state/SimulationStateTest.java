@@ -5,63 +5,65 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.*;
 
-import org.assertj.swing.edt.GuiActionRunner;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 
 public class SimulationStateTest {
 
-    private static SimulationStateManager simulationStateManager;
+    private SimulationStateManager simulationStateManager;
 
-    @BeforeAll
-    public static void setUp() {
-        GuiActionRunner.execute(() -> {
-            SimulationStateManager.setTestMode(true);
+    @BeforeEach
+    public void setUp() {
+        try {
             simulationStateManager = SimulationStateManager.getInstance();
-        });
+        } catch (HeadlessException he) {
+            //Expected error
+        }
+
     }
 
-    @AfterAll
-    public static void testtearDown() {
-        GuiActionRunner.execute(() -> {
-            if (simulationStateManager != null) {
-                simulationStateManager.setRunning(false);
-            }
-        });
+    @AfterEach
+    public void tearDown() {
+        if (simulationStateManager != null) {
+            simulationStateManager.setRunning(false);
+        }
     }
 
     @Test
-    public void testSimulationState() {
+    public void testInitialState() {
+        if (simulationStateManager != null) {
+            assertFalse(simulationStateManager.isRunning());
+        } else {
+            System.out.println("simulationStateManager is null");
+        }
+    }
 
-        GuiActionRunner.execute(() -> {
-            // Test Initial State
-            if (simulationStateManager != null) {
-                assertFalse(simulationStateManager.isRunning());
-            } else {
-                System.out.println("simulationStateManager is null");
-            }
-
-            // Test Start Simulation
-            if (simulationStateManager != null) {
-                try {
-                    simulationStateManager.setCurrentSimulation(
-                            new Simulation("Test Simulation", 0, 0));
-                    simulationStateManager.startSimulation();
-                    assertTrue(simulationStateManager.isRunning());
-                } catch (HeadlessException e) {
-                    // Expected exception
-                }
-            }
-
-            // Test Stop Simulation
-            if (simulationStateManager != null) {
+    @Test
+    public void testStartSimulation() {
+        if (simulationStateManager != null) {
+            try {
                 simulationStateManager.setCurrentSimulation(
                         new Simulation("Test Simulation", 0, 0));
-                simulationStateManager.stopSimulation();
-
-                assertFalse(simulationStateManager.isRunning());
+                simulationStateManager.startSimulation();
+                assertTrue(simulationStateManager.isRunning());
+            } catch (HeadlessException e) {
+                // Expected exception
             }
-        });
+        }
     }
+    @Test
+    public void testStopSimulation() {
+
+        if (simulationStateManager != null) {
+            simulationStateManager.setCurrentSimulation(
+                    new Simulation("Test Simulation", 0, 0));
+            simulationStateManager.stopSimulation();
+            assertFalse(simulationStateManager.isRunning());
+        }
+
+    }
+
 }

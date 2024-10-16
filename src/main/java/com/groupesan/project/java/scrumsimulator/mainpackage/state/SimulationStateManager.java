@@ -1,6 +1,5 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,14 +39,11 @@ public class SimulationStateManager {
     private Integer progressValue;
 
     private static SimulationStateManager instance;
-    private static SimulationProgressPane progressPane = null;
-    private static JFrame framePan = null;
 
-    private static boolean testMode = false;
+    private SimulationProgressPane progressPane = new SimulationProgressPane();
+    private JFrame framePan = new JFrame();
 
     private SimulationStateManager() {
-        progressPane = new SimulationProgressPane();
-        framePan = new JFrame();
         this.running = false;
     }
 
@@ -61,10 +57,6 @@ public class SimulationStateManager {
             instance = new SimulationStateManager();
         }
         return instance;
-    }
-
-    public static void setTestMode(boolean testMode) {
-        SimulationStateManager.testMode = testMode;
     }
 
     /**
@@ -188,7 +180,7 @@ public class SimulationStateManager {
         framePan.setSize(300, 300);
         framePan.setVisible(true);
 
-        framePan.addWindowListener(new WindowAdapter() {
+        framePan.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (state == SprintStateEnum.STOP_SPRINT) {
@@ -256,7 +248,7 @@ public class SimulationStateManager {
                 updateSimulationData(simulationData);
             }
         }
-        if (!testMode) JOptionPane.showMessageDialog(framePan, "Simulation stopped!");
+        JOptionPane.showMessageDialog(null, "Simulation stopped!");
         framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
     }
 
@@ -270,7 +262,7 @@ public class SimulationStateManager {
      */
 
     public static void saveNewSimulationDetails(String simId, String simName, Integer numberOfSprints,
-            Integer sprintDuration) {
+                                                Integer sprintDuration) {
         JSONObject simulationData = getSimulationData();
         if (simulationData == null) {
             simulationData = new JSONObject();
