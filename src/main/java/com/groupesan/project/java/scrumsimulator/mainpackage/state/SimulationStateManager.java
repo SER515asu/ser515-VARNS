@@ -8,6 +8,10 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import javax.swing.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -127,11 +131,30 @@ public class SimulationStateManager {
                 day++;
                 if (day > currentSimultation.getSprintDuration()) {
                     blockerCheck();
+                    saveSprintResults();
                     SimulationProgressPane.resetPanel();
                     day = 1;
                     sprint++;
                 }
             }
+        }
+    }
+
+    private void saveSprintResults() {
+        String fileName = "src/sprint_results.txt";
+        try (OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(fileName, true), StandardCharsets.UTF_8);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter out = new PrintWriter(bw)) {
+            out.println("Sprint " + sprint + " Results:");
+            out.println("Day: " + day);
+            out.println("Progress: " + progressValue + "%");
+            out.println("Blockers encountered:");
+            for (String blocker : SimulationProgressPane.getBlockers()) {
+                out.println("- " + blocker);
+            }
+            out.println("-------------------");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error writing sprint results to file");
         }
     }
 
@@ -228,6 +251,7 @@ public class SimulationStateManager {
         if (state != SprintStateEnum.STOP_SPRINT) {
             state = SprintStateEnum.STOP_SPRINT;
             setRunning(false);
+            saveSprintResults(); 
         } else {
             return;
         }

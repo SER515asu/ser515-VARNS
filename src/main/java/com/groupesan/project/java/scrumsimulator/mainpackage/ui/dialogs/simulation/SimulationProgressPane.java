@@ -3,6 +3,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -54,7 +55,12 @@ public class SimulationProgressPane {
 
     }
 
+    private static List<String> blockers = new ArrayList<>();
+
     public static void addBlocker(String blocker) {
+
+        blockers.add(blocker);
+
         JPanel blockerTextPanel = new JPanel();
         blockerTextPanel.setLayout(new BorderLayout());
 
@@ -71,7 +77,12 @@ public class SimulationProgressPane {
 
     }
 
+    public static List<String> getBlockers() {
+        return new ArrayList<>(blockers);
+    }
+
     public static void resetPanel() {
+        blockers.clear();
         blockerContainer.removeAll();
         checkBoxList.clear();
         blockerContainer.revalidate();
