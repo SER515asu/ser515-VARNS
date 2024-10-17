@@ -19,7 +19,8 @@ public class DemoPane extends JFrame implements BaseComponent {
     }
 
     /**
-     * Initialization of Demo Pane. Demonstrates creation of User stories, Sprints, and Simulation
+     * Initialization of Demo Pane. Demonstrates creation of User stories, Sprints,
+     * and Simulation
      * start.
      */
     public void init() {
@@ -31,6 +32,13 @@ public class DemoPane extends JFrame implements BaseComponent {
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(myGridbagLayout);
+        JLabel currentRolelaLabel = new JLabel("Current Role: ");
+        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Master", "Developer", "Product Owner" });
+        roleComboBox.addActionListener(e -> {
+            String selectedItem = (String) roleComboBox.getSelectedItem();
+            System.out.println("Selected: " + selectedItem);
+            // here add logic to change the role from backend
+        });
 
         JButton sprintsButton = new JButton("Sprints");
         sprintsButton.addActionListener(
@@ -73,8 +81,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         modifySimulationButton.addActionListener(
                 e -> {
                     SimulationManager simulationManager = new SimulationManager();
-                    ModifySimulationPane modifySimulationPane =
-                            new ModifySimulationPane(simulationManager);
+                    ModifySimulationPane modifySimulationPane = new ModifySimulationPane(simulationManager);
                     modifySimulationPane.setVisible(true);
                 });
 
@@ -93,7 +100,8 @@ public class DemoPane extends JFrame implements BaseComponent {
                 });
 
         // New button for Variant Simulation UI
-        // TODO: Figure out what this is used for because it was initially hidden from view
+        // TODO: Figure out what this is used for because it was initially hidden from
+        // view
         JButton variantSimulationUIButton = new JButton("Variant Simulation UI");
         variantSimulationUIButton.addActionListener(
                 e -> {
@@ -104,6 +112,8 @@ public class DemoPane extends JFrame implements BaseComponent {
         JButton sprintBacklogsButton = getSprintBacklogsButton();
 
         new DemoPaneBuilder(myJpanel)
+                .addComponent(currentRolelaLabel, 3, 1)
+                .addComponent(roleComboBox, 4, 1)
                 .addComponent(sprintsButton, 0, 0)
                 .addComponent(userStoriesButton, 1, 0)
                 .addComponent(simulationPanel, 2, 0)
@@ -111,7 +121,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(updateStoryStatusButton, 4, 0)
                 .addComponent(modifySimulationButton, 5, 0)
                 .addComponent(joinSimulationButton, 6, 0)
-                .addComponent(simulationButton,7, 0)
+                .addComponent(simulationButton, 7, 0)
                 .addComponent(potentialBlockersButton, 9, 0)
                 .addComponent(simulationSwitchRoleButton, 1, 1)
                 .addComponent(variantSimulationUIButton, 2, 1)
@@ -125,7 +135,8 @@ public class DemoPane extends JFrame implements BaseComponent {
         sprintBacklogsButton.addActionListener(
                 e -> {
                     if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
-                        JOptionPane.showMessageDialog(null, "Please create and join a simulation before adding user stories to sprint backlog");
+                        JOptionPane.showMessageDialog(null,
+                                "Please create and join a simulation before adding user stories to sprint backlog");
                         return;
                     }
 
