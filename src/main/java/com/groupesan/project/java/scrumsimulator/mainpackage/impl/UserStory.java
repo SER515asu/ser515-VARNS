@@ -210,9 +210,18 @@ public class UserStory extends ScrumObject {
         this.businessValuePoint = businessValuePoint;
     }
 
+    public boolean isBlocked() {
+        for (BlockerObject blocker : blockers) {
+            if (!blocker.isResolved()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // using this to add blocker to the user story
     public void setBlocker(BlockerObject blocker) {
-        blockers.clear();
         blockers.add(blocker);
     }
 
@@ -221,15 +230,16 @@ public class UserStory extends ScrumObject {
             return;
         }
 
-        List<BlockerObject> resolvedBlockers = new ArrayList<>();
-
         for (BlockerObject blocker : blockers) {
+
+            if(blocker.isResolved()) {
+                continue;
+            }
+
             if (blocker.attemptResolve()) {
-                resolvedBlockers.add(blocker);
+                blocker.resolve();
                 System.out.println("Blocker resolved: " + blocker.getType().getName());
             }
         }
-
-        blockers.removeAll(resolvedBlockers);
     }
 }

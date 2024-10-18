@@ -15,6 +15,7 @@ import org.json.JSONTokener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 
 
@@ -117,6 +118,11 @@ public class SimulationStateManager {
             progressPane.updateProgress(progressValue, day, sprint, currentSimultation.getSprintDuration());
 
             System.out.println("Day: " + day + " Sprint: " + sprint);
+
+            for (UserStory userStory : currentSimultation.getSprints().get(sprint - 1).getUserStories()) {
+                System.out.println(userStory.getName() + " " + userStory.getUserStoryState().getClass().getSimpleName() + (userStory.isBlocked() ? "Blocked" : ""));
+            }
+
             resolveBlockers();
             detectBlockers();
 
@@ -153,13 +159,18 @@ public class SimulationStateManager {
         BlockerTypeStore blockerStore = BlockerTypeStore.get();
 
         // For every unresolved user story in the current sprint, roll for blocker
-        for (int i = 0; i < currentSimultation.getSprints().get(sprint - 1).getUserStories().size(); i++) {
+        for (var userStory : currentSimultation.getSprints().get(sprint - 1).getUserStories()) {
+
+            if (userStory.getUserStoryState() instanceof UserStoryCompletedState) {
+                continue;
+            }
+
             BlockerObject blocker = blockerStore.rollForBlocker();
 
             if (blocker != null) {
                 System.out.println("Blocker detected: " + blocker.getType().getName());
                 SimulationProgressPane.addBlocker(blocker.getType().getName());
-                currentSimultation.getSprints().get(sprint - 1).getUserStories().get(i).setBlocker(blocker);
+                userStory.setBlocker(blocker);
             }
         }
     }
