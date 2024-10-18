@@ -11,7 +11,7 @@ public class BlockerObject {
         RESOLVED
     }
 
-    public BlockerState state;
+    private BlockerState state;
 
     public BlockerObject(BlockerType type) {
         this.type = type;
