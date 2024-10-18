@@ -262,7 +262,7 @@ public class SimulationStateManager {
      */
 
     public static void saveNewSimulationDetails(String simId, String simName, Integer numberOfSprints,
-            Integer sprintDuration) {
+                                                Integer sprintDuration) {
         JSONObject simulationData = getSimulationData();
         if (simulationData == null) {
             simulationData = new JSONObject();
