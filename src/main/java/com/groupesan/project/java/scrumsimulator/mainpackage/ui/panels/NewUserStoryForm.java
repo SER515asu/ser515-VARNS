@@ -2,13 +2,12 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFactory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -54,73 +53,66 @@ public class NewUserStoryForm extends JFrame implements BaseComponent {
 
                 JLabel nameLabel = new JLabel("Name:");
                 myJpanel.add(
-                                nameLabel,
-                                new CustomConstraints(
-                                                0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL));
+                        nameLabel,
+                        new CustomConstraints(
+                                0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL));
                 myJpanel.add(
-                                nameField,
-                                new CustomConstraints(
-                                                1, 0, GridBagConstraints.EAST, 1.0, 0.0,
-                                                GridBagConstraints.HORIZONTAL));
+                        nameField,
+                        new CustomConstraints(
+                                1, 0, GridBagConstraints.EAST, 1.0, 0.0,
+                                GridBagConstraints.HORIZONTAL));
 
                 JLabel descLabel = new JLabel("Description:");
                 myJpanel.add(
-                                descLabel,
-                                new CustomConstraints(
-                                                0, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL));
+                        descLabel,
+                        new CustomConstraints(
+                                0, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL));
                 myJpanel.add(
-                                new JScrollPane(descArea),
-                                new CustomConstraints(
-                                                1, 1, GridBagConstraints.EAST, 1.0, 0.3, GridBagConstraints.BOTH));
+                        new JScrollPane(descArea),
+                        new CustomConstraints(
+                                1, 1, GridBagConstraints.EAST, 1.0, 0.3, GridBagConstraints.BOTH));
 
                 JLabel pointsLabel = new JLabel("Points:");
                 myJpanel.add(
-                                pointsLabel,
-                                new CustomConstraints(
-                                                0, 2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL));
+                        pointsLabel,
+                        new CustomConstraints(
+                                0, 2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL));
                 myJpanel.add(
-                                pointsCombo,
-                                new CustomConstraints(
-                                                1, 2, GridBagConstraints.EAST, 1.0, 0.0,
-                                                GridBagConstraints.HORIZONTAL));
+                        pointsCombo,
+                        new CustomConstraints(
+                                1, 2, GridBagConstraints.EAST, 1.0, 0.0,
+                                GridBagConstraints.HORIZONTAL));
                 JLabel businessValuepointsLabel = new JLabel("Buisness Value Points:");
                 myJpanel.add(
-                                businessValuepointsLabel,
-                                new CustomConstraints(
-                                                0, 3, GridBagConstraints.WEST,
-                                                GridBagConstraints.HORIZONTAL));
+                        businessValuepointsLabel,
+                        new CustomConstraints(
+                                0, 3, GridBagConstraints.WEST,
+                                GridBagConstraints.HORIZONTAL));
                 myJpanel.add(
-                                pointsCombobusinessValue,
-                                new CustomConstraints(
-                                                1, 3, GridBagConstraints.EAST, 1.0, 0.0,
-                                                GridBagConstraints.HORIZONTAL));
+                        pointsCombobusinessValue,
+                        new CustomConstraints(
+                                1, 3, GridBagConstraints.EAST, 1.0, 0.0,
+                                GridBagConstraints.HORIZONTAL));
 
                 JButton cancelButton = new JButton("Cancel");
 
-                cancelButton.addActionListener(
-                                new ActionListener() {
-                                        @Override
-                                        public void actionPerformed(ActionEvent e) {
-                                                dispose();
-                                        }
-                                });
+                cancelButton.addActionListener(e -> dispose());
 
                 JButton submitButton = new JButton("Submit");
 
                 submitButton.addActionListener(
-                                new ActionListener() {
-                                        @Override
-                                        public void actionPerformed(ActionEvent e) {
-                                                dispose();
-                                        }
-                                });
+                        e -> {
+                                UserStory userStory = getUserStoryObject();
+                                UserStoryStore.getInstance().addUserStory(userStory);
+                                dispose();
+                        });
 
                 myJpanel.add(
-                                cancelButton,
-                                new CustomConstraints(0, 4, GridBagConstraints.EAST, GridBagConstraints.NONE));
+                        cancelButton,
+                        new CustomConstraints(0, 4, GridBagConstraints.EAST, GridBagConstraints.NONE));
                 myJpanel.add(
-                                submitButton,
-                                new CustomConstraints(1, 4, GridBagConstraints.WEST, GridBagConstraints.NONE));
+                        submitButton,
+                        new CustomConstraints(1, 4, GridBagConstraints.WEST, GridBagConstraints.NONE));
 
                 add(myJpanel);
         }
@@ -134,7 +126,7 @@ public class NewUserStoryForm extends JFrame implements BaseComponent {
                 UserStoryFactory userStoryFactory = UserStoryFactory.getInstance();
 
                 UserStory userStory = userStoryFactory.createNewUserStory(name, description, points,
-                                businessValuePoints);
+                        businessValuePoints);
 
                 userStory.doRegister();
 
