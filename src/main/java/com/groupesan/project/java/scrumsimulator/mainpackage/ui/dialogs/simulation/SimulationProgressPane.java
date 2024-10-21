@@ -20,7 +20,7 @@ public class SimulationProgressPane {
 
     private static volatile JPanel checkboxGroup = new JPanel();
 
-    private static volatile JPanel blockerContainer = new JPanel();
+    private static volatile JPanel userStoryContainer = new JPanel();
 
     private static ArrayList<JCheckBox> checkBoxList = new ArrayList<>();
 
@@ -38,10 +38,10 @@ public class SimulationProgressPane {
 
 
 
-        blockerContainer.setLayout(new BoxLayout(blockerContainer, BoxLayout.Y_AXIS));
+        userStoryContainer.setLayout(new BoxLayout(userStoryContainer, BoxLayout.Y_AXIS));
 
 
-        blockerScrollPane = new JScrollPane(blockerContainer);
+        blockerScrollPane = new JScrollPane(userStoryContainer);
         blockerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 
@@ -54,28 +54,43 @@ public class SimulationProgressPane {
 
     }
 
-    public static void addBlocker(String blocker) {
-        JPanel blockerTextPanel = new JPanel();
-        blockerTextPanel.setLayout(new BorderLayout());
+//    public static void addBlocker(String blocker) {
+//        JPanel blockerTextPanel = new JPanel();
+//        blockerTextPanel.setLayout(new BorderLayout());
+//
+//        JLabel blockerText = new JLabel(blocker);
+//        JCheckBox checkBoxButton = new JCheckBox();
+//
+//        checkBoxList.add(checkBoxButton);
+//        blockerTextPanel.add(blockerText, BorderLayout.WEST);
+//        blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
+//
+//        blockerContainer.add(blockerTextPanel);
+//        blockerContainer.revalidate();
+//        blockerContainer.repaint();
+//
+//    }
 
-        JLabel blockerText = new JLabel(blocker);
-        JCheckBox checkBoxButton = new JCheckBox();
+    public static void addUserStory(String USText) {
+        JPanel userStoryTextPanel = new JPanel();
+        userStoryTextPanel.setLayout(new BorderLayout());
 
-        checkBoxList.add(checkBoxButton);
-        blockerTextPanel.add(blockerText, BorderLayout.WEST);
-        blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
+        JLabel userStoryText = new JLabel(USText);
+        userStoryTextPanel.add(userStoryText, BorderLayout.WEST);
+        // checkBoxList.add(checkBoxButton);
 
-        blockerContainer.add(blockerTextPanel);
-        blockerContainer.revalidate();
-        blockerContainer.repaint();
+        // blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
+
+        userStoryContainer.add(userStoryText);
+        userStoryContainer.revalidate();
+        userStoryContainer.repaint();
 
     }
 
     public static void resetPanel() {
-        blockerContainer.removeAll();
-        checkBoxList.clear();
-        blockerContainer.revalidate();
-        blockerContainer.repaint();
+        userStoryContainer.removeAll();
+        userStoryContainer.revalidate();
+        userStoryContainer.repaint();
     }
 
     public static boolean checkResolved(){

@@ -92,6 +92,7 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
+        userStoryAdder();
         while (isRunning()) {
             try {
                 for (int i = 0; i < 10; i++) {
@@ -127,17 +128,23 @@ public class SimulationStateManager {
             detectBlockers();
 
             if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
-                blockerCheck();
+                SimulationProgressPane.resetPanel();
                 stopSimulation();
             } else {
                 day++;
                 if (day > currentSimultation.getSprintDuration()) {
-                    blockerCheck();
                     SimulationProgressPane.resetPanel();
                     day = 1;
                     sprint++;
+                    userStoryAdder();
                 }
             }
+        }
+    }
+
+    public void userStoryAdder(){
+        for (var userStory : currentSimultation.getSprints().get(sprint - 1).getUserStories()) {
+            SimulationProgressPane.addUserStory(String.valueOf(userStory));
         }
     }
 
@@ -169,7 +176,7 @@ public class SimulationStateManager {
 
             if (blocker != null) {
                 System.out.println("Blocker detected: " + blocker.getType().getName());
-                SimulationProgressPane.addBlocker(blocker.getType().getName());
+                //SimulationProgressPane.addBlocker(blocker.getType().getName());
                 userStory.setBlocker(blocker);
             }
         }
