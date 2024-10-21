@@ -43,6 +43,8 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
 
         JButton saveButton = getSaveButton(encounterChanceField, resolveChanceField, nameField);
         saveButton.setName("saveButton");
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> dispose());
 
         myPanel.add(nameLabel,
                 new CustomConstraints(0, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
