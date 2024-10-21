@@ -6,8 +6,16 @@ public class BlockerObject {
 
     private BlockerType type;
 
+    private enum BlockerState {
+        UNRESOLVED,
+        RESOLVED
+    }
+
+    private BlockerState state;
+
     public BlockerObject(BlockerType type) {
         this.type = type;
+        this.state = BlockerState.UNRESOLVED;
     }
 
     public BlockerType getType() {
@@ -24,5 +32,13 @@ public class BlockerObject {
         } else {
             return false;
         }
+    }
+
+    public void resolve() {
+        state = BlockerState.RESOLVED;
+    }
+
+    public boolean isResolved() {
+        return state == BlockerState.RESOLVED;
     }
 }
