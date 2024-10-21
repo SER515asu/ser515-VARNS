@@ -21,6 +21,8 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
     private JLabel resolveLabel;
     private JLabel lowerBoundEncounterValueLabel;
     private JLabel upperBoundEncounterValueLabel;
+    private JLabel lowerBoundResolveValueLabel;
+    private JLabel upperBoundResolveValueLabel;
 
     private JPanel myPanel;
     private JCheckBox randomModeCheckBox;
@@ -29,6 +31,8 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
     private JTextField resolveChanceField;
     private JSlider lowerBoundRandomEncounterSlider;
     private JSlider upperBoundRandomEncounterSlider;
+    private JSlider lowerBoundRandomResolveSlider;
+    private JSlider upperBoundRandomResolveSlider;
     private JButton saveButton;
 
     public EditBlockerProbabilities(String blockerName, int encounterChance, int resolveChance) {
@@ -68,6 +72,12 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         lowerBoundEncounterValueLabel = new JLabel(String.valueOf(lowerBoundRandomEncounterSlider.getValue()));
         upperBoundEncounterValueLabel = new JLabel(String.valueOf(upperBoundRandomEncounterSlider.getValue()));
 
+        lowerBoundRandomResolveSlider = new JSlider(0, 100, 0);
+        upperBoundRandomResolveSlider = new JSlider(0, 100, 100);
+
+        lowerBoundResolveValueLabel = new JLabel(String.valueOf(lowerBoundRandomResolveSlider.getValue()));
+        upperBoundResolveValueLabel = new JLabel(String.valueOf(upperBoundRandomResolveSlider.getValue()));
+
         lowerBoundRandomEncounterSlider.addChangeListener(e -> {
             if (lowerBoundRandomEncounterSlider.getValue() > upperBoundRandomEncounterSlider.getValue()) {
                 lowerBoundRandomEncounterSlider.setValue(upperBoundRandomEncounterSlider.getValue());
@@ -82,6 +92,22 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
             }
             upperBoundEncounterValueLabel.setText(String.valueOf(upperBoundRandomEncounterSlider.getValue()));
             encounterChanceField.setText(String.valueOf(upperBoundRandomEncounterSlider.getValue()));
+        });
+
+        lowerBoundRandomResolveSlider.addChangeListener(e -> {
+            if (lowerBoundRandomResolveSlider.getValue() > upperBoundRandomResolveSlider.getValue()) {
+                lowerBoundRandomResolveSlider.setValue(upperBoundRandomResolveSlider.getValue());
+            }
+            lowerBoundResolveValueLabel.setText(String.valueOf(lowerBoundRandomResolveSlider.getValue()));
+            resolveChanceField.setText(String.valueOf(lowerBoundRandomResolveSlider.getValue()));
+        });
+
+        upperBoundRandomResolveSlider.addChangeListener(e -> {
+            if (upperBoundRandomResolveSlider.getValue() < lowerBoundRandomResolveSlider.getValue()) {
+                upperBoundRandomResolveSlider.setValue(lowerBoundRandomResolveSlider.getValue());
+            }
+            upperBoundResolveValueLabel.setText(String.valueOf(upperBoundRandomResolveSlider.getValue()));
+            resolveChanceField.setText(String.valueOf(upperBoundRandomResolveSlider.getValue()));
         });
 
         this.saveButton = getSaveButton(encounterChanceField, resolveChanceField, nameField);
@@ -109,8 +135,6 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
 
         myPanel.add(resolveLabel,
                 new CustomConstraints(0, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
-        myPanel.add(resolveChanceField,
-                new CustomConstraints(1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         myPanel.add(randomModeCheckBox,
                 new CustomConstraints(0, 3, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
@@ -138,6 +162,25 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
             myPanel.add(encounterPanel,
                     new CustomConstraints(1, 1, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
 
+            JPanel resolvePanel = new JPanel();
+            resolvePanel.setLayout(new GridBagLayout());
+
+            resolvePanel.add(new JLabel("Lower Bound:"),
+                    new CustomConstraints(0, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+            resolvePanel.add(lowerBoundRandomResolveSlider,
+                    new CustomConstraints(1, 0, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
+            resolvePanel.add(lowerBoundResolveValueLabel,
+                    new CustomConstraints(2, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+
+            resolvePanel.add(new JLabel("Upper Bound:"),
+                    new CustomConstraints(0, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+            resolvePanel.add(upperBoundRandomResolveSlider,
+                    new CustomConstraints(1, 1, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
+            resolvePanel.add(upperBoundResolveValueLabel,
+                    new CustomConstraints(2, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+
+            myPanel.add(resolvePanel,
+                    new CustomConstraints(1, 2, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
         } else {
             myPanel.add(encounterLabel,
                     new CustomConstraints(0, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
@@ -165,14 +208,8 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
                 encounterChance = RandomUtils.getRandomInt(lowerBoundRandomEncounterSlider.getValue(),
                         upperBoundRandomEncounterSlider.getValue());
 
-                // TODO - Remove this once we have support for resolve chance
-                EncounterResolveProbabilities result = getEncounterResolveProbabilities(encounterChanceField,
-                        resolveChanceField);
-
-                if (result == null)
-                    return;
-
-                resolveChance = result.newResolveChance();
+                resolveChance = RandomUtils.getRandomInt(lowerBoundRandomResolveSlider.getValue(),
+                        upperBoundRandomResolveSlider.getValue());
 
             } else {
                 EncounterResolveProbabilities result = getEncounterResolveProbabilities(encounterChanceField,
