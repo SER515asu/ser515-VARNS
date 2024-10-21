@@ -223,9 +223,14 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
             }
 
             BlockerType blocker = BlockerTypeStore.get().getBlockerType(blockerName);
-            blocker.setName(nameField.getText());
-            blocker.setEncounterChance(encounterChance);
-            blocker.setResolveChance(resolveChance);
+            if (blocker == null) {
+                blocker = new BlockerType(nameField.getText(), encounterChance, resolveChance);
+                BlockerTypeStore.get().addBlockerType(blocker);
+            } else {
+                blocker.setName(nameField.getText());
+                blocker.setEncounterChance(encounterChance);
+                blocker.setResolveChance(resolveChance);
+            }
             dispose();
         });
         return saveButton;

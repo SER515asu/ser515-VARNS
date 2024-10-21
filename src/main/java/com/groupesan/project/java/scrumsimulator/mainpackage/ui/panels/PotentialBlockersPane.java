@@ -36,6 +36,10 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
         myJpanel.add(new JLabel("Double click on any blocker below to edit its probabilities"), BorderLayout.NORTH);
 
+        JButton addBlockerButton = new JButton("Add Blocker");
+        addBlockerButton.addActionListener(e -> openEditForm("", 0, 0));
+        myJpanel.add(addBlockerButton, BorderLayout.SOUTH);
+
         String[] columnNames = { "Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)", "" };
 
         tableModel = new DefaultTableModel(columnNames, 0) {
