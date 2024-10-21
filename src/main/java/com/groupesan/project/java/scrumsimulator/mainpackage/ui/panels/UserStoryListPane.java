@@ -62,10 +62,7 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
 
             form.addWindowListener(
                     new java.awt.event.WindowAdapter() {
-                        public void windowClosed(
-                                java.awt.event.WindowEvent windowEvent) {
-                            UserStory userStory = form.getUserStoryObject();
-                            UserStoryStore.getInstance().addUserStory(userStory);
+                        public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                             reloadUserStories();
                         }
                     });
