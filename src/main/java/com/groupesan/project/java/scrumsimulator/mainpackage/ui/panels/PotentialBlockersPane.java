@@ -17,8 +17,8 @@ import java.awt.event.WindowEvent;
 
 public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
-    private static DefaultTableModel tableModel;
-    private static JTable blockersTable;
+    private DefaultTableModel tableModel;
+    private JTable blockersTable;
 
     public PotentialBlockersPane() {
         this.init();
@@ -87,7 +87,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         add(myJpanel);
     }
 
-    private static void openEditForm(Object id, int encounterChance, int resolveChance) {
+    private void openEditForm(Object id, int encounterChance, int resolveChance) {
         EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance);
         form.setVisible(true);
         form.addWindowListener(new WindowAdapter() {
@@ -98,7 +98,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         });
     }
 
-    private static void refreshTableData() {
+    private void refreshTableData() {
         int i = tableModel.getRowCount() - 1;
         while (i > -1) {
             tableModel.removeRow(i);
@@ -116,7 +116,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         });
     }
 
-    class ButtonRenderer extends JButton implements TableCellRenderer {
+    private static class ButtonRenderer extends JButton implements TableCellRenderer {
 
         public ButtonRenderer() {
             setOpaque(true);
@@ -130,7 +130,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         }
     }
     
-    class ButtonEditor extends DefaultCellEditor {
+    private class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
         private String label;
         private boolean isPushed;
