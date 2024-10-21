@@ -34,6 +34,8 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
     private JSlider lowerBoundRandomResolveSlider;
     private JSlider upperBoundRandomResolveSlider;
     private JButton saveButton;
+    private JButton cancelButton;
+    private JButton deleteButton;
 
     public EditBlockerProbabilities(String blockerName, int encounterChance, int resolveChance) {
         this.blockerName = blockerName;
@@ -113,6 +115,21 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         this.saveButton = getSaveButton(encounterChanceField, resolveChanceField, nameField);
         saveButton.setName("saveButton");
 
+        this.cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> dispose());
+        cancelButton.setName("cancelButton");
+
+        this.deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(e -> {
+            BlockerType blocker = BlockerTypeStore.get().getBlockerType(blockerName);
+            if (blocker != null) {
+                BlockerTypeStore.get().removeBlocker(blocker);
+            }
+            dispose();
+        });
+        deleteButton.setName("deleteButton");
+        deleteButton.setForeground(Color.RED);
+
         randomModeCheckBox.addItemListener(e -> {
             randomMode = randomModeCheckBox.isSelected();
             rebuildPanel();
@@ -139,7 +156,11 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         myPanel.add(randomModeCheckBox,
                 new CustomConstraints(0, 3, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
         myPanel.add(saveButton,
-                new CustomConstraints(1, 3, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(0, 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+        myPanel.add(cancelButton,
+                new CustomConstraints(1, 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+        myPanel.add(deleteButton,
+                new CustomConstraints(2, 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
 
         if (randomMode) {
             JPanel encounterPanel = new JPanel();
