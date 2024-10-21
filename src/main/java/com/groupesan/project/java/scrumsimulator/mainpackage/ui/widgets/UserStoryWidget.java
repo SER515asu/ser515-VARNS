@@ -34,7 +34,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
     MouseAdapter openEditDialog = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (parent.isEditWindowOpen) {
+            if (parent.isEditWindowOpen()) {
                 return;
             }
             parent.disableWindow();

@@ -25,7 +25,7 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
 
     private final List<UserStoryWidget> widgets = new ArrayList<>();
     private final JPanel subPanel = new JPanel();
-    public boolean isEditWindowOpen;
+    private boolean isEditWindowOpen;
 
     private void reloadUserStories() {
         widgets.clear();
@@ -105,5 +105,9 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
                         0, 1, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
 
         add(myJpanel);
+    }
+
+    public boolean isEditWindowOpen() {
+        return isEditWindowOpen;
     }
 }
