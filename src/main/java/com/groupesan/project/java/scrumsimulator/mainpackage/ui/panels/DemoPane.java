@@ -172,8 +172,14 @@ public class DemoPane extends JFrame implements BaseComponent {
                         return;
                     }
 
+                    setMenuButtonsEnabled(false);
+                    setGlassPaneVisible(true);
+
                     SprintBacklogPane sprintBacklogPane = new SprintBacklogPane(this);
                     sprintBacklogPane.setVisible(true);
+
+                    setMenuButtonsEnabled(true);
+                    setGlassPaneVisible(false);
                 });
 
         new DemoPaneBuilder(myJpanel)
@@ -209,18 +215,6 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     private void setGlassPaneVisible(boolean visible) {
         getGlassPane().setVisible(visible);
-    }
-
-    private void openSimulationDialog() {
-        JDialog simulationDialog = new JDialog(this, "Simulation", Dialog.ModalityType.APPLICATION_MODAL);
-        simulationDialog.setSize(800, 600);
-        simulationDialog.setLocationRelativeTo(this);
-        simulationDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        simulationDialog.setVisible(true);
-
-        setMenuButtonsEnabled(true);
-        setGlassPaneVisible(false);
     }
 
     private void setMenuButtonsEnabled(boolean enabled) {
