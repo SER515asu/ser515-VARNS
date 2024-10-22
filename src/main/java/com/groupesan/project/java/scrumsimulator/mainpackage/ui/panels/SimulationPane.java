@@ -1,6 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.AddUser;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,7 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,12 +23,13 @@ import javax.swing.JTextField;
 /**
  * SimulationPane is a part of the UI in the scrum simulator.
  *
- * <p>Todo: logic/controller portions of original FeedbackPanel.java
+ * <p>
+ * Todo: logic/controller portions of original FeedbackPanel.java
  *
  * @version 0.1
  * @since 2023-11-8
  */
-public class SimulationPane extends JFrame {
+public class SimulationPane extends JDialog implements BaseComponent {
     private JButton joinButton;
     private JTextField usernameField;
     private JRadioButton playerRadioButton;
@@ -33,15 +37,26 @@ public class SimulationPane extends JFrame {
     private ButtonGroup typeButtonGroup;
     private JComboBox<String> roleComboBox;
 
-    private static final List<String> allowedRoleNames =
-            Arrays.asList("pig", "chicken", "product owner", "scrum master");
+    private JFrame parent;
+
+    private static final List<String> allowedRoleNames = Arrays.asList("pig", "chicken", "product owner",
+            "scrum master");
 
     /** The simulation Pane for adding new users. */
-    public SimulationPane() {
-        setTitle("Simulation Status");
-        setSize(400, 200);
-        setLocationRelativeTo(null);
+    public SimulationPane(JFrame parent) {
+        this.parent = parent;
+
+        this.init();
+    }
+
+    @Override
+    public void init() {
+        setSize(800, 200);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(ModalityType.APPLICATION_MODAL);
+
+        setTitle("Simulation Status");
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(4, 2));

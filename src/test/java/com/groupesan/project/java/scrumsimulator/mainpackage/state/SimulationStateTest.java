@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
 
 public class SimulationStateTest {
 
@@ -28,14 +29,14 @@ public class SimulationStateTest {
     @AfterEach
     public void tearDown() {
         if (simulationStateManager != null) {
-            simulationStateManager.setRunning(false);
+            simulationStateManager.stopSimulation();
         }
     }
 
     @Test
     public void testInitialState() {
         if (simulationStateManager != null) {
-            assertFalse(simulationStateManager.isRunning());
+            assertFalse(simulationStateManager.getState() == SprintStateEnum.RUNNING);
         } else {
             System.out.println("simulationStateManager is null");
         }
@@ -48,7 +49,7 @@ public class SimulationStateTest {
                 simulationStateManager.setCurrentSimulation(
                         new Simulation("Test Simulation", 0, 0));
                 simulationStateManager.startSimulation();
-                assertTrue(simulationStateManager.isRunning());
+                assertTrue(simulationStateManager.getState() == SprintStateEnum.RUNNING);
             } catch (HeadlessException e) {
                 // Expected exception
             }
@@ -61,7 +62,7 @@ public class SimulationStateTest {
             simulationStateManager.setCurrentSimulation(
                     new Simulation("Test Simulation", 0, 0));
             simulationStateManager.stopSimulation();
-            assertFalse(simulationStateManager.isRunning());
+            assertFalse(simulationStateManager.getState() == SprintStateEnum.RUNNING);
         }
 
     }

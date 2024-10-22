@@ -5,13 +5,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-public class SimulationSwitchRolePane extends JFrame {
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
+
+public class SimulationSwitchRolePane extends JDialog implements BaseComponent {
 
     private JRadioButton developerRadioButton;
     private JRadioButton scrumMasterRadioButton;
@@ -19,11 +22,22 @@ public class SimulationSwitchRolePane extends JFrame {
     private ButtonGroup roleButtonGroup;
     private JButton switchButton;
 
-    public SimulationSwitchRolePane() {
-        setTitle("Simulation Status");
-        setSize(400, 200);
-        setLocationRelativeTo(null);
+    private JFrame parent;
+
+    public SimulationSwitchRolePane(JFrame parent) {
+        this.parent = parent;
+
+        this.init();
+    }
+
+    @Override
+    public void init() {
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
+        setTitle("Simulation Status");
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(4, 1));

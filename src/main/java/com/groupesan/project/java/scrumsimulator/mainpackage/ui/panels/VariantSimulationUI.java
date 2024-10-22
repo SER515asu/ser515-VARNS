@@ -5,19 +5,26 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
-public class VariantSimulationUI extends JFrame implements BaseComponent {
+public class VariantSimulationUI extends JDialog implements BaseComponent {
     private JPanel mainPanel;
     private CardLayout cardLayout;
 
-    public VariantSimulationUI() {
+    private JFrame parent;
+
+    public VariantSimulationUI(JFrame parent) {
+        this.parent = parent;
+
         init();
     }
 
     @Override
     public void init() {
-        setTitle("Variant Simulation UI");
-        setSize(600, 400);
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
+        setTitle("Variant Simulation UI");
 
         mainPanel = new JPanel();
         cardLayout = new CardLayout();
@@ -58,13 +65,5 @@ public class VariantSimulationUI extends JFrame implements BaseComponent {
         // For example, for the Product Owner, you might add components related to backlog
         // management.
         return panel;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(
-                () -> {
-                    VariantSimulationUI variantSimulationUI = new VariantSimulationUI();
-                    variantSimulationUI.setVisible(true);
-                });
     }
 }

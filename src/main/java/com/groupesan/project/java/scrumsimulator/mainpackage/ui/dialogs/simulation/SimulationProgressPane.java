@@ -83,7 +83,7 @@ public class SimulationProgressPane {
 
         for(JCheckBox checkBox : checkBoxList) {
             if(!checkBox.isSelected()) {
-                stateManager.setState(SprintStateEnum.START_SPRINT);
+                stateManager.setState(SprintStateEnum.RUNNING);
                 return false;
             }
         }
@@ -95,11 +95,11 @@ public class SimulationProgressPane {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
 
-        if(state == SprintStateEnum.START_SPRINT) {
-            stateManager.setState(SprintStateEnum.PAUSE_SPRINT);
+        if(state == SprintStateEnum.RUNNING) {
+            stateManager.setState(SprintStateEnum.PAUSED);
             pauseSimulationButton.setText("Start Simulation");
-        } else if (state == SprintStateEnum.PAUSE_SPRINT){
-            stateManager.setState(SprintStateEnum.START_SPRINT);
+        } else if (state == SprintStateEnum.PAUSED){
+            stateManager.setState(SprintStateEnum.RUNNING);
             pauseSimulationButton.setText("Pause Simulation");
         }
     }

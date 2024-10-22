@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,10 +18,13 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
-public class UserStoryListPane extends JFrame implements BaseComponent {
-    public UserStoryListPane() {
-        isEditWindowOpen = false;
+public class UserStoryListPane extends JDialog implements BaseComponent {
+
+    JFrame parent;
+
+    public UserStoryListPane(JFrame parent) {
         this.init();
+        this.parent = parent;
     }
 
     private final List<UserStoryWidget> widgets = new ArrayList<>();
@@ -32,8 +36,9 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
         subPanel.removeAll();
 
         for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
-            UserStoryWidget userStoryWidget = new UserStoryWidget(userStory, true, this).setCloseEditDialogActionListener(
-                    e -> reloadUserStories());
+            UserStoryWidget userStoryWidget = new UserStoryWidget(userStory, true, this)
+                    .setCloseEditDialogActionListener(
+                            e -> reloadUserStories());
             userStoryWidget.init();
             widgets.add(userStoryWidget);
         }
@@ -80,9 +85,12 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
     }
 
     public void init() {
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
         setTitle("Product Backlog");
-        setSize(400, 300);
 
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
