@@ -86,9 +86,11 @@ public class SimulationProgressPane {
 
         // blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
 
-        userStoryContainer.add(userStoryText);
+
         userStoryContainer.add(userStoryHeader);
         userStoryContainer.add(userProgressHeader);
+
+        // userStoryContainer.add(userStoryText);
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
 
