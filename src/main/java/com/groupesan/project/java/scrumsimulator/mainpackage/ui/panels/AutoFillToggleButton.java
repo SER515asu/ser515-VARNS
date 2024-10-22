@@ -1,4 +1,4 @@
-package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation;
+package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -26,9 +26,8 @@ public class AutoFillToggleButton {
     private final DataModel<Object> sprintLengthModel;
     private final GeneralPage generalPage;
 
-
-
-    public AutoFillToggleButton(DataModel<Object> sprintModel, DataModel<Object> sprintLengthModel, GeneralPage generalPage) {
+    public AutoFillToggleButton(DataModel<Object> sprintModel, DataModel<Object> sprintLengthModel,
+            GeneralPage generalPage) {
         this.sprintModel = sprintModel;
         this.sprintLengthModel = sprintLengthModel;
         this.generalPage = generalPage;
@@ -52,10 +51,8 @@ public class AutoFillToggleButton {
     }
 
     private int getRandomValue(int start, int end) {
-    return random.nextInt(end - start + 1) + start;
+        return random.nextInt(end - start + 1) + start;
     }
-
-
 
     private void showRangeSelectionWindow() {
         rangeSelectionFrame = new JFrame("Select Ranges");
@@ -112,13 +109,15 @@ public class AutoFillToggleButton {
         submitButton = new JButton("Submit");
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         submitButton.addActionListener(e -> {
-            int randomSprintLength = getRandomValue(sprintLengthStartSlider.getValue(), sprintLengthEndSlider.getValue());
-            int randomSprintNumber = getRandomValue(sprintNumberStartSlider.getValue(), sprintNumberEndSlider.getValue());
-        
-            sprintLengthModel.setData(randomSprintLength);  // Update sprint length model
-            sprintModel.setData(randomSprintNumber);        // Update sprint number model
+            int randomSprintLength = getRandomValue(sprintLengthStartSlider.getValue(),
+                    sprintLengthEndSlider.getValue());
+            int randomSprintNumber = getRandomValue(sprintNumberStartSlider.getValue(),
+                    sprintNumberEndSlider.getValue());
+
+            sprintLengthModel.setData(randomSprintLength); // Update sprint length model
+            sprintModel.setData(randomSprintNumber); // Update sprint number model
             generalPage.updateUI();
-        
+
             JOptionPane.showMessageDialog(rangeSelectionFrame,
                     "Randomly selected values:\n" +
                             "Sprint Length: " + randomSprintLength + " Days\n" +
@@ -127,7 +126,7 @@ public class AutoFillToggleButton {
             toggleButton.setText("OFF");
             rangeSelectionFrame.dispose();
         });
-        
+
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(submitButton);
 

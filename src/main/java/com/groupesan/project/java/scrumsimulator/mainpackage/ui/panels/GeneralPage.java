@@ -1,16 +1,16 @@
-package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation;
+package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.DataModel;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.GridBagConstraintsBuilder;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.ResuableHeader;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SpinnerInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.TextInput;
-import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.Wizard;
 
 import java.awt.*;
 import javax.swing.*;
 
-class GeneralPage extends Wizard.WizardPage {
+class GeneralPage extends JDialog implements BaseComponent {
     private final DataModel<String> simulationModel;
     private final DataModel<Object> sprintModel;
     private final DataModel<Object> sprintLengthModel;
@@ -25,12 +25,12 @@ class GeneralPage extends Wizard.WizardPage {
     }
 
     @Override
-    protected String getId() {
-        return "General";
-    }
+    public void init() {
+        setTitle("General");
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
-    @Override
-    protected JPanel render() {
         JPanel container = new JPanel(new BorderLayout());
         ResuableHeader resuableHeader = new ResuableHeader("General", "General simulation settings");
 
@@ -87,7 +87,6 @@ class GeneralPage extends Wizard.WizardPage {
                 .setFill(GridBagConstraints.HORIZONTAL));
 
         container.add(inputs, BorderLayout.NORTH);
-        return container;
     }
 
     public void updateUI() {
