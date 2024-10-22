@@ -41,6 +41,7 @@ public class SimulationProgressPane {
         userStoryContainer.setLayout(new BoxLayout(userStoryContainer, BoxLayout.Y_AXIS));
 
 
+
         blockerScrollPane = new JScrollPane(userStoryContainer);
         blockerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -77,11 +78,17 @@ public class SimulationProgressPane {
 
         JLabel userStoryText = new JLabel(USText);
         userStoryTextPanel.add(userStoryText, BorderLayout.WEST);
+        JLabel userStoryHeader = new JLabel("User Story");
+        JLabel userProgressHeader = new JLabel("Progress");
+        userStoryTextPanel.add(userStoryHeader, BorderLayout.WEST);
+        userStoryTextPanel.add(userProgressHeader, BorderLayout.EAST);
         // checkBoxList.add(checkBoxButton);
 
         // blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
 
         userStoryContainer.add(userStoryText);
+        userStoryContainer.add(userStoryHeader);
+        userStoryContainer.add(userProgressHeader);
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
 
