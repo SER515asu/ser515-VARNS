@@ -1,122 +1,85 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.AddUser;
-import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
-
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
+import java.awt.Dialog;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
-/**
- * SimulationPane is a part of the UI in the scrum simulator.
- *
- * <p>
- * Todo: logic/controller portions of original FeedbackPanel.java
- *
- * @version 0.1
- * @since 2023-11-8
- */
-public class SimulationPane extends JDialog implements BaseComponent {
-    private JButton joinButton;
-    private JTextField usernameField;
-    private JRadioButton playerRadioButton;
-    private JRadioButton teacherRadioButton;
-    private ButtonGroup typeButtonGroup;
-    private JComboBox<String> roleComboBox;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationListener;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
+public class SimulationPane extends JDialog implements SimulationListener, BaseComponent {
+
+    private SimulationProgressPane progressPane;
     private JFrame parent;
+    private SimulationStateManager simulationStateManager;
 
-    private static final List<String> allowedRoleNames = Arrays.asList("pig", "chicken", "product owner",
-            "scrum master");
-
-    /** The simulation Pane for adding new users. */
     public SimulationPane(JFrame parent) {
         this.parent = parent;
-
+        this.progressPane = new SimulationProgressPane();
+        this.simulationStateManager = SimulationStateManager.getInstance();
         this.init();
+
+        simulationStateManager.addListener(this);
     }
 
     @Override
     public void init() {
-        setSize(800, 200);
+        setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(ModalityType.APPLICATION_MODAL);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
-        setTitle("Simulation Status");
+        setTitle("Simulation Pane");
+        add(progressPane.getSimPan());
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2));
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent evt) {
+                simulationStateManager.startSimulation();
+            }
 
-        JLabel usernameLabel = new JLabel("Username:");
-        usernameField = new JTextField(20);
-        panel.add(usernameLabel);
-        panel.add(usernameField);
-
-        JLabel typeLabel = new JLabel("Type:");
-        panel.add(typeLabel);
-
-        typeButtonGroup = new ButtonGroup();
-        playerRadioButton = new JRadioButton("Player");
-        teacherRadioButton = new JRadioButton("Teacher");
-        typeButtonGroup.add(playerRadioButton);
-        typeButtonGroup.add(teacherRadioButton);
-
-        panel.add(playerRadioButton);
-        panel.add(new JLabel(""));
-        panel.add(teacherRadioButton);
-
-        JLabel roleNameLabel = new JLabel("Role Name:");
-        roleComboBox = new JComboBox<>(allowedRoleNames.toArray(new String[0]));
-        panel.add(roleNameLabel);
-        panel.add(roleComboBox);
-
-        joinButton = new JButton("Join Simulation");
-        joinButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Logic for join button
-                        onJoinButtonClicked();
-                    }
-                });
-
-        setLayout(new BorderLayout());
-        add(joinButton, BorderLayout.SOUTH);
-        add(panel);
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                simulationStateManager.stopSimulation();
+                dispose();
+            }
+        });
     }
 
-    private void onJoinButtonClicked() {
-        String username = usernameField.getText();
-        String type = playerRadioButton.isSelected() ? "player" : "teacher";
-        String roleName = roleComboBox.getSelectedItem().toString();
-
-        if (username.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    null, "Username cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        AddUser.addUser(username, type, roleName);
-        clearFields();
+    @Override
+    public void onProgressUpdate(int progressValue, int day, int sprint, int sprintDuration) {
+        progressPane.updateProgress(progressValue, day, sprint, sprintDuration);
     }
 
-    private void clearFields() {
-        usernameField.setText("");
-        typeButtonGroup.clearSelection();
-        roleComboBox.setSelectedIndex(0);
+    @Override
+    public void onBlockerDetected(BlockerObject blocker) {
+        progressPane.addBlocker(blocker);
+    }
+
+    @Override
+    public void onBlockerResolved(BlockerObject blocker) {
+        progressPane.removeBlocker(blocker);
+    }
+
+    @Override
+    public void onSimulationStopped() {
+        JOptionPane.showMessageDialog(this, "Simulation stopped!");
+    }
+
+    @Override
+    public void onSimulationStarted() {
+        JOptionPane.showMessageDialog(this, "Simulation started!");
+    }
+
+    @Override
+    public void dispose() {
+        simulationStateManager.removeListener(this);
+        super.dispose();
     }
 }

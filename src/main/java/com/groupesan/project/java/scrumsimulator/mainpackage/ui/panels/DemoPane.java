@@ -65,7 +65,8 @@ public class DemoPane extends JFrame implements BaseComponent {
                     setMenuButtonsEnabled(false);
                     setGlassPaneVisible(true);
 
-                    SimulationStateManager.getInstance().startSimulation();
+                    SimulationPane form = new SimulationPane(this);
+                    form.setVisible(true);
 
                     setMenuButtonsEnabled(true);
                     setGlassPaneVisible(false);
