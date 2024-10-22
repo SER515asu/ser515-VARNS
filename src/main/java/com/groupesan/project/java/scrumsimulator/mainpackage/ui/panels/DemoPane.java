@@ -16,7 +16,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
-            simulationSwitchRoleButton, variantSimulationUIButton, sprintBacklogsButton;
+            simulationSwitchRoleButton, variantSimulationUIButton, sprintBacklogsButton, newSimulationButton;
 
     public DemoPane() {
         this.init();
@@ -32,6 +32,19 @@ public class DemoPane extends JFrame implements BaseComponent {
         myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(myGridbagLayout);
+
+        newSimulationButton = new JButton("New Simulation");
+        newSimulationButton.addActionListener(
+                e -> {
+                    setMenuButtonsEnabled(false);
+                    setGlassPaneVisible(true);
+
+                    NewSimulationPane form = new NewSimulationPane(this);
+                    form.setVisible(true);
+
+                    setMenuButtonsEnabled(true);
+                    setGlassPaneVisible(false);
+                });
 
         sprintsButton = new JButton("Sprints");
         sprintsButton.addActionListener(
@@ -192,6 +205,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(joinSimulationButton, 6, 0)
                 .addComponent(simulationButton, 7, 0)
                 .addComponent(potentialBlockersButton, 9, 0)
+                .addComponent(newSimulationButton, 0, 1)
                 .addComponent(simulationSwitchRoleButton, 1, 1)
                 .addComponent(variantSimulationUIButton, 2, 1)
                 .buildPanel();
@@ -218,6 +232,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     }
 
     private void setMenuButtonsEnabled(boolean enabled) {
+        newSimulationButton.setEnabled(enabled);
         sprintsButton.setEnabled(enabled);
         userStoriesButton.setEnabled(enabled);
         startSimulationButton.setEnabled(enabled);
