@@ -6,7 +6,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSta
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import javax.swing.*;
@@ -104,8 +103,8 @@ public class DemoPane extends JFrame implements BaseComponent {
                     setMenuButtonsEnabled(false);
                     setGlassPaneVisible(true);
 
-                    SimulationPane simulationPane = new SimulationPane(this);
-                    simulationPane.setVisible(true);
+                    AddUserPane AddUserPane = new AddUserPane(this);
+                    AddUserPane.setVisible(true);
 
                     setMenuButtonsEnabled(true);
                     setGlassPaneVisible(false);
