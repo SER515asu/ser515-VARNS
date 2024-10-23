@@ -1,26 +1,38 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
+
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class UpdateUserStoryPanel extends JFrame {
+public class UpdateUserStoryPanel extends JDialog implements BaseComponent {
 
-    public UpdateUserStoryPanel() {
-        init();
+    private JFrame parent;
+
+    public UpdateUserStoryPanel(JFrame parent) {
+        this.parent = parent;
+
+        this.init();
     }
 
-    private void init() {
-        setTitle("Update User Story Status");
-        setSize(400, 200);
+    @Override
+    public void init() {
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
+        setTitle("Update User Story Status");
 
         JPanel panel = new JPanel();
         placeComponents(panel);
@@ -45,7 +57,7 @@ public class UpdateUserStoryPanel extends JFrame {
         statusLabel.setBounds(10, 50, 120, 25);
         panel.add(statusLabel);
 
-        String[] statusOptions = {"new", "in progress", "ready for test", "completed"};
+        String[] statusOptions = { "new", "in progress", "ready for test", "completed" };
         JComboBox<String> statusComboBox = new JComboBox<>(statusOptions);
         statusComboBox.setBounds(150, 50, 200, 25);
         panel.add(statusComboBox);

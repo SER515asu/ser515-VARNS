@@ -7,17 +7,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.awt.Dialog;
+
 /**
- * SimulationUI is the main user interface for the simulation. It displays different UI elements
+ * SimulationUI is the main user interface for the simulation. It displays
+ * different UI elements
  * based on the user's selected role.
  */
-public class SimulationUI extends JFrame implements BaseComponent {
+public class SimulationUI extends JDialog implements BaseComponent {
     private String userRole;
     private String selectedSimulationId;
     private JPanel panel;
 
+    private JFrame parent;
+
     /** Constructor for SimulationUI. It initializes the role selection process. */
-    public SimulationUI() {
+    public SimulationUI(JFrame parent) {
+        this.parent = parent;
+
         init();
     }
 
@@ -30,19 +37,16 @@ public class SimulationUI extends JFrame implements BaseComponent {
             String[] simulationNames = new String[simulations.length()];
             for (int i = 0; i < simulations.length(); i++) {
                 JSONObject simulation = simulations.getJSONObject(i);
-                simulationNames[i] =
-                        simulation.getString("Name") + " - " + simulation.getString("ID");
+                simulationNames[i] = simulation.getString("Name") + " - " + simulation.getString("ID");
             }
-            String selectedSimulation =
-                    (String)
-                            JOptionPane.showInputDialog(
-                                    null,
-                                    "Select a Simulation:",
-                                    "Simulation Selection",
-                                    JOptionPane.QUESTION_MESSAGE,
-                                    null,
-                                    simulationNames,
-                                    simulationNames[0]);
+            String selectedSimulation = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Select a Simulation:",
+                    "Simulation Selection",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    simulationNames,
+                    simulationNames[0]);
 
             // Store the selected simulation ID (extract from selectedSimulation)
             if (selectedSimulation != null) {
@@ -103,14 +107,18 @@ public class SimulationUI extends JFrame implements BaseComponent {
     }
 
     /**
-     * Initializes the user interface components. This method is called after the user role has been
+     * Initializes the user interface components. This method is called after the
+     * user role has been
      * set.
      */
     @Override
     public void init() {
-        setTitle("Simulation");
-        setSize(400, 300);
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
+        setTitle("Simulation");
         panel = new JPanel();
         panel.add(
                 new JLabel(

@@ -1,13 +1,17 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
-import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -16,8 +20,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
-
 
 /**
  * SimulationStateManager manages the state of a simulation, including whether
@@ -26,26 +28,23 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulati
 public class SimulationStateManager {
 
     public enum SprintStateEnum {
-        START_SPRINT,
-        STOP_SPRINT,
-        PAUSE_SPRINT
+        RUNNING,
+        STOPPED,
+        PAUSED
     }
 
-    private boolean running;
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
-    private Simulation currentSimultation;
+    private Simulation currentSimulation;
     private SprintStateEnum state;
     private Integer day = 1;
     private Integer sprint = 1;
     private Integer progressValue;
 
     private static SimulationStateManager instance;
-
-    private SimulationProgressPane progressPane = new SimulationProgressPane();
-    private JFrame framePan = new JFrame();
+    private final List<SimulationListener> listeners = new ArrayList<>();
 
     private SimulationStateManager() {
-        this.running = false;
+        this.state = SprintStateEnum.STOPPED;
     }
 
     /**
@@ -64,9 +63,11 @@ public class SimulationStateManager {
      * Sets the current simulation.
      *
      * @param simulation The simulation to set as the current simulation.
+     * @return the SimulationStateManager
      */
-    public void setCurrentSimulation(Simulation simulation) {
-        this.currentSimultation = simulation;
+    public SimulationStateManager setCurrentSimulation(Simulation simulation) {
+        this.currentSimulation = simulation;
+        return this;
     }
 
     /**
@@ -75,29 +76,91 @@ public class SimulationStateManager {
      * @return current simulation
      */
     public Simulation getCurrentSimulation() {
-        return this.currentSimultation;
+        return this.currentSimulation;
     }
 
-    /**
-     * Returns the current state of the simulation.
-     *
-     * @return boolean running
-     */
-    public boolean isRunning() {
-        return running;
+    public void addListener(SimulationListener listener) {
+        listeners.add(listener);
     }
 
-    public void setRunning(boolean running) {
-        this.running = running;
+    public void removeListener(SimulationListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyProgressUpdate() {
+        for (SimulationListener listener : listeners) {
+            listener.onProgressUpdate(progressValue, day, sprint, currentSimulation.getSprintDuration());
+        }
+    }
+
+    private void notifyBlockerDetected(BlockerObject blocker) {
+        for (SimulationListener listener : listeners) {
+            listener.onBlockerDetected(blocker);
+        }
+    }
+
+    private void notifyBlockerResolved(BlockerObject blocker) {
+        for (SimulationListener listener : listeners) {
+            listener.onBlockerResolved(blocker);
+        }
+    }
+
+    private void notifySimulationStarted() {
+        for (SimulationListener listener : listeners) {
+            listener.onSimulationStarted();
+        }
+    }
+
+    private void notifySimulationStopped() {
+        for (SimulationListener listener : listeners) {
+            listener.onSimulationStopped();
+        }
+    }
+
+    private void notifyUserStory(UserStory userStory) {
+        for (SimulationListener listener : listeners) {
+            listener.onUserStory(userStory);
+        }
+    }
+
+    private void notifyResetUserStoryPanel() {
+        for (SimulationListener listener : listeners) {
+            listener.onSprintCompletion();
+        }
+    }
+
+
+    public void startSimulation() {
+        if (currentSimulation == null) {
+            JOptionPane.showMessageDialog(null, "No simulation selected");
+            return;
+        }
+
+        state = SprintStateEnum.RUNNING;
+        notifySimulationStarted();
+        new Thread(this::runSimulation).start();
+    }
+
+    public void stopSimulation() {
+        if (currentSimulation == null) {
+            JOptionPane.showMessageDialog(null, "No simulation selected");
+            return;
+        }
+
+        if (state != SprintStateEnum.STOPPED) {
+            state = SprintStateEnum.STOPPED;
+        }
+
+        notifySimulationStopped();
     }
 
     private void runSimulation() {
-        userStoryAdder();
-        while (isRunning()) {
+        addUserStory();
+        while (state == SprintStateEnum.RUNNING) {
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                    if (!isRunning()) {
+                    if (state != SprintStateEnum.RUNNING) {
                         return;
                     }
                 }
@@ -105,169 +168,63 @@ public class SimulationStateManager {
                 e.printStackTrace();
             }
 
-            if (!isRunning()) {
+            if (state == SprintStateEnum.STOPPED) {
                 return;
             }
 
-
-
-            if (state == SprintStateEnum.PAUSE_SPRINT) {
-                continue;
-            }
-
-            progressValue = (int) Math.round(100.0 / (currentSimultation.getSprintDuration()) * day);
-            progressPane.updateProgress(progressValue, day, sprint, currentSimultation.getSprintDuration());
-
-            System.out.println("Day: " + day + " Sprint: " + sprint);
-
-            for (UserStory userStory : currentSimultation.getSprints().get(sprint - 1).getUserStories()) {
-                System.out.println(userStory.getName() + " " + userStory.getUserStoryState().getClass().getSimpleName() + (userStory.isBlocked() ? "Blocked" : ""));
-            }
+            progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
+            notifyProgressUpdate();
 
             resolveBlockers();
             detectBlockers();
 
-            if (sprint >= currentSimultation.getSprintCount() && day >= currentSimultation.getSprintDuration()) {
-                SimulationProgressPane.resetPanel();
+            if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
                 stopSimulation();
             } else {
                 day++;
-                if (day > currentSimultation.getSprintDuration()) {
-                    SimulationProgressPane.resetPanel();
+                if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
-                    userStoryAdder();
+                    resetPanel();
+                    addUserStory();
                 }
             }
         }
     }
 
-    public void userStoryAdder(){
-        for (var userStory : currentSimultation.getSprints().get(sprint - 1).getUserStories()) {
-            SimulationProgressPane.addUserStory(String.valueOf(userStory));
-        }
+    private void resetPanel() {
+        notifyResetUserStoryPanel();
     }
 
-    private void blockerCheck() {
-        if(!SimulationProgressPane.checkResolved()) {
-            JOptionPane.showMessageDialog(null, "There are unresolved issues! Resolve them before the sprint can proceed");
-            while(!SimulationProgressPane.checkResolved()) {
-                continue;
-            }
-        }
-    }
-    private void resolveBlockers() {
-        for (int i = 0; i < currentSimultation.getSprints().get(sprint - 1).getUserStories().size(); i++) {
-            currentSimultation.getSprints().get(sprint - 1).getUserStories().get(i).resolveBlockers();
+    private void addUserStory(){
+        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
+            notifyUserStory(userStory);
         }
     }
 
     private void detectBlockers() {
         BlockerTypeStore blockerStore = BlockerTypeStore.get();
-
-        // For every unresolved user story in the current sprint, roll for blocker
-        for (var userStory : currentSimultation.getSprints().get(sprint - 1).getUserStories()) {
-
-            if (userStory.getUserStoryState() instanceof UserStoryCompletedState) {
-                continue;
-            }
-
+        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
             BlockerObject blocker = blockerStore.rollForBlocker();
-
             if (blocker != null) {
-                System.out.println("Blocker detected: " + blocker.getType().getName());
-                //SimulationProgressPane.addBlocker(blocker.getType().getName());
+                notifyBlockerDetected(blocker);
                 userStory.setBlocker(blocker);
             }
         }
     }
 
-
-
-    /** Method to set the simulation state to running. */
-    public void startSimulation() {
-        if (currentSimultation == null) {
-            JOptionPane.showMessageDialog(null, "No simulation selected");
-            return;
-        }
-
-        progressValue = 0;
-        setRunning(true);
-
-        framePan.add(progressPane.getSimPan());
-        framePan.setSize(300, 300);
-        framePan.setVisible(true);
-
-        framePan.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                if (state == SprintStateEnum.STOP_SPRINT) {
-                    return;
+    private void resolveBlockers() {
+        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
+            for (BlockerObject blocker : userStory.getBlockers()) {
+                if (blocker == null || blocker.isResolved()) {
+                    continue;
                 }
 
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to stop the simulation?",
-                        "Warning", JOptionPane.YES_NO_OPTION);
-
-                if (dialogResult == JOptionPane.YES_OPTION) {
-                    stopSimulation();
-                    framePan.dispose();
+                if (blocker.attemptResolve()) {
+                    notifyBlockerResolved(blocker);
                 }
             }
-        });
-
-        state = SprintStateEnum.START_SPRINT;
-        new Thread(this::runSimulation).start();
-    }
-
-    /** Method to set the simulation state to not running. */
-    public void resetSimulation() {
-        setRunning(false);
-        if (currentSimultation == null) {
-            JOptionPane.showMessageDialog(null, "No simulation selected");
-            return;
         }
-
-        state = SprintStateEnum.STOP_SPRINT;
-        JOptionPane.showMessageDialog(null, "Simulation stopped!");
-        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
-
-        day = 1;
-        sprint = 1;
-        progressValue = 0;
-
-        progressPane.resetProgress();
-    }
-
-    public void stopSimulation() {
-        if (currentSimultation == null) {
-            JOptionPane.showMessageDialog(null, "No simulation selected");
-            return;
-        }
-        if (state != SprintStateEnum.STOP_SPRINT) {
-            state = SprintStateEnum.STOP_SPRINT;
-            setRunning(false);
-        } else {
-            return;
-        }
-
-        SimulationProgressPane.resetPanel();
-        // Included JSON code to indicate stopped simulations.
-        JSONObject simulationData = getSimulationData();
-        if (simulationData != null) {
-            JSONArray simulations = simulationData.optJSONArray("Simulations");
-            if (simulations != null) {
-                for (int i = 0; i < simulations.length(); i++) {
-                    JSONObject simulation = simulations.getJSONObject(i);
-                    if (simulation.getString("Status").equals("Running")) {
-                        simulation.put("Status", "Stopped");
-                        break;
-                    }
-                }
-                updateSimulationData(simulationData);
-            }
-        }
-        JOptionPane.showMessageDialog(null, "Simulation stopped!");
-        framePan.dispatchEvent(new WindowEvent(framePan, WindowEvent.WINDOW_CLOSING));
     }
 
     /**

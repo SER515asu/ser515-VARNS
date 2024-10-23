@@ -225,6 +225,10 @@ public class UserStory extends ScrumObject {
         blockers.add(blocker);
     }
 
+    public List<BlockerObject> getBlockers() {
+        return blockers;
+    }
+
     public void resolveBlockers() {
         if (blockers.size() == 0) {
             return;

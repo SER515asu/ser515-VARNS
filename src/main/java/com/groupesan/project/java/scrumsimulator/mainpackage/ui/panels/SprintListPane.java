@@ -6,6 +6,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.impl.SprintStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SprintWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
+import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -13,22 +14,31 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-public class SprintListPane extends JFrame implements BaseComponent {
-    public SprintListPane() {
+public class SprintListPane extends JDialog implements BaseComponent {
+
+    JFrame parent;
+
+    public SprintListPane(JFrame parent) {
+        this.parent = parent;
+
         this.init();
     }
 
     private List<SprintWidget> widgets = new ArrayList<>();
 
     public void init() {
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
         setTitle("Sprints list");
-        setSize(400, 300);
 
         GridBagLayout myGridbagLayout = new GridBagLayout();
         JPanel myJpanel = new JPanel();
