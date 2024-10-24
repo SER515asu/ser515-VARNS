@@ -141,11 +141,11 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
-        while (state == SprintStateEnum.RUNNING) {
+        while (true) {
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                    if (state != SprintStateEnum.RUNNING) {
+                    if (state == SprintStateEnum.STOPPED) {
                         return;
                     }
                 }
@@ -153,8 +153,8 @@ public class SimulationStateManager {
                 e.printStackTrace();
             }
 
-            if (state == SprintStateEnum.STOPPED) {
-                return;
+            if (state == SprintStateEnum.PAUSED) {
+                continue;
             }
 
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
