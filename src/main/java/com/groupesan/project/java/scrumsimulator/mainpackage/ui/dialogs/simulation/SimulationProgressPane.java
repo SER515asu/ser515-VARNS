@@ -72,7 +72,8 @@ public class SimulationProgressPane {
 
 
     public void resetPanel() {
-        // Had to remove SwingUtilities to be able to refresh the panel. 
+        // Had to remove SwingUtilities to be able to refresh the panel.
+
         userStoryContainer.removeAll();
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
