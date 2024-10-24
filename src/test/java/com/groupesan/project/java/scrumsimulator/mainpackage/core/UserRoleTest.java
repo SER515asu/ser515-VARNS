@@ -29,4 +29,10 @@ public class UserRoleTest {
         instance.setUserRole(UserRole.PRODUCT_OWNER);
         Assertions.assertEquals(instance.getUserRole(), UserRole.PRODUCT_OWNER, "User role should be PRODUCT_OWNER");
     }
+
+    @Test
+    public void testChangingRoleToScrumAdmin() {
+        instance.setUserRole(UserRole.SCRUM_ADMIN);
+        Assertions.assertEquals(instance.getUserRole(), UserRole.SCRUM_ADMIN, "User role should be SCRUM_ADMIN");
+    }
 }

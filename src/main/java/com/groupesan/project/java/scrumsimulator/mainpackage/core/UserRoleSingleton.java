@@ -11,7 +11,8 @@ public class UserRoleSingleton {
             Map.of(
                     "Scrum Master", UserRole.SCRUM_MASTER,
                     "Developer", UserRole.DEVELOPER,
-                    "Product Owner", UserRole.PRODUCT_OWNER
+                    "Product Owner", UserRole.PRODUCT_OWNER,
+                    "Scrum Administrator", UserRole.SCRUM_ADMIN
             )
     );
 
