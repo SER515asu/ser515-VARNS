@@ -15,20 +15,27 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class PotentialBlockersPane extends JFrame implements BaseComponent {
+public class PotentialBlockersPane extends JDialog implements BaseComponent {
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
 
-    public PotentialBlockersPane() {
+    private JFrame parent;
+
+    public PotentialBlockersPane(JFrame parent) {
+        this.parent = parent;
+
         this.init();
     }
 
     @Override
     public void init() {
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
         setTitle("Potential Blocker List");
-        setSize(600, 400);
 
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -124,12 +131,12 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+                boolean isSelected, boolean hasFocus, int row, int column) {
             setText((value == null) ? "Actions" : value.toString());
             return this;
         }
     }
-    
+
     private class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
         private String label;
@@ -144,7 +151,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value,
-                                                     boolean isSelected, int row, int column) {
+                boolean isSelected, int row, int column) {
             label = (value == null) ? "Actions" : value.toString();
             button.setText(label);
             isPushed = true;
@@ -154,7 +161,8 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerType blockerType = BlockerTypeStore.get().getBlockerType((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
+                BlockerType blockerType = BlockerTypeStore.get()
+                        .getBlockerType((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
                 JPopupMenu popupMenu = new JPopupMenu();
                 JMenuItem editItem = new JMenuItem("Edit");
                 JMenuItem deleteItem = new JMenuItem("Delete");
