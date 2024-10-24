@@ -2,6 +2,8 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumRole;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRole;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -121,7 +123,9 @@ public class DemoPane extends JFrame implements BaseComponent {
         roleComboBox.setPreferredSize(new Dimension(150, 25));
         roleComboBox.addActionListener(e -> {
             String selectedRole = (String) roleComboBox.getSelectedItem();
-            System.out.println("Selected role: " + selectedRole);
+            UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
+            UserRoleSingleton.getInstance().setUserRole(role);
+            System.out.println("Selected role: " + UserRoleSingleton.getInstance().getUserRole());
         });
 
         panel.add(roleLabel);
