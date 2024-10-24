@@ -2,7 +2,6 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumRole;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -90,7 +89,7 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
         sprintBacklogsButton.addActionListener(
-                e -> handleSprintBacklogs());
+                e -> handleButtonAction(new SprintBacklogPane(this)));
 
         new DemoPaneBuilder(myJpanel)
                 .addComponent(sprintsButton, 0, 0)
@@ -130,9 +129,9 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
         panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
-        panel.add(createButton("Assign Sprint Backlogs", this::handleSprintBacklogs));
-        panel.add(createButton("Update User Story Status", () -> new UpdateUserStoryPanel(this).setVisible(true)));
-        panel.add(createButton("Potential Blockers", () -> new PotentialBlockersPane(this).setVisible(true)));
+        panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+        panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
+        panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
 
         return panel;
     }
@@ -156,17 +155,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         JButton button = new JButton(text);
         button.addActionListener(e -> action.run());
         return button;
-    }
-
-    private void handleSprintBacklogs() {
-        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Please create and join a simulation before adding user stories to sprint backlog",
-                    "No Active Simulation",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            handleButtonAction(new SprintBacklogPane(this));
-        }
     }
 
     private void handleButtonAction(JDialog pane) {

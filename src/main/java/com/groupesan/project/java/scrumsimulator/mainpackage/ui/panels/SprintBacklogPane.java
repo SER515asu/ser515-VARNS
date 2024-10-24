@@ -46,6 +46,14 @@ public class SprintBacklogPane extends JDialog implements BaseComponent {
 
         setTitle("Assign Sprint Backlogs");
 
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Please create and join a simulation before adding user stories to sprint backlog",
+                    "No Active Simulation",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         JList<String> userStories = new JList<>();
         redrawUserStoriesList(userStories);
         JScrollPane userStoriesList = new JScrollPane(userStories);
@@ -213,6 +221,14 @@ public class SprintBacklogPane extends JDialog implements BaseComponent {
         userStoriesComponent.addListSelectionListener(
                 e -> selectedSprintUserStory = userStoriesComponent.getSelectedValue());
         userStoriesComponent.setListData(userStories);
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            return;
+        }
+        super.setVisible(b);
     }
 
 }
