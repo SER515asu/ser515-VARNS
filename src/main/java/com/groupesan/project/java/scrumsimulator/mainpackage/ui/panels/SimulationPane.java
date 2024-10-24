@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationListener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
@@ -46,7 +47,9 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
 
             @Override
             public void windowClosing(WindowEvent evt) {
-                simulationStateManager.stopSimulation();
+                if (simulationStateManager.getState() == SprintStateEnum.RUNNING) {
+                    simulationStateManager.stopSimulation();
+                }
                 dispose();
             }
         });

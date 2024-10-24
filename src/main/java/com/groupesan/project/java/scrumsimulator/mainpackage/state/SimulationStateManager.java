@@ -35,15 +35,22 @@ public class SimulationStateManager {
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
     private Simulation currentSimulation;
     private SprintStateEnum state;
-    private Integer day = 1;
-    private Integer sprint = 1;
+    private Integer day;
+    private Integer sprint;
     private Integer progressValue;
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
 
     private SimulationStateManager() {
-        this.state = SprintStateEnum.STOPPED;
+        init();
+    }
+
+    private void init() {
+        state = SprintStateEnum.STOPPED;
+        day = 1;
+        sprint = 1;
+        progressValue = 0;
     }
 
     /**
@@ -133,9 +140,7 @@ public class SimulationStateManager {
             return;
         }
 
-        if (state != SprintStateEnum.STOPPED) {
-            state = SprintStateEnum.STOPPED;
-        }
+        init();
 
         notifySimulationStopped();
     }
