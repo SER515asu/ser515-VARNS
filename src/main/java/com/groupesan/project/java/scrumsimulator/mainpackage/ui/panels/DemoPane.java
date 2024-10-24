@@ -1,9 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumRole;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRole;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -15,7 +12,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
-            simulationSwitchRoleButton, variantSimulationUIButton, sprintBacklogsButton, newSimulationButton;
+            variantSimulationUIButton, sprintBacklogsButton, newSimulationButton;
 
     public DemoPane() {
         this.init();
@@ -86,10 +83,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         joinSimulationButton.addActionListener(
                 e -> handleButtonAction(new SimulationUI(this)));
 
-        simulationSwitchRoleButton = new JButton("Switch Role");
-        simulationSwitchRoleButton.addActionListener(
-                e -> handleButtonAction(new SimulationSwitchRolePane(this)));
-
         variantSimulationUIButton = new JButton("Variant Simulation UI");
         variantSimulationUIButton.addActionListener(
                 e -> handleButtonAction(new VariantSimulationUI(this)));
@@ -108,9 +101,8 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(simulationButton, 6, 0)
                 .addComponent(modifySimulationButton, 7, 0)
                 .addComponent(joinSimulationButton, 8, 0)
-                .addComponent(simulationSwitchRoleButton, 9, 0)
-                .addComponent(variantSimulationUIButton, 10, 0)
-                .addComponent(sprintBacklogsButton, 11, 0)
+                .addComponent(variantSimulationUIButton, 9, 0)
+                .addComponent(sprintBacklogsButton, 10, 0)
                 .buildPanel();
 
         add(myJpanel);
@@ -155,7 +147,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
         panel.add(createButton("Join Simulation", () -> handleButtonAction(new SimulationUI(this))));
         panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
-        panel.add(createButton("Switch Role", () -> handleButtonAction(new SimulationSwitchRolePane(this))));
         panel.add(createButton("Variant Simulation UI", () -> handleButtonAction(new VariantSimulationUI(this))));
 
         return panel;
@@ -201,7 +192,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         simulationButton.setEnabled(enabled);
         modifySimulationButton.setEnabled(enabled);
         joinSimulationButton.setEnabled(enabled);
-        simulationSwitchRoleButton.setEnabled(enabled);
         variantSimulationUIButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
     }
