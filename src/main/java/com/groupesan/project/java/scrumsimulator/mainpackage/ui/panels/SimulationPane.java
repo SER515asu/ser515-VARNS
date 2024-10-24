@@ -77,7 +77,7 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
 
     @Override
     public void onSimulationStarted() {
-        JOptionPane.showMessageDialog(this, "Simulation started!");
+        System.out.println("Simulation started");
     }
 
     @Override
