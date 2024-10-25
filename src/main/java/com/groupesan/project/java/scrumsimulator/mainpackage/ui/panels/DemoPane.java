@@ -65,13 +65,14 @@ public class DemoPane extends JFrame implements BaseComponent {
     public void redrawUIBasedOnRole() {
         UserRole role = UserRoleSingleton.getInstance().getUserRole();
         bottomPanel.removeAll();
+        repaint();
         setupButtons();
 
         JPanel centerPanel = createCenterPanel(role);
         bottomPanel.add(centerPanel, BorderLayout.CENTER);
 
-        JPanel rightPanel = createRightPanel();
-        add(rightPanel, BorderLayout.EAST);
+        JPanel rightPanel = createRightPanel(role);
+        bottomPanel.add(rightPanel, BorderLayout.EAST);
 
         setupGlassPane();
         add(bottomPanel);
@@ -176,6 +177,9 @@ public class DemoPane extends JFrame implements BaseComponent {
                 panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
             }
             case SCRUM_ADMIN -> {
+                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+                // TODO: Spike Button Here
+                panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
                 panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
             }
         }
@@ -186,13 +190,25 @@ public class DemoPane extends JFrame implements BaseComponent {
         return panel;
     }
 
-    private JPanel createRightPanel() {
+    private JPanel createRightPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Simulation Controls"));
 
-        panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
-        panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
-        panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
+        switch (role) {
+            case SCRUM_MASTER -> {
+                panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
+                panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
+                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+            }
+            case DEVELOPER, PRODUCT_OWNER -> {}
+            case SCRUM_ADMIN -> {
+                panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
+                panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
+                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                // TODO: Add Show Simulation History Button here
+            }
+        }
+
         panel.add(createButton("Join Simulation", () -> handleButtonAction(new SimulationUI(this))));
         panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
         panel.add(createButton("Variant Simulation UI", () -> handleButtonAction(new VariantSimulationUI(this))));
