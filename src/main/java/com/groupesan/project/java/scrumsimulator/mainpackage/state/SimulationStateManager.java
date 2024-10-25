@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -142,6 +143,18 @@ public class SimulationStateManager {
         }
     }
 
+    private void notifyStoryStatusChange(UserStory userStory) {
+        for (SimulationListener listener : listeners) {
+            listener.onUserStoryStatusChange(userStory);
+        }
+    }
+
+    private void notifyUserStoryStatusUpdatePanel() {
+        for (SimulationListener listener : listeners) {
+            listener.onSprintCompletion();
+        }
+    }
+
 
     public void startSimulation() {
         if (currentSimulation == null) {
@@ -195,6 +208,7 @@ public class SimulationStateManager {
                 stopSimulation();
             } else {
                 day++;
+                setRandomUserStoryAsSelected();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
@@ -215,9 +229,29 @@ public class SimulationStateManager {
         }
     }
 
+    public void setRandomUserStoryAsSelected() {
+
+        List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
+        Random numb = new Random();
+
+        int randNumb = numb.nextInt(usList.size());
+
+
+        UserStory selectedStory = usList.get(randNumb);
+        System.out.println("Before Story selected: " + selectedStory.getName());
+        System.out.println("Before Story status: " + selectedStory.getUserStoryState());
+        selectedStory.changeState(new UserStorySelectedState(selectedStory));
+        System.out.println("Before Story selected: " + selectedStory.getName());
+        System.out.println("Before Story status: " + selectedStory.getUserStoryState());
+        notifyStoryStatusChange(selectedStory);
+
+
+    }
+
     private void detectInProgressUserStory() {
         notifyInProgressUserStory();
     }
+
 
     private void detectBlockers() {
         BlockerTypeStore blockerStore = BlockerTypeStore.get();

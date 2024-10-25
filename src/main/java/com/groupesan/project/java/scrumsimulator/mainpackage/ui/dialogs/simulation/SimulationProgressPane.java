@@ -13,6 +13,9 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 
 
 public class SimulationProgressPane {
@@ -66,17 +69,50 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        model.addRow(new Object[] { USText.getName(), "In Progress"});
+        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "Added");
+
+        model.addRow(new Object[] { USText.getName(), status});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
+    }
+
+    public void changeState(UserStory userStory) {
+        UserStoryState userStoryState = userStory.getUserStoryState();
+
+        if(userStoryState instanceof UserStorySelectedState) {
+                setStatus(userStory, "Selected");
+        }
     }
 
     /**
      * Set the user stories in place to yellow.
      */
     public void inProgressState() {
-        System.out.println("Setting colour");
-        userStoryContainer.getColumnModel().getColumn(1).setCellRenderer(new StatusCellRender());
+        userStoryContainer.getColumn("Status").setCellRenderer(
+                new DefaultTableCellRenderer() {
+                    @Override
+                    public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
+                        Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
+
+                        System.out.println("Progress detected: " + progress);
+
+                        if ("Added".equals(progress)) {
+                            userStoryCell.setForeground(Color.ORANGE);
+                        }
+                        else if ("Selected".equals(progress)) {
+                            userStoryCell.setForeground(Color.BLUE);
+                        }
+                        else if ("Completed".equals(progress)) {
+                            userStoryCell.setForeground(Color.GREEN);
+                        } else {
+                            userStoryCell.setForeground(Color.BLACK);
+                        }
+
+                        return userStoryCell;
+                    }
+                }
+         );
+        userStoryContainer.repaint();
     }
 
 
@@ -91,6 +127,21 @@ public class SimulationProgressPane {
         userStoryContainer.repaint();
     }
 
+    private void setStatus(UserStory US, String status) {
+
+        int rowCount = model.getRowCount();
+        int statusColumn = 1;
+        String selectedUS = US.getName();
+
+        for(int i = 0; i < rowCount; i++){
+            String currentUS = (String) model.getValueAt(i, statusColumn);
+
+            if(currentUS.equals(selectedUS)) {
+                model.setValueAt(status, i, statusColumn);
+            }
+        }
+
+    }
 
 
     public boolean checkResolved() {
@@ -116,6 +167,50 @@ public class SimulationProgressPane {
         }
     }
 
+    // TODO - I want to keep this because it can refactored later to be reused to display blockers within the story
+//    public void addBlocker(BlockerObject blocker) {
+//        JPanel blockerTextPanel = new JPanel(new BorderLayout());
+//        JLabel blockerText = new JLabel(blocker.getType().getName());
+//        JCheckBox checkBoxButton = new JCheckBox();
+//
+//        blockerCheckBoxMap.put(blocker, checkBoxButton);
+//
+//        blockerTextPanel.add(blockerText, BorderLayout.WEST);
+//        blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
+//
+//        SwingUtilities.invokeLater(() -> {
+//            blockerContainer.add(blockerTextPanel);
+//            blockerContainer.revalidate();
+//            blockerContainer.repaint();
+//        });
+//    }
+
+    //    public void addBlockers(List<BlockerObject> blockers) {
+//        for (BlockerObject blocker : blockers) {
+//            addBlocker(blocker);
+//        }
+//    }
+//
+//    public void removeBlocker(BlockerObject blocker) {
+//        JCheckBox checkBox = blockerCheckBoxMap.get(blocker);
+//        if (checkBox != null) {
+//            JPanel parentPanel = (JPanel) checkBox.getParent();
+//            blockerCheckBoxMap.remove(blocker);
+//
+//            SwingUtilities.invokeLater(() -> {
+//                blockerContainer.remove(parentPanel);
+//                blockerContainer.revalidate();
+//                blockerContainer.repaint();
+//            });
+//        }
+//    }
+//
+//    public void removeBlockers(List<BlockerObject> blockers) {
+//        for (BlockerObject blocker : blockers) {
+//            removeBlocker(blocker);
+//        }
+//    }
+
     public JPanel getSimPan() {
         return simPan;
     }
@@ -136,23 +231,3 @@ public class SimulationProgressPane {
     }
 }
 
-class StatusCellRender extends DefaultTableCellRenderer {
-    /**
-     * Class created to set the status of each individual user story and to give them a colour. - Suparno
-     */
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
-
-        if ("In Progress".equals(progress)) {
-            userStoryCell.setForeground(Color.YELLOW);
-        }
-        if ("Completed".equals(progress)) {
-            userStoryCell.setForeground(Color.GREEN);
-        } else {
-            userStoryCell.setForeground(Color.BLACK);
-        }
-
-        return userStoryCell;
-    }
-}

@@ -61,9 +61,16 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
         progressPane.updateProgress(progressValue, day, sprint, sprintDuration);
     }
 
+    @Override
     public void onInProgressUserStory(){
         progressPane.inProgressState();
     }
+
+    @Override
+    public void onUserStoryStatusChange(UserStory userStory) {
+        progressPane.changeState(userStory);
+    }
+
 
     @Override
     public void onBlockerDetected(BlockerObject blocker) {
@@ -76,6 +83,10 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
     public void onBlockerResolved(BlockerObject blocker) {
         // This will need to be refactored later. - Suparno
         //progressPane.removeBlocker(blocker);
+    }
+
+    public void onChangeStoryStatus(UserStory userStory) {
+        progressPane.changeState(userStory);
     }
 
     @Override

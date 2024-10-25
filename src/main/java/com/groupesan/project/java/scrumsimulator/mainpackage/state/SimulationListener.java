@@ -15,4 +15,5 @@ public interface SimulationListener {
     void onSimulationStarted();
     void onSprintCompletion();
     void onInProgressUserStory();
+    void onUserStoryStatusChange(UserStory userStory);
 }
