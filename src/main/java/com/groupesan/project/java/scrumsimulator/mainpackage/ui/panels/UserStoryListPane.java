@@ -12,6 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
@@ -105,12 +108,15 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
                 new CustomConstraints(
                         0, 0, GridBagConstraints.WEST, 1.0, 0.8, GridBagConstraints.HORIZONTAL));
 
-        JButton newUserStory = new JButton("New User Story");
-        newUserStory.addActionListener(handleNewUserStoryAction());
-        myJpanel.add(
-                newUserStory,
-                new CustomConstraints(
-                        0, 1, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+        if (UserRolePermissions.actionAllowed(UserRoleSingleton.getInstance().getUserRole(), UserAction.MANAGE_USER_STORES)) {
+            JButton newUserStory = new JButton("New User Story");
+            newUserStory.addActionListener(handleNewUserStoryAction());
+            myJpanel.add(
+                    newUserStory,
+                    new CustomConstraints(
+                            0, 1, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+        }
 
         add(myJpanel);
     }
