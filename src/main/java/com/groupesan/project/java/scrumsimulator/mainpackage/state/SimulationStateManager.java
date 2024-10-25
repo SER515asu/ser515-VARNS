@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.*;
 
@@ -40,6 +42,8 @@ public class SimulationStateManager {
     private Integer day;
     private Integer sprint;
     private Integer progressValue;
+
+    private SecureRandom rand = new SecureRandom();
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -231,10 +235,12 @@ public class SimulationStateManager {
 
     public void setRandomStates() {
 
-        // TODO - Figure out a random or linear way of setting the status of the user story. 
+        // TODO - Figure out a random or linear way of setting the status of the user story.
+
+
         List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
-        Random numb = new Random();
-        int randNumb = numb.nextInt(usList.size());
+
+        int randNumb =  rand.nextInt(usList.size());
 
 
         UserStory selectedStory = usList.get(randNumb);
@@ -246,7 +252,6 @@ public class SimulationStateManager {
             selectedStory.changeState(new UserStoryCompletedState(selectedStory));
             notifyStoryStatusChange(selectedStory);
         } else {
-            selectedStory.changeState(new UserStoryCompletedState(selectedStory));
             notifyStoryStatusChange(selectedStory);
         }
     }

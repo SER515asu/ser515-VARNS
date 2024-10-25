@@ -24,11 +24,10 @@ public class SimulationProgressPane {
 
     private JScrollPane userStoryScrollPane;
 
-    private DefaultTableModel model;
-    private static JTable userStoryContainer;
+    private  DefaultTableModel model = null;
+    private JTable userStoryContainer;
 
 
-    private ArrayList<String> userStoryList;
 
 
 
