@@ -36,15 +36,22 @@ public class SimulationStateManager {
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
     private Simulation currentSimulation;
     private SprintStateEnum state;
-    private Integer day = 1;
-    private Integer sprint = 1;
+    private Integer day;
+    private Integer sprint;
     private Integer progressValue;
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
 
     private SimulationStateManager() {
-        this.state = SprintStateEnum.STOPPED;
+        init();
+    }
+
+    private void init() {
+        state = SprintStateEnum.STOPPED;
+        day = 1;
+        sprint = 1;
+        progressValue = 0;
     }
 
     /**
@@ -123,6 +130,12 @@ public class SimulationStateManager {
         }
     }
 
+    private void notifyInProgressUserStory() {
+        for (SimulationListener listener : listeners) {
+            listener.onInProgressUserStory();
+        }
+    }
+
     private void notifyResetUserStoryPanel() {
         for (SimulationListener listener : listeners) {
             listener.onSprintCompletion();
@@ -147,9 +160,7 @@ public class SimulationStateManager {
             return;
         }
 
-        if (state != SprintStateEnum.STOPPED) {
-            state = SprintStateEnum.STOPPED;
-        }
+        init();
 
         notifySimulationStopped();
     }
@@ -160,7 +171,7 @@ public class SimulationStateManager {
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                    if (state != SprintStateEnum.RUNNING) {
+                    if (state == SprintStateEnum.STOPPED) {
                         return;
                     }
                 }
@@ -168,8 +179,8 @@ public class SimulationStateManager {
                 e.printStackTrace();
             }
 
-            if (state == SprintStateEnum.STOPPED) {
-                return;
+            if (state == SprintStateEnum.PAUSED) {
+                continue;
             }
 
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
@@ -177,6 +188,8 @@ public class SimulationStateManager {
 
             resolveBlockers();
             detectBlockers();
+            detectInProgressUserStory();
+
 
             if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
                 stopSimulation();
@@ -200,6 +213,10 @@ public class SimulationStateManager {
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
             notifyUserStory(userStory);
         }
+    }
+
+    private void detectInProgressUserStory() {
+        notifyInProgressUserStory();
     }
 
     private void detectBlockers() {

@@ -124,7 +124,6 @@ public class SimulationUI extends JDialog implements BaseComponent {
                 new JLabel(
                         "Please select an active Simulation, then a role to join the Simulation"));
         setContentPane(panel);
-        setVisible(true); // Make the UI visible first
         selectSimulation(); // Then start the simulation selection process
     }
 }

@@ -11,6 +11,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationListener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
@@ -47,7 +48,9 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
 
             @Override
             public void windowClosing(WindowEvent evt) {
-                simulationStateManager.stopSimulation();
+                if (simulationStateManager.getState() == SprintStateEnum.RUNNING) {
+                    simulationStateManager.stopSimulation();
+                }
                 dispose();
             }
         });
@@ -56,6 +59,10 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
     @Override
     public void onProgressUpdate(int progressValue, int day, int sprint, int sprintDuration) {
         progressPane.updateProgress(progressValue, day, sprint, sprintDuration);
+    }
+
+    public void onInProgressUserStory(){
+        progressPane.inProgressState();
     }
 
     @Override
@@ -83,7 +90,7 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
 
     @Override
     public void onSimulationStarted() {
-        JOptionPane.showMessageDialog(this, "Simulation started!");
+        System.out.println("Simulation started");
     }
 
     @Override
