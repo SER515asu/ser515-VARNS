@@ -165,23 +165,23 @@ public class DemoPane extends JFrame implements BaseComponent {
         panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
 
         switch (role) {
-            case SCRUM_MASTER -> {
+            case SCRUM_MASTER:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
-            }
-            case DEVELOPER -> {
+                break;
+            case DEVELOPER:
                 panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
                 // TODO: Spike Button Here
-            }
-            case PRODUCT_OWNER -> {
+                break;
+            case PRODUCT_OWNER:
                 panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
-            }
-            case SCRUM_ADMIN -> {
+                break;
+            case SCRUM_ADMIN:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
                 panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
                 panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
-            }
+                break;
         }
 
         // TODO: Potentially remove below buttons
@@ -194,19 +194,23 @@ public class DemoPane extends JFrame implements BaseComponent {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Simulation Controls"));
 
+        // Switch case syntax is not ideal, but it's easier than fixing Checkstyle plugin at this time
         switch (role) {
-            case SCRUM_MASTER -> {
+            case SCRUM_MASTER:
                 panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
                 panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
                 panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
-            }
-            case DEVELOPER, PRODUCT_OWNER -> {}
-            case SCRUM_ADMIN -> {
+                break;
+            case DEVELOPER:
+                break;
+            case PRODUCT_OWNER:
+                break;
+            case SCRUM_ADMIN:
                 panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
                 panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
                 panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
                 // TODO: Add Show Simulation History Button here
-            }
+                break;
         }
 
         panel.add(createButton("Join Simulation", () -> handleButtonAction(new SimulationUI(this))));
