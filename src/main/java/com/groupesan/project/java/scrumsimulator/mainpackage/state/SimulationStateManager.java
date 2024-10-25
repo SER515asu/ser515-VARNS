@@ -208,7 +208,7 @@ public class SimulationStateManager {
                 stopSimulation();
             } else {
                 day++;
-                setRandomUserStoryAsSelected();
+                setRandomStates();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
@@ -229,25 +229,31 @@ public class SimulationStateManager {
         }
     }
 
-    public void setRandomUserStoryAsSelected() {
+    public void setRandomStates() {
 
+        // TODO - Figure out a random or linear way of setting the status of the user story. 
         List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
         Random numb = new Random();
-
         int randNumb = numb.nextInt(usList.size());
 
 
         UserStory selectedStory = usList.get(randNumb);
-        System.out.println("Before Story selected: " + selectedStory.getName());
-        System.out.println("Before Story status: " + selectedStory.getUserStoryState());
-        selectedStory.changeState(new UserStorySelectedState(selectedStory));
-        System.out.println("Before Story selected: " + selectedStory.getName());
-        System.out.println("Before Story status: " + selectedStory.getUserStoryState());
-        notifyStoryStatusChange(selectedStory);
 
-
+        if(selectedStory.getUserStoryState() instanceof UserStoryAddedState) {
+            selectedStory.changeState(new UserStorySelectedState(selectedStory));
+            notifyStoryStatusChange(selectedStory);
+        } else if (selectedStory.getUserStoryState() instanceof UserStorySelectedState) {
+            selectedStory.changeState(new UserStoryCompletedState(selectedStory));
+            notifyStoryStatusChange(selectedStory);
+        } else {
+            selectedStory.changeState(new UserStoryCompletedState(selectedStory));
+            notifyStoryStatusChange(selectedStory);
+        }
     }
 
+    /**
+     * Detect the state of all user stories as the simulation is in progress.
+     */
     private void detectInProgressUserStory() {
         notifyInProgressUserStory();
     }

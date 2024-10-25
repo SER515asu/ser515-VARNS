@@ -11,11 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 
 
 public class SimulationProgressPane {
@@ -79,9 +76,16 @@ public class SimulationProgressPane {
     public void changeState(UserStory userStory) {
         UserStoryState userStoryState = userStory.getUserStoryState();
 
+        System.out.println(userStory.getName());
+        System.out.println(userStoryState instanceof UserStorySelectedState);
+
         if(userStoryState instanceof UserStorySelectedState) {
                 setStatus(userStory, "Selected");
         }
+        else if(userStoryState instanceof UserStoryCompletedState) {
+            setStatus(userStory, "Completed");
+        }
+        userStoryContainer.repaint();
     }
 
     /**
@@ -93,8 +97,6 @@ public class SimulationProgressPane {
                     @Override
                     public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
                         Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
-
-                        System.out.println("Progress detected: " + progress);
 
                         if ("Added".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
@@ -130,14 +132,20 @@ public class SimulationProgressPane {
     private void setStatus(UserStory US, String status) {
 
         int rowCount = model.getRowCount();
+        int userStoryRow = 0;
         int statusColumn = 1;
         String selectedUS = US.getName();
 
-        for(int i = 0; i < rowCount; i++){
-            String currentUS = (String) model.getValueAt(i, statusColumn);
+        System.out.println("Story selected: " + selectedUS);
 
+        for(int i = 0; i < rowCount; i++){
+            String currentUS = (String) model.getValueAt(i, userStoryRow);
+            System.out.println("Story selected: " + selectedUS);
+            System.out.println("Current user story: " + currentUS);
             if(currentUS.equals(selectedUS)) {
                 model.setValueAt(status, i, statusColumn);
+                System.out.println("Story found");
+                break;
             }
         }
 
