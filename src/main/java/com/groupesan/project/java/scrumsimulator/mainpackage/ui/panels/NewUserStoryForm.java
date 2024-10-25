@@ -5,25 +5,19 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFacto
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class NewUserStoryForm extends JFrame implements BaseComponent {
+public class NewUserStoryForm extends JDialog implements BaseComponent {
 
         Double[] pointsList = { 1.0, 2.0, 3.0, 5.0, 8.0, 11.0, 19.0, 30.0, 49.0 };
         Integer[] businessValuePointsList = { 1, 2, 3, 5, 8, 13, 20, 40, 100 };
+        private final JDialog parent;
 
-        public NewUserStoryForm() {
+        public NewUserStoryForm(JDialog parent) {
+                this.parent = parent;
                 this.init();
         }
 
@@ -36,6 +30,8 @@ public class NewUserStoryForm extends JFrame implements BaseComponent {
                 setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 setTitle("New User Story");
                 setSize(400, 300);
+                setLocationRelativeTo(parent);
+                setModalityType(ModalityType.DOCUMENT_MODAL);
 
                 nameField = new JTextField();
                 descArea = new JTextArea();

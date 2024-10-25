@@ -5,6 +5,10 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
@@ -14,9 +18,30 @@ public class DemoPane extends JFrame implements BaseComponent {
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
             variantSimulationUIButton, sprintBacklogsButton, newSimulationButton;
 
+    private Map<UserRole, Set<JButton>> roleToButton;
+    private JPanel bottomPanel;
+
     public DemoPane() {
         this.init();
         player.doRegister();
+        roleToButton = new HashMap<>(Map.of(
+                UserRole.SCRUM_MASTER, new HashSet<>(Set.of(
+                        newSimulationButton,
+                        sprintBacklogsButton
+                        // spike activities button
+                )),
+                UserRole.DEVELOPER, new HashSet<>(Set.of(
+                        userStoriesButton
+                        // spike activities button
+                )),
+                UserRole.PRODUCT_OWNER, new HashSet<>(Set.of(
+                        userStoriesButton
+                )),
+                UserRole.SCRUM_ADMIN, new HashSet<>(Set.of(
+                        potentialBlockersButton,
+                        startSimulationButton
+                ))
+        ));
     }
 
     public void init() {
@@ -33,20 +58,27 @@ public class DemoPane extends JFrame implements BaseComponent {
         JPanel topPanel = createTopPanel();
         add(topPanel, BorderLayout.NORTH);
 
+        bottomPanel = new JPanel(new BorderLayout(10, 10));
+        redrawUIBasedOnRole();
+    }
+
+    public void redrawUIBasedOnRole() {
+        UserRole role = UserRoleSingleton.getInstance().getUserRole();
+        bottomPanel.removeAll();
         setupButtons();
 
-        JPanel centerPanel = createCenterPanel();
-        add(centerPanel, BorderLayout.CENTER);
+        JPanel centerPanel = createCenterPanel(role);
+        bottomPanel.add(centerPanel, BorderLayout.CENTER);
 
         JPanel rightPanel = createRightPanel();
         add(rightPanel, BorderLayout.EAST);
 
         setupGlassPane();
+        add(bottomPanel);
         StylePane.applyStyle(this);
     }
 
     private void setupButtons() {
-
         newSimulationButton = new JButton("New Simulation");
         newSimulationButton.addActionListener(
                 e -> handleButtonAction(new NewSimulationPane(this)));
@@ -111,13 +143,15 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
-        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Master", "Developer", "Product Owner" });
+        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Master", "Developer", "Product Owner", "Scrum Administrator"});
         roleComboBox.setPreferredSize(new Dimension(150, 25));
+        UserRoleSingleton.getInstance().setUserRole(UserRole.SCRUM_MASTER);
         roleComboBox.addActionListener(e -> {
             String selectedRole = (String) roleComboBox.getSelectedItem();
             UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
             UserRoleSingleton.getInstance().setUserRole(role);
             System.out.println("Selected role: " + UserRoleSingleton.getInstance().getUserRole());
+            redrawUIBasedOnRole();
         });
 
         panel.add(roleLabel);
@@ -125,16 +159,30 @@ public class DemoPane extends JFrame implements BaseComponent {
         return panel;
     }
 
-    private JPanel createCenterPanel() {
+    private JPanel createCenterPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
 
-        panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
-        panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
-        panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
-        panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
-        panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
+        switch (role) {
+            case SCRUM_MASTER -> {
+                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+                // TODO: Spike Button Here
+            }
+            case DEVELOPER -> {
+                panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
+                // TODO: Spike Button Here
+            }
+            case PRODUCT_OWNER -> {
+                panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
+            }
+            case SCRUM_ADMIN -> {
+                panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
+            }
+        }
 
+        // TODO: Potentially remove below buttons
+        panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
+        panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
         return panel;
     }
 

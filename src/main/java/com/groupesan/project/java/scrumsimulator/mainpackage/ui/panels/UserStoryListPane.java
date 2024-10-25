@@ -62,7 +62,7 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
 
     private ActionListener handleNewUserStoryAction() {
         return e -> {
-            NewUserStoryForm form = new NewUserStoryForm();
+            NewUserStoryForm form = new NewUserStoryForm(this);
             form.setVisible(true);
 
             form.addWindowListener(
