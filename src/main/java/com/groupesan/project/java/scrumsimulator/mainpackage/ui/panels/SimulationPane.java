@@ -79,7 +79,7 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
             String selectedRole = (String) roleComboBox.getSelectedItem();
             UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
             UserRoleSingleton.getInstance().setUserRole(role);
-            ((DemoPane)parent).roleComboBox.setSelectedItem(selectedRole);
+            ((DemoPane)parent).updateRoleSelection(selectedRole);
         });
         
         panel.add(roleLabel);

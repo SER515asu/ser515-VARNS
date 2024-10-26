@@ -143,7 +143,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         add(myJpanel);
     }
 
-    public JComboBox<String> roleComboBox;
+    private JComboBox<String> roleComboBox;
 
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -162,6 +162,10 @@ public class DemoPane extends JFrame implements BaseComponent {
         panel.add(roleLabel);
         panel.add(roleComboBox);
         return panel;
+    }
+
+    public void updateRoleSelection(String selectedRole) {
+        roleComboBox.setSelectedItem(selectedRole);
     }
 
     private JPanel createCenterPanel(UserRole role) {
