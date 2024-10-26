@@ -88,9 +88,9 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
 
         this.deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> {
-            BlockerSolution solution = BlockerSolutionStore.getBlockerSolution(solutionName);
+            BlockerSolution solution = BlockerSolutionStore.getInstance().getBlockerSolution(solutionName);
             if (solution != null) {
-                BlockerSolutionStore.removeBlockerSolution(solution);
+                BlockerSolutionStore.getInstance().removeBlockerSolution(solution);
             }
             dispose();
         });
@@ -168,10 +168,10 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
                 finalProbability = Integer.parseInt(probabilityChanceField.getText());
             }
 
-            BlockerSolution solution = BlockerSolutionStore.getBlockerSolution(solutionName);
+            BlockerSolution solution = BlockerSolutionStore.getInstance().getBlockerSolution(solutionName);
             if (solution == null) {
                 solution = new BlockerSolution(nameField.getText(), finalProbability);
-                BlockerSolutionStore.addBlockerSolution(solution);
+                BlockerSolutionStore.getInstance().addBlockerSolution(solution);
             } else {
                 solution.setName(nameField.getText());
                 solution.setChance(finalProbability);

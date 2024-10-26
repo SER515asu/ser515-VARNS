@@ -106,7 +106,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
             i--;
         }
 
-        BlockerSolutionStore.getBlockerSolutions().forEach(solution -> {
+        BlockerSolutionStore.getInstance().getBlockerSolutions().forEach(solution -> {
             tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" });
         });
     }
@@ -169,7 +169,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerSolution blockerSolution = BlockerSolutionStore
+                BlockerSolution blockerSolution = BlockerSolutionStore.getInstance()
                         .getBlockerSolution((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
                 JPopupMenu popupMenu = new JPopupMenu();
                 JMenuItem editItem = new JMenuItem("Edit");
@@ -179,13 +179,13 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
                 editItem.addActionListener(e -> openEditForm(blockerSolution.getName(),
                         blockerSolution.getChance()));
                 deleteItem.addActionListener(e -> {
-                    BlockerSolutionStore.removeBlockerSolution(blockerSolution);
+                    BlockerSolutionStore.getInstance().removeBlockerSolution(blockerSolution);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
                     BlockerSolution duplicate = new BlockerSolution(blockerSolution.getName() + " - Copy",
                             blockerSolution.getChance());
-                    BlockerSolutionStore.addBlockerSolution(duplicate);
+                    BlockerSolutionStore.getInstance().addBlockerSolution(duplicate);
                     refreshTableData();
                 });
 
