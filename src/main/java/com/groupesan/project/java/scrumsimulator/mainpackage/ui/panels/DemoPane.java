@@ -16,7 +16,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
-            variantSimulationUIButton, sprintBacklogsButton, newSimulationButton;
+            variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
 
     private Map<UserRole, Set<JButton>> roleToButton;
     private JPanel bottomPanel;
@@ -97,6 +97,10 @@ public class DemoPane extends JFrame implements BaseComponent {
         potentialBlockersButton.addActionListener(
                 e -> handleButtonAction(new PotentialBlockersPane(this)));
 
+        potentialBlockerSolutionsButton = new JButton("Potential Blocker Solutions");
+        potentialBlockerSolutionsButton.addActionListener(
+                e -> handleButtonAction(new PotentialBlockerSolutionsPane(this)));
+
         updateStoryStatusButton = new JButton("Update User Story Status");
         updateStoryStatusButton.addActionListener(
                 e -> handleButtonAction(new UpdateUserStoryPanel(this)));
@@ -127,12 +131,13 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(userStoriesButton, 2, 0)
                 .addComponent(startSimulationButton, 3, 0)
                 .addComponent(potentialBlockersButton, 4, 0)
-                .addComponent(updateStoryStatusButton, 5, 0)
-                .addComponent(simulationButton, 6, 0)
-                .addComponent(modifySimulationButton, 7, 0)
-                .addComponent(joinSimulationButton, 8, 0)
-                .addComponent(variantSimulationUIButton, 9, 0)
-                .addComponent(sprintBacklogsButton, 10, 0)
+                .addComponent(potentialBlockerSolutionsButton, 5, 0)
+                .addComponent(updateStoryStatusButton, 6, 0)
+                .addComponent(simulationButton, 7, 0)
+                .addComponent(modifySimulationButton, 8, 0)
+                .addComponent(joinSimulationButton, 9, 0)
+                .addComponent(variantSimulationUIButton, 10, 0)
+                .addComponent(sprintBacklogsButton, 11, 0)
                 .buildPanel();
 
         add(myJpanel);
@@ -160,38 +165,38 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createCenterPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
-
+    
         switch (role) {
             case SCRUM_MASTER:
-                panel.add(
-                        createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
                 break;
             case DEVELOPER:
-                panel.add(createButton("Product Backlog(User Stories)",
+                panel.add(createButton("Product Backlog (User Stories)",
                         () -> handleButtonAction(new UserStoryListPane(this))));
                 // TODO: Spike Button Here
                 break;
             case PRODUCT_OWNER:
-                panel.add(createButton("Product Backlog(User Stories)",
+                panel.add(createButton("Product Backlog (User Stories)",
                         () -> handleButtonAction(new UserStoryListPane(this))));
                 break;
             case SCRUM_ADMIN:
-                panel.add(
-                        createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
-                panel.add(createButton("Product Backlog(User Stories)",
+                panel.add(createButton("Product Backlog (User Stories)",
                         () -> handleButtonAction(new UserStoryListPane(this))));
-                panel.add(
-                        createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
+                panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
+                panel.add(createButton("Potential Blocker Solutions",
+                        () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
                 break;
         }
-
+    
         // TODO: Potentially remove below buttons
-        panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
+        // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
         return panel;
     }
+    
 
     private JPanel createRightPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -272,6 +277,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         userStoriesButton.setEnabled(enabled);
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
+        potentialBlockerSolutionsButton.setEnabled(enabled);
         updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
         modifySimulationButton.setEnabled(enabled);
