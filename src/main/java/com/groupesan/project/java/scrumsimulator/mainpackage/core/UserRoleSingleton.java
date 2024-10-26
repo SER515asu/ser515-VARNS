@@ -51,7 +51,7 @@ public class UserRoleSingleton {
             case PRODUCT_OWNER:
                 return "Product Owner";
             default:
-                return "Developer"; // Default case
+                return "Developer";
         }
     }
 }
