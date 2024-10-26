@@ -88,7 +88,7 @@ public class ModifySimulationPane extends JDialog implements BaseComponent {
 
         JButton submitButton = new JButton("Create Simulation");
         submitButton.addActionListener(e -> {
-            String simId = UUID.randomUUID().toString();
+            UUID simId = UUID.randomUUID();
             String simName = simulationNameField.getText();
             Integer sprintLengthCycle = 0;
             try {
@@ -117,7 +117,7 @@ public class ModifySimulationPane extends JDialog implements BaseComponent {
             SimulationSingleton.getInstance().createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
 
             // Prepare a JTextField to display the Simulation ID
-            JTextField simIdField = new JTextField(simId);
+            JTextField simIdField = new JTextField(simId.toString());
             simIdField.setEditable(false);
             Object[] message = {
                     "A new simulation has been generated.\nSimulation ID:", simIdField

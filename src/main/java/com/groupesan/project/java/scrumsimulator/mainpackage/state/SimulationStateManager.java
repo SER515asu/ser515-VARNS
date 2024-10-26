@@ -1,28 +1,16 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+
+import static com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton.saveSimulationDetails;
 
 /**
  * SimulationStateManager manages the state of a simulation, including whether
@@ -36,7 +24,6 @@ public class SimulationStateManager {
         PAUSED
     }
 
-    private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
     private Simulation currentSimulation;
     private SprintStateEnum state;
     private Integer day;
@@ -147,7 +134,7 @@ public class SimulationStateManager {
         init();
 
         notifySimulationStopped();
-        saveSprintResults();
+        saveSimulationDetails();
     }
 
     private void runSimulation() {
@@ -185,24 +172,6 @@ public class SimulationStateManager {
         }
     }
 
-    private void saveSprintResults() {
-        String fileName = "src/sprint_results.txt";
-        try (OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(fileName, true), StandardCharsets.UTF_8);
-        BufferedWriter bw = new BufferedWriter(fw);
-        PrintWriter out = new PrintWriter(bw)) {
-            out.println("Sprint " + sprint + " Results:");
-            out.println("Day: " + day);
-            out.println("Progress: " + progressValue + "%");
-            out.println("Blockers encountered:");
-            for (String blocker : SimulationProgressPane.getBlockers()) {
-                out.println("- " + blocker);
-            }
-            out.println("-------------------");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error writing sprint results to file");
-        }
-    }
-
     private void detectBlockers() {
         BlockerTypeStore blockerStore = BlockerTypeStore.get();
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
@@ -225,62 +194,6 @@ public class SimulationStateManager {
                     notifyBlockerResolved(blocker);
                 }
             }
-        }
-    }
-
-    /**
-     * Saves the details of a new simulation to a JSON file.
-     *
-     * @param simId           The ID of the simulation.
-     * @param simName         The name of the simulation.
-     * @param numberOfSprints The number of sprints in the simulation.
-     * @param sprintDuration  The duration of each sprint in the simulation.
-     */
-
-    public static void saveNewSimulationDetails(String simId, String simName, Integer numberOfSprints,
-            Integer sprintDuration) {
-        JSONObject simulationData = getSimulationData();
-        if (simulationData == null) {
-            simulationData = new JSONObject();
-        }
-
-        JSONObject newSimulation = new JSONObject();
-        newSimulation.put("ID", simId);
-        newSimulation.put("Name", simName);
-        newSimulation.put("Status", "New");
-        newSimulation.put("SprintDuration", sprintDuration);
-        newSimulation.put("NumberOfSprints", numberOfSprints);
-        newSimulation.put("sprintDuration", sprintDuration);
-        newSimulation.put("Sprints", new JSONArray());
-        newSimulation.put("Events", new JSONArray());
-        newSimulation.put("Users", new JSONArray());
-
-        JSONArray simulations = simulationData.optJSONArray("Simulations");
-        if (simulations == null) {
-            simulations = new JSONArray();
-            simulationData.put("Simulations", simulations);
-        }
-        simulations.put(newSimulation);
-
-        updateSimulationData(simulationData);
-    }
-
-    private static JSONObject getSimulationData() {
-        try (FileInputStream fis = new FileInputStream(JSON_FILE_PATH)) {
-            JSONTokener tokener = new JSONTokener(fis);
-            return new JSONObject(tokener);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error reading from simulation.JSON");
-            return null;
-        }
-    }
-
-    private static void updateSimulationData(JSONObject updatedData) {
-        try (OutputStreamWriter writer = new OutputStreamWriter(
-                new FileOutputStream(JSON_FILE_PATH), StandardCharsets.UTF_8)) {
-            writer.write(updatedData.toString(4));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error writing to simulation.JSON");
         }
     }
 
