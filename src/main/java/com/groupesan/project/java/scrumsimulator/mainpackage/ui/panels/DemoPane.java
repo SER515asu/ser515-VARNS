@@ -28,20 +28,17 @@ public class DemoPane extends JFrame implements BaseComponent {
                 UserRole.SCRUM_MASTER, new HashSet<>(Set.of(
                         newSimulationButton,
                         sprintBacklogsButton
-                        // spike activities button
+                // spike activities button
                 )),
                 UserRole.DEVELOPER, new HashSet<>(Set.of(
                         userStoriesButton
-                        // spike activities button
+                // spike activities button
                 )),
                 UserRole.PRODUCT_OWNER, new HashSet<>(Set.of(
-                        userStoriesButton
-                )),
+                        userStoriesButton)),
                 UserRole.SCRUM_ADMIN, new HashSet<>(Set.of(
                         potentialBlockersButton,
-                        startSimulationButton
-                ))
-        ));
+                        startSimulationButton))));
     }
 
     public void init() {
@@ -166,21 +163,27 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         switch (role) {
             case SCRUM_MASTER:
-                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+                panel.add(
+                        createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
                 break;
             case DEVELOPER:
-                panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
+                panel.add(createButton("Product Backlog(User Stories)",
+                        () -> handleButtonAction(new UserStoryListPane(this))));
                 // TODO: Spike Button Here
                 break;
             case PRODUCT_OWNER:
-                panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
+                panel.add(createButton("Product Backlog(User Stories)",
+                        () -> handleButtonAction(new UserStoryListPane(this))));
                 break;
             case SCRUM_ADMIN:
-                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+                panel.add(
+                        createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
-                panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
-                panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
+                panel.add(createButton("Product Backlog(User Stories)",
+                        () -> handleButtonAction(new UserStoryListPane(this))));
+                panel.add(
+                        createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
                 break;
         }
 
@@ -194,7 +197,8 @@ public class DemoPane extends JFrame implements BaseComponent {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Simulation Controls"));
 
-        // Switch case syntax is not ideal, but it's easier than fixing Checkstyle plugin at this time
+        // Switch case syntax is not ideal, but it's easier than fixing Checkstyle
+        // plugin at this time
         switch (role) {
             case SCRUM_MASTER:
                 panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
@@ -226,12 +230,18 @@ public class DemoPane extends JFrame implements BaseComponent {
         return button;
     }
 
-    private void handleButtonAction(JDialog pane) {
+    private void handleButtonAction(JFrame pane) {
         setMenuButtonsEnabled(false);
         setGlassPaneVisible(true);
         pane.setVisible(true);
-        setMenuButtonsEnabled(true);
-        setGlassPaneVisible(false);
+        pane.setAlwaysOnTop(true);
+        
+        pane.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                setMenuButtonsEnabled(true);
+                setGlassPaneVisible(false);
+            }
+        });
     }
 
     private void setupGlassPane() {
@@ -242,6 +252,12 @@ public class DemoPane extends JFrame implements BaseComponent {
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
+
+        glassPane.addMouseListener(new java.awt.event.MouseAdapter() {
+        });
+        glassPane.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        });
+
         glassPane.setOpaque(false);
         setGlassPane(glassPane);
     }

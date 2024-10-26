@@ -43,6 +43,7 @@ public class NewSprintForm extends JFrame implements BaseComponent {
     public void init() {
         setTitle("New Sprint");
         setSize(400, 300);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         GridBagLayout myGridbagLayout = new GridBagLayout();
         JPanel myJpanel = new JPanel();

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,7 +20,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
-public class UserStoryListPane extends JDialog implements BaseComponent {
+public class UserStoryListPane extends JFrame implements BaseComponent {
 
     JFrame parent;
 
@@ -67,6 +66,7 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
         return e -> {
             NewUserStoryForm form = new NewUserStoryForm(this);
             form.setVisible(true);
+            form.setAlwaysOnTop(true);
 
             form.addWindowListener(
                     new java.awt.event.WindowAdapter() {
@@ -91,7 +91,6 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Product Backlog");
 
