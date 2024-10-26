@@ -51,8 +51,6 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
         add(createRoleSelector(), BorderLayout.NORTH);
         add(progressPane.getSimPan(), BorderLayout.CENTER);
         
-        add(progressPane.getSimPan());
-
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent evt) {
@@ -73,17 +71,21 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
         JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Master", "Developer", "Product Owner" });
-        roleComboBox.setPreferredSize(new Dimension(150, 25));
+        
+        UserRole currentRole = UserRoleSingleton.getInstance().getUserRole();
+        String currentRoleLabel = UserRoleSingleton.getLabelFromUserRole(currentRole);
+        roleComboBox.setSelectedItem(currentRoleLabel);
+        
         roleComboBox.addActionListener(e -> {
             String selectedRole = (String) roleComboBox.getSelectedItem();
             UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
             UserRoleSingleton.getInstance().setUserRole(role);
-            System.out.println("Selected role: " + UserRoleSingleton.getInstance().getUserRole());
         });
-    
+        
         panel.add(roleLabel);
         panel.add(roleComboBox);
-        return panel;
+        
+        return panel; 
     }
 
     @Override
