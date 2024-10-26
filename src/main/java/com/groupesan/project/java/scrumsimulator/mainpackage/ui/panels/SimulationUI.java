@@ -7,14 +7,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.awt.Dialog;
 
 /**
  * SimulationUI is the main user interface for the simulation. It displays
  * different UI elements
  * based on the user's selected role.
  */
-public class SimulationUI extends JDialog implements BaseComponent {
+public class SimulationUI extends JFrame implements BaseComponent {
     private String userRole;
     private String selectedSimulationId;
     private JPanel panel;
@@ -116,7 +115,6 @@ public class SimulationUI extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Simulation");
         panel = new JPanel();

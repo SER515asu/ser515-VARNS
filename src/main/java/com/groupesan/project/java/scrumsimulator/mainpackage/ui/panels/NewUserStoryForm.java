@@ -13,13 +13,13 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class NewUserStoryForm extends JDialog implements BaseComponent {
+public class NewUserStoryForm extends JFrame implements BaseComponent {
 
     Double[] pointsList = {1.0, 2.0, 3.0, 5.0, 8.0, 11.0, 19.0, 30.0, 49.0};
     Integer[] businessValuePointsList = {1, 2, 3, 5, 8, 13, 20, 40, 100};
-    private final JDialog parent;
+    private final JFrame parent;
 
-    public NewUserStoryForm(JDialog parent) {
+    public NewUserStoryForm(JFrame parent) {
         this.parent = parent;
         this.init();
     }
@@ -34,7 +34,6 @@ public class NewUserStoryForm extends JDialog implements BaseComponent {
         setTitle("New User Story");
         setSize(400, 300);
         setLocationRelativeTo(parent);
-        setModalityType(ModalityType.DOCUMENT_MODAL);
 
         nameField = new JTextField();
         descArea = new JTextArea();

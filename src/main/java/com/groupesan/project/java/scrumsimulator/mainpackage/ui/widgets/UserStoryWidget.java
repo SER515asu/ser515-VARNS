@@ -38,8 +38,10 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
                 return;
             }
             parent.disableWindow();
+            parent.setAlwaysOnTop(false);
             EditUserStoryForm form = new EditUserStoryForm(userStory);
             form.setVisible(true);
+            form.setAlwaysOnTop(true);
 
             form.addWindowListener(
                     new java.awt.event.WindowAdapter() {
@@ -47,6 +49,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
                             actionListener.actionPerformed(null);
                             init();
                             parent.enableWindow();
+                            parent.setAlwaysOnTop(true);
                         }
                     });
         }

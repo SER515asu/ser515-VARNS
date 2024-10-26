@@ -3,12 +3,10 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
-import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.UUID;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,7 +20,7 @@ import javax.swing.border.EmptyBorder;
  * simulations. It
  * allows the generation of a new simulation ID and displays it on the UI.
  */
-public class ModifySimulationPane extends JDialog implements BaseComponent {
+public class ModifySimulationPane extends JFrame implements BaseComponent {
 
     private JTextField simulationNameField;
     private JTextField numberOfSprintsField;
@@ -42,7 +40,6 @@ public class ModifySimulationPane extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Create Simulation");
 
