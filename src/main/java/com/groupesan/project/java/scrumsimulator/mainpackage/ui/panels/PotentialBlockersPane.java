@@ -15,17 +15,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class PotentialBlockersPane extends JDialog implements BaseComponent {
+public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
-
+    private JPanel glassPane;
     private JFrame parent;
 
     public PotentialBlockersPane(JFrame parent) {
         this.parent = parent;
-
         this.init();
+        setupGlassPane();
     }
 
     @Override
@@ -33,8 +33,6 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-
         setTitle("Potential Blocker List");
 
         JPanel myJpanel = new JPanel();
@@ -48,7 +46,6 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
         myJpanel.add(addBlockerButton, BorderLayout.SOUTH);
 
         String[] columnNames = { "Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)", "" };
-
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -56,10 +53,8 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
             }
         };
         blockersTable = new JTable(tableModel);
-
         blockersTable.getColumn("").setCellRenderer(new ButtonRenderer());
         blockersTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
-
         refreshTableData();
 
         blockersTable.addMouseListener(new MouseAdapter() {
@@ -69,14 +64,9 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
                         && blockersTable.getSelectedRow() != -1) {
                     int row = blockersTable.getSelectedRow();
                     if (row != -1) {
-                        // Do something when a row is clicked
-                        System.out.println("Row " + row + " clicked.");
-                        // For example, get the value of the first column (ID)
                         Object id = blockersTable.getValueAt(row, 0);
                         int encounterChance = (int) blockersTable.getValueAt(row, 1);
                         int resolveChance = (int) blockersTable.getValueAt(row, 2);
-                        System.out.println("ID: " + id);
-
                         openEditForm(id, encounterChance, resolveChance);
                     }
                 }
@@ -86,21 +76,24 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
         blockersTable.setFillsViewportHeight(true);
         blockersTable.setAutoCreateRowSorter(true);
         blockersTable.getTableHeader().setReorderingAllowed(false);
-
         JScrollPane scrollPane = new JScrollPane(blockersTable);
 
         myJpanel.add(scrollPane, BorderLayout.CENTER);
-
         add(myJpanel);
     }
 
     private void openEditForm(Object id, int encounterChance, int resolveChance) {
         EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance);
+        this.setAlwaysOnTop(false);
+        form.setAlwaysOnTop(true);
+        setGlassPaneVisible(true);
         form.setVisible(true);
         form.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 refreshTableData();
+                setGlassPaneVisible(false);
+                setAlwaysOnTop(true);
             }
         });
     }
@@ -123,8 +116,29 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
         });
     }
 
-    private static class ButtonRenderer extends JButton implements TableCellRenderer {
+    private void setupGlassPane() {
+        glassPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                g.setColor(new Color(0, 0, 0, 100));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
 
+        glassPane.addMouseListener(new MouseAdapter() {
+        });
+        glassPane.addMouseMotionListener(new MouseAdapter() {
+        });
+        glassPane.setOpaque(false);
+        setGlassPane(glassPane);
+    }
+
+    private void setGlassPaneVisible(boolean visible) {
+        getGlassPane().setVisible(visible);
+        getGlassPane().repaint();
+    }
+
+    private static class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
         }
@@ -184,7 +198,6 @@ public class PotentialBlockersPane extends JDialog implements BaseComponent {
                 popupMenu.add(editItem);
                 popupMenu.add(deleteItem);
                 popupMenu.add(duplicateItem);
-
                 popupMenu.show(button, button.getWidth(), button.getHeight());
             }
             isPushed = false;

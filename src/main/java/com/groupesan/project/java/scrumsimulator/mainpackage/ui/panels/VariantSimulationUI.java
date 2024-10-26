@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
-public class VariantSimulationUI extends JDialog implements BaseComponent {
+public class VariantSimulationUI extends JFrame implements BaseComponent {
     private JPanel mainPanel;
     private CardLayout cardLayout;
 
@@ -22,7 +22,6 @@ public class VariantSimulationUI extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Variant Simulation UI");
 
