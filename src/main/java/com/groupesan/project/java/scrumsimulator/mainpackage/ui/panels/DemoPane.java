@@ -192,7 +192,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         }
     
         // TODO: Potentially remove below buttons
-        panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
+        // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
         return panel;
     }

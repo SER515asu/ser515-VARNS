@@ -63,7 +63,6 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
         lowerBoundProbabilityValueLabel = new JLabel(String.valueOf(lowerBoundRandomProbabilitySlider.getValue()));
         upperBoundProbabilityValueLabel = new JLabel(String.valueOf(upperBoundRandomProbabilitySlider.getValue()));
 
-        // Slider event listeners
         lowerBoundRandomProbabilitySlider.addChangeListener(e -> {
             if (lowerBoundRandomProbabilitySlider.getValue() > upperBoundRandomProbabilitySlider.getValue()) {
                 lowerBoundRandomProbabilitySlider.setValue(upperBoundRandomProbabilitySlider.getValue());
@@ -179,9 +178,5 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
             dispose();
         });
         return saveButton;
-    }
-
-    private String capitalize(String text) {
-        return Character.toUpperCase(text.charAt(0)) + text.substring(1);
     }
 }
