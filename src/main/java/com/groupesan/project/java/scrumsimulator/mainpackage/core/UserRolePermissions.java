@@ -30,6 +30,12 @@ public class UserRolePermissions {
             ),
             UserRole.SCRUM_ADMIN, new HashSet<>(
                     Set.of(
+                            UserAction.MANAGE_USER_STORES,
+                            UserAction.CONTROL_SPRINT_PARAMETERS,
+                            UserAction.POPULATE_SPRINT_BACKLOG,
+                            UserAction.ESTIMATE_WORK_EFFORT,
+                            UserAction.RESOLVE_ISSUES,
+                            UserAction.CONDUCT_SPIKE_ACTIVITIES,
                             UserAction.FINE_TUNE_PROBABILITIES,
                             UserAction.MANAGE_SIMULATION_STATE
                     )
