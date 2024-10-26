@@ -9,12 +9,20 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
  * SimulationManager acts as an intermediary between the UI and
  * SimulationStateManager. It handles the creation and updating of simulations.
  */
-public class SimulationManager {
+public class SimulationSingleton {
 
-    Map<String, Simulation> simulations = new HashMap<String, Simulation>();
+    Map<String, Simulation> simulations = new HashMap<>();
+    private static SimulationSingleton instance;
 
-    public SimulationManager() {
+    private SimulationSingleton() {
         // empty for now as methods in 'SimulationStateManager' are static
+    }
+
+    public static synchronized SimulationSingleton getInstance() {
+        if (instance == null) {
+            instance = new SimulationSingleton();
+        }
+        return instance;
     }
 
     /**

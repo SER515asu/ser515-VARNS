@@ -1,6 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.Dialog;
@@ -24,7 +24,6 @@ import javax.swing.border.EmptyBorder;
  */
 public class ModifySimulationPane extends JDialog implements BaseComponent {
 
-    private SimulationManager simulationManager;
     private JTextField simulationNameField;
     private JTextField numberOfSprintsField;
     private JTextField sprintLengthCycleField;
@@ -34,8 +33,6 @@ public class ModifySimulationPane extends JDialog implements BaseComponent {
 
     public ModifySimulationPane(JFrame parent) {
         this.parent = parent;
-
-        this.simulationManager = new SimulationManager();
         this.init();
     }
 
@@ -117,7 +114,7 @@ public class ModifySimulationPane extends JDialog implements BaseComponent {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
+            SimulationSingleton.getInstance().createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
 
             // Prepare a JTextField to display the Simulation ID
             JTextField simIdField = new JTextField(simId);
