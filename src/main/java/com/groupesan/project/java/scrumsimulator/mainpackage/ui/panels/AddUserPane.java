@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,7 +28,7 @@ import javax.swing.JTextField;
  * @version 0.1
  * @since 2023-11-8
  */
-public class AddUserPane extends JDialog implements BaseComponent {
+public class AddUserPane extends JFrame implements BaseComponent {
     private JButton joinButton;
     private JTextField usernameField;
     private JRadioButton playerRadioButton;
@@ -54,7 +53,6 @@ public class AddUserPane extends JDialog implements BaseComponent {
         setSize(800, 200);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(ModalityType.APPLICATION_MODAL);
 
         setTitle("Add User");
 
