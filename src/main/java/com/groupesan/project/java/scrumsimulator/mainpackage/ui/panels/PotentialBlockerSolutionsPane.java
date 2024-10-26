@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -15,14 +15,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class PotentialBlockersPane extends JFrame implements BaseComponent {
+public class PotentialBlockerSolutionsPane extends JFrame implements BaseComponent {
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
     private JPanel glassPane;
     private JFrame parent;
 
-    public PotentialBlockersPane(JFrame parent) {
+    public PotentialBlockerSolutionsPane(JFrame parent) {
         this.parent = parent;
         this.init();
         setupGlassPane();
@@ -33,28 +33,30 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Potential Blocker List");
+        setTitle("Potential Blocker Solutions List");
 
         JPanel myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(new BorderLayout());
 
-        myJpanel.add(new JLabel("Double click on any blocker below to edit its probabilities"), BorderLayout.NORTH);
+        myJpanel.add(new JLabel("Double click on any solution below to edit its probabilities"), BorderLayout.NORTH);
 
-        JButton addBlockerButton = new JButton("Add Blocker");
-        addBlockerButton.addActionListener(e -> openEditForm("", 0, 0));
-        myJpanel.add(addBlockerButton, BorderLayout.SOUTH);
+        JButton addSolutionButton = new JButton("Add Solution");
+        addSolutionButton.addActionListener(e -> openEditForm("", 0));
+        myJpanel.add(addSolutionButton, BorderLayout.SOUTH);
 
-        String[] columnNames = { "Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)", "" };
+        String[] columnNames = { "Solution Name", "Chance (Weight)", "" };
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3;
+                return column == 2;
             }
         };
         blockersTable = new JTable(tableModel);
+
         blockersTable.getColumn("").setCellRenderer(new ButtonRenderer());
         blockersTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
+
         refreshTableData();
 
         blockersTable.addMouseListener(new MouseAdapter() {
@@ -65,9 +67,8 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
                     int row = blockersTable.getSelectedRow();
                     if (row != -1) {
                         Object id = blockersTable.getValueAt(row, 0);
-                        int encounterChance = (int) blockersTable.getValueAt(row, 1);
-                        int resolveChance = (int) blockersTable.getValueAt(row, 2);
-                        openEditForm(id, encounterChance, resolveChance);
+                        int chance = (int) blockersTable.getValueAt(row, 1);
+                        openEditForm(id, chance);
                     }
                 }
             }
@@ -76,23 +77,23 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         blockersTable.setFillsViewportHeight(true);
         blockersTable.setAutoCreateRowSorter(true);
         blockersTable.getTableHeader().setReorderingAllowed(false);
-        JScrollPane scrollPane = new JScrollPane(blockersTable);
 
+        JScrollPane scrollPane = new JScrollPane(blockersTable);
         myJpanel.add(scrollPane, BorderLayout.CENTER);
         add(myJpanel);
     }
 
-    private void openEditForm(Object id, int encounterChance, int resolveChance) {
-        EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance);
+    private void openEditForm(Object id, int chance) {
+        EditBlockerSolutionProbabilities form = new EditBlockerSolutionProbabilities((String) id, chance);
         this.setAlwaysOnTop(false);
+        setGlassPaneVisible(true); // Show glass pane
         form.setAlwaysOnTop(true);
-        setGlassPaneVisible(true);
         form.setVisible(true);
         form.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 refreshTableData();
-                setGlassPaneVisible(false);
+                setGlassPaneVisible(false); // Hide glass pane after form closes
                 setAlwaysOnTop(true);
             }
         });
@@ -105,14 +106,8 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
             i--;
         }
 
-        BlockerTypeStore.get().getBlockerTypes().forEach(blockerType -> {
-            Object[] rowData = {
-                    blockerType.getName(),
-                    blockerType.getEncounterChance(),
-                    blockerType.getResolveChance(),
-                    "Actions"
-            };
-            tableModel.addRow(rowData);
+        BlockerSolutionStore.getInstance().getBlockerSolutions().forEach(solution -> {
+            tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" });
         });
     }
 
@@ -125,10 +120,8 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
             }
         };
 
-        glassPane.addMouseListener(new MouseAdapter() {
-        });
-        glassPane.addMouseMotionListener(new MouseAdapter() {
-        });
+        glassPane.addMouseListener(new MouseAdapter() {});
+        glassPane.addMouseMotionListener(new MouseAdapter() {});
         glassPane.setOpaque(false);
         setGlassPane(glassPane);
     }
@@ -139,6 +132,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
     }
 
     private static class ButtonRenderer extends JButton implements TableCellRenderer {
+
         public ButtonRenderer() {
             setOpaque(true);
         }
@@ -175,29 +169,30 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerType blockerType = BlockerTypeStore.get()
-                        .getBlockerType((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
+                BlockerSolution blockerSolution = BlockerSolutionStore.getInstance()
+                        .getBlockerSolution((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
                 JPopupMenu popupMenu = new JPopupMenu();
                 JMenuItem editItem = new JMenuItem("Edit");
                 JMenuItem deleteItem = new JMenuItem("Delete");
                 JMenuItem duplicateItem = new JMenuItem("Duplicate");
 
-                editItem.addActionListener(e -> openEditForm(blockerType.getName(),
-                        blockerType.getEncounterChance(), blockerType.getResolveChance()));
+                editItem.addActionListener(e -> openEditForm(blockerSolution.getName(),
+                        blockerSolution.getChance()));
                 deleteItem.addActionListener(e -> {
-                    BlockerTypeStore.get().removeBlocker(blockerType);
+                    BlockerSolutionStore.getInstance().removeBlockerSolution(blockerSolution);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
-                    BlockerType duplicate = new BlockerType(blockerType.getName() + " - Copy",
-                            blockerType.getEncounterChance(), blockerType.getResolveChance());
-                    BlockerTypeStore.get().addBlockerType(duplicate);
+                    BlockerSolution duplicate = new BlockerSolution(blockerSolution.getName() + " - Copy",
+                            blockerSolution.getChance());
+                    BlockerSolutionStore.getInstance().addBlockerSolution(duplicate);
                     refreshTableData();
                 });
 
                 popupMenu.add(editItem);
                 popupMenu.add(deleteItem);
                 popupMenu.add(duplicateItem);
+
                 popupMenu.show(button, button.getWidth(), button.getHeight());
             }
             isPushed = false;

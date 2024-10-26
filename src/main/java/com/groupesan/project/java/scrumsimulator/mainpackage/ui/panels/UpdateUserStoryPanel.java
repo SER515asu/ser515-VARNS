@@ -3,19 +3,17 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
-import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class UpdateUserStoryPanel extends JDialog implements BaseComponent {
+public class UpdateUserStoryPanel extends JFrame implements BaseComponent {
 
     private JFrame parent;
 
@@ -30,7 +28,6 @@ public class UpdateUserStoryPanel extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Update User Story Status");
 

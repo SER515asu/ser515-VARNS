@@ -6,19 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
-public class UserStoryListPane extends JDialog implements BaseComponent {
+public class UserStoryListPane extends JFrame implements BaseComponent {
 
     JFrame parent;
 
@@ -62,8 +64,9 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
 
     private ActionListener handleNewUserStoryAction() {
         return e -> {
-            NewUserStoryForm form = new NewUserStoryForm();
+            NewUserStoryForm form = new NewUserStoryForm(this);
             form.setVisible(true);
+            form.setAlwaysOnTop(true);
 
             form.addWindowListener(
                     new java.awt.event.WindowAdapter() {
@@ -88,7 +91,6 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Product Backlog");
 
@@ -105,12 +107,15 @@ public class UserStoryListPane extends JDialog implements BaseComponent {
                 new CustomConstraints(
                         0, 0, GridBagConstraints.WEST, 1.0, 0.8, GridBagConstraints.HORIZONTAL));
 
-        JButton newUserStory = new JButton("New User Story");
-        newUserStory.addActionListener(handleNewUserStoryAction());
-        myJpanel.add(
-                newUserStory,
-                new CustomConstraints(
-                        0, 1, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+        if (UserRolePermissions.actionAllowed(UserRoleSingleton.getInstance().getUserRole(), UserAction.MANAGE_USER_STORES)) {
+            JButton newUserStory = new JButton("New User Story");
+            newUserStory.addActionListener(handleNewUserStoryAction());
+            myJpanel.add(
+                    newUserStory,
+                    new CustomConstraints(
+                            0, 1, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+        }
 
         add(myJpanel);
     }

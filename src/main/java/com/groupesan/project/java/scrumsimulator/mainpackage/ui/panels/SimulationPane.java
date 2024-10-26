@@ -1,9 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -23,7 +21,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSta
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
-public class SimulationPane extends JDialog implements SimulationListener, BaseComponent {
+public class SimulationPane extends JFrame implements SimulationListener, BaseComponent {
 
     private SimulationProgressPane progressPane;
     private JFrame parent;
@@ -43,7 +41,6 @@ public class SimulationPane extends JDialog implements SimulationListener, BaseC
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         setTitle("Simulation Pane");
 

@@ -11,7 +11,8 @@ public class UserRoleSingleton {
             Map.of(
                     "Scrum Master", UserRole.SCRUM_MASTER,
                     "Developer", UserRole.DEVELOPER,
-                    "Product Owner", UserRole.PRODUCT_OWNER
+                    "Product Owner", UserRole.PRODUCT_OWNER,
+                    "Scrum Administrator", UserRole.SCRUM_ADMIN
             )
     );
 
@@ -20,7 +21,7 @@ public class UserRoleSingleton {
     public static synchronized UserRoleSingleton getInstance() {
         if (instance == null) {
             instance = new UserRoleSingleton();
-            instance.userRole = UserRole.SCRUM_MASTER;
+            instance.userRole = UserRole.SCRUM_ADMIN;
         }
         return instance;
     }

@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.Objects;
 import java.util.List;
 
-public class SprintBacklogPane extends JDialog implements BaseComponent {
+public class SprintBacklogPane extends JFrame implements BaseComponent {
 
     String selectedUserStory;
     String selectedSprintUserStory;
@@ -38,7 +38,6 @@ public class SprintBacklogPane extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         Container container = getContentPane();
         container.setLayout(new GridBagLayout());
@@ -51,6 +50,7 @@ public class SprintBacklogPane extends JDialog implements BaseComponent {
                     "Please create and join a simulation before adding user stories to sprint backlog",
                     "No Active Simulation",
                     JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
             return;
         }
 
@@ -96,7 +96,7 @@ public class SprintBacklogPane extends JDialog implements BaseComponent {
         });
 
         Container middleMenuContainer = new Container();
-        middleMenuContainer.setLayout(new GridBagLayout()); // Set layout manager
+        middleMenuContainer.setLayout(new GridBagLayout());
 
         JButton moveLeft = getMoveLeft(selectSprintComboBox, userStories, sprintUserStories);
         JButton moveRight = getMoveRight(selectSprintComboBox, userStories, sprintUserStories);
