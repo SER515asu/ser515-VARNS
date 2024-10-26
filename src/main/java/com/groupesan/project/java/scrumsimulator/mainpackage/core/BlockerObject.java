@@ -1,5 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 public class BlockerObject {
@@ -12,6 +13,8 @@ public class BlockerObject {
     }
 
     private BlockerState state;
+
+    private BlockerSolution solution;
 
     public BlockerObject(BlockerType type) {
         this.type = type;
@@ -28,6 +31,7 @@ public class BlockerObject {
 
     public boolean attemptResolve() {
         if (RandomUtils.getRandomInt(100) < type.getResolveChance()) {
+            this.solution = BlockerSolutionStore.getRandomBlockerSolution();
             return true;
         } else {
             return false;
@@ -40,5 +44,9 @@ public class BlockerObject {
 
     public boolean isResolved() {
         return state == BlockerState.RESOLVED;
+    }
+
+    public BlockerSolution getSolution() {
+        return solution;
     }
 }
