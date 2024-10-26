@@ -7,40 +7,57 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.GridBagConstraintsBuilder;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 import java.util.List;
 
-public class SprintBacklogPane extends JFrame {
+public class SprintBacklogPane extends JDialog implements BaseComponent {
 
     String selectedUserStory;
     String selectedSprintUserStory;
 
     List<UserStory> userStories;
 
-    public SprintBacklogPane() {
-        setBounds(100, 100, 200, 200);
-        Container container = getContentPane();
-        container.setLayout(new GridBagLayout());
-        this.updateUserStories();
-        init(container);
+    private JFrame parent;
+
+    public SprintBacklogPane(JFrame parent) {
+        this.parent = parent;
+
+        init();
     }
 
     private void updateUserStories() {
         this.userStories = UserStoryStore.getInstance().getUserStories();
     }
 
-    public void init(Container myContainer) {
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Assign Sprint Backlogs");
+    @Override
+    public void init() {
         setSize(800, 600);
+        setLocationRelativeTo(parent);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
+        Container container = getContentPane();
+        container.setLayout(new GridBagLayout());
+        this.updateUserStories();
+
+        setTitle("Assign Sprint Backlogs");
+
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Please create and join a simulation before adding user stories to sprint backlog",
+                    "No Active Simulation",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
         JList<String> userStories = new JList<>();
         redrawUserStoriesList(userStories);
         JScrollPane userStoriesList = new JScrollPane(userStories);
-        myContainer.add(
+        container.add(
                 userStoriesList,
                 new GridBagConstraintsBuilder()
                         .setGridX(0)
@@ -49,7 +66,7 @@ public class SprintBacklogPane extends JFrame {
                         .setFill(GridBagConstraints.HORIZONTAL));
 
         JComboBox<String> selectSprintComboBox = new JComboBox<>();
-        myContainer.add(selectSprintComboBox,
+        container.add(selectSprintComboBox,
                 new GridBagConstraintsBuilder()
                         .setGridX(2)
                         .setGridY(0)
@@ -65,7 +82,7 @@ public class SprintBacklogPane extends JFrame {
         JList<String> sprintUserStories = new JList<>();
         redrawSprintUserStoriesList(selectSprintComboBox, sprintUserStories);
         JScrollPane sprintUserStoriesList = new JScrollPane(sprintUserStories);
-        myContainer.add(
+        container.add(
                 sprintUserStoriesList,
                 new GridBagConstraintsBuilder()
                         .setGridX(2)
@@ -100,7 +117,7 @@ public class SprintBacklogPane extends JFrame {
                         .setWeightX(1)
                         .setFill(GridBagConstraints.HORIZONTAL));
 
-        myContainer.add(
+        container.add(
                 middleMenuContainer,
                 new GridBagConstraintsBuilder()
                         .setGridX(1)
@@ -110,7 +127,7 @@ public class SprintBacklogPane extends JFrame {
 
         JButton randomizeButton = getRandomizeButton(selectSprintComboBox, userStories, sprintUserStories);
 
-        myContainer.add(
+        container.add(
                 randomizeButton,
                 new GridBagConstraintsBuilder()
                         .setGridX(1)
@@ -204,6 +221,14 @@ public class SprintBacklogPane extends JFrame {
         userStoriesComponent.addListSelectionListener(
                 e -> selectedSprintUserStory = userStoriesComponent.getSelectedValue());
         userStoriesComponent.setListData(userStories);
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            return;
+        }
+        super.setVisible(b);
     }
 
 }

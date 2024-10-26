@@ -2,137 +2,203 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumRole;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationManager;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
-import java.awt.GridBagLayout;
 import javax.swing.*;
+import java.awt.*;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
     private final Player player = new Player("bob", new ScrumRole("demo"));
+    private JPanel myJpanel;
+    private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
+            updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
+            simulationSwitchRoleButton, variantSimulationUIButton, sprintBacklogsButton, newSimulationButton;
 
     public DemoPane() {
         this.init();
         player.doRegister();
     }
 
-    /**
-     * Initialization of Demo Pane. Demonstrates creation of User stories, Sprints, and Simulation
-     * start.
-     */
     public void init() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Demo");
-        setSize(1400, 500);
+        setSize(1000, 700);
+        setLayout(new BorderLayout(10, 10));
 
         GridBagLayout myGridbagLayout = new GridBagLayout();
-        JPanel myJpanel = new JPanel();
+        myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(myGridbagLayout);
 
-        JButton sprintsButton = new JButton("Sprints");
+        JPanel topPanel = createTopPanel();
+        add(topPanel, BorderLayout.NORTH);
+
+        setupButtons();
+
+        JPanel centerPanel = createCenterPanel();
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel rightPanel = createRightPanel();
+        add(rightPanel, BorderLayout.EAST);
+
+        setupGlassPane();
+        StylePane.applyStyle(this);
+    }
+
+    private void setupButtons() {
+
+        newSimulationButton = new JButton("New Simulation");
+        newSimulationButton.addActionListener(
+                e -> handleButtonAction(new NewSimulationPane(this)));
+
+        sprintsButton = new JButton("Sprints");
         sprintsButton.addActionListener(
-                e -> {
-                    SprintListPane form = new SprintListPane();
-                    form.setVisible(true);
-                });
+                e -> handleButtonAction(new SprintListPane(this)));
 
-        JButton userStoriesButton = new JButton("Product Backlog (User Stories)");
+        userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
-                e -> {
-                    UserStoryListPane form = new UserStoryListPane();
-                    form.setVisible(true);
-                });
+                e -> handleButtonAction(new UserStoryListPane(this)));
 
-        SimulationPanel simulationPanel = new SimulationPanel();
+        startSimulationButton = new JButton("Start Simulation");
+        startSimulationButton.addActionListener(
+                e -> handleButtonAction(new SimulationPane(this)));
 
-        JButton potentialBlockersButton = new JButton("Potential Blockers");
+        potentialBlockersButton = new JButton("Potential Blockers");
         potentialBlockersButton.addActionListener(
-                e -> {
-                    PotentialBlockersPane form = new PotentialBlockersPane();
-                    form.setVisible(true);
-                });
+                e -> handleButtonAction(new PotentialBlockersPane(this)));
 
-        JButton updateStoryStatusButton = new JButton("Update User Story Status");
+        updateStoryStatusButton = new JButton("Update User Story Status");
         updateStoryStatusButton.addActionListener(
-                e -> {
-                    UpdateUserStoryPanel form = new UpdateUserStoryPanel();
-                    form.setVisible(true);
-                });
+                e -> handleButtonAction(new UpdateUserStoryPanel(this)));
 
-        JButton simulationButton = new JButton("Add User");
+        simulationButton = new JButton("Add User");
         simulationButton.addActionListener(
-                e -> {
-                    SimulationPane simulationPane = new SimulationPane();
-                    simulationPane.setVisible(true);
-                });
+                e -> handleButtonAction(new AddUserPane(this)));
 
-        JButton modifySimulationButton = new JButton("Modify Simulation");
+        modifySimulationButton = new JButton("Modify Simulation");
         modifySimulationButton.addActionListener(
-                e -> {
-                    SimulationManager simulationManager = new SimulationManager();
-                    ModifySimulationPane modifySimulationPane =
-                            new ModifySimulationPane(simulationManager);
-                    modifySimulationPane.setVisible(true);
-                });
+                e -> handleButtonAction(new ModifySimulationPane(this)));
 
-        JButton joinSimulationButton = new JButton("Join Simulation");
+        joinSimulationButton = new JButton("Join Simulation");
         joinSimulationButton.addActionListener(
-                e -> {
-                    SimulationUI simulationUserInterface = new SimulationUI();
-                    simulationUserInterface.setVisible(true);
-                });
+                e -> handleButtonAction(new SimulationUI(this)));
 
-        JButton simulationSwitchRoleButton = new JButton("Switch Role");
+        simulationSwitchRoleButton = new JButton("Switch Role");
         simulationSwitchRoleButton.addActionListener(
-                e -> {
-                    SimulationSwitchRolePane feedbackPanelUI = new SimulationSwitchRolePane();
-                    feedbackPanelUI.setVisible(true);
-                });
+                e -> handleButtonAction(new SimulationSwitchRolePane(this)));
 
-        // New button for Variant Simulation UI
-        // TODO: Figure out what this is used for because it was initially hidden from view
-        JButton variantSimulationUIButton = new JButton("Variant Simulation UI");
+        variantSimulationUIButton = new JButton("Variant Simulation UI");
         variantSimulationUIButton.addActionListener(
-                e -> {
-                    VariantSimulationUI variantSimulationUI = new VariantSimulationUI();
-                    variantSimulationUI.setVisible(true);
-                });
+                e -> handleButtonAction(new VariantSimulationUI(this)));
 
-        JButton sprintBacklogsButton = getSprintBacklogsButton();
+        sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
+        sprintBacklogsButton.addActionListener(
+                e -> handleButtonAction(new SprintBacklogPane(this)));
 
         new DemoPaneBuilder(myJpanel)
-                .addComponent(sprintsButton, 0, 0)
-                .addComponent(userStoriesButton, 1, 0)
-                .addComponent(simulationPanel, 2, 0)
-                .addComponent(sprintBacklogsButton, 3, 0)
-                .addComponent(updateStoryStatusButton, 4, 0)
-                .addComponent(modifySimulationButton, 5, 0)
-                .addComponent(joinSimulationButton, 6, 0)
-                .addComponent(simulationButton,7, 0)
-                .addComponent(potentialBlockersButton, 9, 0)
-                .addComponent(simulationSwitchRoleButton, 1, 1)
-                .addComponent(variantSimulationUIButton, 2, 1)
+                .addComponent(newSimulationButton, 0, 0)
+                .addComponent(sprintsButton, 1, 0)
+                .addComponent(userStoriesButton, 2, 0)
+                .addComponent(startSimulationButton, 3, 0)
+                .addComponent(potentialBlockersButton, 4, 0)
+                .addComponent(updateStoryStatusButton, 5, 0)
+                .addComponent(simulationButton, 6, 0)
+                .addComponent(modifySimulationButton, 7, 0)
+                .addComponent(joinSimulationButton, 8, 0)
+                .addComponent(simulationSwitchRoleButton, 9, 0)
+                .addComponent(variantSimulationUIButton, 10, 0)
+                .addComponent(sprintBacklogsButton, 11, 0)
                 .buildPanel();
 
         add(myJpanel);
     }
 
-    private static JButton getSprintBacklogsButton() {
-        JButton sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
-        sprintBacklogsButton.addActionListener(
-                e -> {
-                    if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
-                        JOptionPane.showMessageDialog(null, "Please create and join a simulation before adding user stories to sprint backlog");
-                        return;
-                    }
+    private JPanel createTopPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel roleLabel = new JLabel("Current Role:");
+        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Master", "Developer", "Product Owner" });
+        roleComboBox.setPreferredSize(new Dimension(150, 25));
+        roleComboBox.addActionListener(e -> {
+            String selectedRole = (String) roleComboBox.getSelectedItem();
+            System.out.println("Selected role: " + selectedRole);
+        });
 
-                    // Load SprintUIPane
-                    SprintBacklogPane sprintBacklogPane = new SprintBacklogPane();
-                    sprintBacklogPane.setVisible(true);
-                });
-        return sprintBacklogsButton;
+        panel.add(roleLabel);
+        panel.add(roleComboBox);
+        return panel;
+    }
+
+    private JPanel createCenterPanel() {
+        JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
+        panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
+
+        panel.add(createButton("Product Backlog(User Stories)", () -> handleButtonAction(new UserStoryListPane(this))));
+        panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
+        panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
+        panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
+        panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
+
+        return panel;
+    }
+
+    private JPanel createRightPanel() {
+        JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
+        panel.setBorder(BorderFactory.createTitledBorder("Simulation Controls"));
+
+        panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
+        panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+        panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
+        panel.add(createButton("Join Simulation", () -> handleButtonAction(new SimulationUI(this))));
+        panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
+        panel.add(createButton("Switch Role", () -> handleButtonAction(new SimulationSwitchRolePane(this))));
+        panel.add(createButton("Variant Simulation UI", () -> handleButtonAction(new VariantSimulationUI(this))));
+
+        return panel;
+    }
+
+    private JButton createButton(String text, Runnable action) {
+        JButton button = new JButton(text);
+        button.addActionListener(e -> action.run());
+        return button;
+    }
+
+    private void handleButtonAction(JDialog pane) {
+        setMenuButtonsEnabled(false);
+        setGlassPaneVisible(true);
+        pane.setVisible(true);
+        setMenuButtonsEnabled(true);
+        setGlassPaneVisible(false);
+    }
+
+    private void setupGlassPane() {
+        JPanel glassPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                g.setColor(new Color(0, 0, 0, 100));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        glassPane.setOpaque(false);
+        setGlassPane(glassPane);
+    }
+
+    private void setGlassPaneVisible(boolean visible) {
+        getGlassPane().setVisible(visible);
+    }
+
+    private void setMenuButtonsEnabled(boolean enabled) {
+        newSimulationButton.setEnabled(enabled);
+        sprintsButton.setEnabled(enabled);
+        userStoriesButton.setEnabled(enabled);
+        startSimulationButton.setEnabled(enabled);
+        potentialBlockersButton.setEnabled(enabled);
+        updateStoryStatusButton.setEnabled(enabled);
+        simulationButton.setEnabled(enabled);
+        modifySimulationButton.setEnabled(enabled);
+        joinSimulationButton.setEnabled(enabled);
+        simulationSwitchRoleButton.setEnabled(enabled);
+        variantSimulationUIButton.setEnabled(enabled);
+        sprintBacklogsButton.setEnabled(enabled);
     }
 }

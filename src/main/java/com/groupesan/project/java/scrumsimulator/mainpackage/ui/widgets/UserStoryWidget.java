@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.EditUserStoryForm;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.UserStoryListPane;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -25,6 +26,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
     // serialized
     private final UserStory userStory;
     private final boolean reactToMouseHover;
+    private final UserStoryListPane parent;
 
     ActionListener actionListener = e -> {
     };
@@ -32,6 +34,10 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
     MouseAdapter openEditDialog = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
+            if (parent.isEditWindowOpen()) {
+                return;
+            }
+            parent.disableWindow();
             EditUserStoryForm form = new EditUserStoryForm(userStory);
             form.setVisible(true);
 
@@ -40,6 +46,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
                         public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                             actionListener.actionPerformed(null);
                             init();
+                            parent.enableWindow();
                         }
                     });
         }
@@ -57,9 +64,10 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         }
     };
 
-    public UserStoryWidget(UserStory userStory, boolean reactToMouseHover) {
+    public UserStoryWidget(UserStory userStory, boolean reactToMouseHover, UserStoryListPane parent) {
         this.userStory = userStory;
         this.reactToMouseHover = reactToMouseHover;
+        this.parent = parent;
         this.init();
     }
 

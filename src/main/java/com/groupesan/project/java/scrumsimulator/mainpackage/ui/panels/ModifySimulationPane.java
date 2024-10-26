@@ -1,13 +1,14 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationManager;
-import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.GridBagConstraintsBuilder;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
+import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.UUID;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,7 +22,7 @@ import javax.swing.border.EmptyBorder;
  * simulations. It
  * allows the generation of a new simulation ID and displays it on the UI.
  */
-public class ModifySimulationPane extends JFrame implements BaseComponent {
+public class ModifySimulationPane extends JDialog implements BaseComponent {
 
     private SimulationManager simulationManager;
     private JTextField simulationNameField;
@@ -29,17 +30,24 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
     private JTextField sprintLengthCycleField;
     private JTextArea simulationIdDisplay;
 
-        public ModifySimulationPane(SimulationManager manager) {
-                this.simulationManager = manager;
-                this.init();
-        }
+    private JFrame parent;
+
+    public ModifySimulationPane(JFrame parent) {
+        this.parent = parent;
+
+        this.simulationManager = new SimulationManager();
+        this.init();
+    }
 
     /** Initializes the UI components of the ModifySimulationPane. */
     @Override
     public void init() {
+        setSize(800, 600);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+
         setTitle("Create Simulation");
-        setSize(400, 300);
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -82,53 +90,55 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                         1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         JButton submitButton = new JButton("Create Simulation");
-        submitButton.addActionListener( e -> {
-                        String simId = UUID.randomUUID().toString();
-                        String simName = simulationNameField.getText();
-                        Integer sprintLengthCycle = 0;
-                        try {
-                                sprintLengthCycle = sprintLengthCycleField.getText().isEmpty() ? 0 : Integer.parseInt(sprintLengthCycleField.getText());
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(
-                                    ModifySimulationPane.this,
-                                    "Length of a sprint must be an integer.",
-                                    "Invalid Input",
-                                    JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                        Integer numberOfSprints = 0;
-                        try {
-                                numberOfSprints = numberOfSprintsField.getText().isEmpty() ? 0 : Integer.parseInt(numberOfSprintsField.getText());
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(
-                                    ModifySimulationPane.this,
-                                    "Number of sprints must be an integer.",
-                                    "Invalid Input",
-                                    JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                        simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
+        submitButton.addActionListener(e -> {
+            String simId = UUID.randomUUID().toString();
+            String simName = simulationNameField.getText();
+            Integer sprintLengthCycle = 0;
+            try {
+                sprintLengthCycle = sprintLengthCycleField.getText().isEmpty() ? 0
+                        : Integer.parseInt(sprintLengthCycleField.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        ModifySimulationPane.this,
+                        "Length of a sprint must be an integer.",
+                        "Invalid Input",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Integer numberOfSprints = 0;
+            try {
+                numberOfSprints = numberOfSprintsField.getText().isEmpty() ? 0
+                        : Integer.parseInt(numberOfSprintsField.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        ModifySimulationPane.this,
+                        "Number of sprints must be an integer.",
+                        "Invalid Input",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
 
-                        // Prepare a JTextField to display the Simulation ID
-                        JTextField simIdField = new JTextField(simId);
-                        simIdField.setEditable(false);
-                        Object[] message = {
-                            "A new simulation has been generated.\nSimulation ID:", simIdField
-                        };
+            // Prepare a JTextField to display the Simulation ID
+            JTextField simIdField = new JTextField(simId);
+            simIdField.setEditable(false);
+            Object[] message = {
+                    "A new simulation has been generated.\nSimulation ID:", simIdField
+            };
 
-                        // Show a dialog with the JTextField containing the Simulation ID
-                        JOptionPane.showMessageDialog(
-                                ModifySimulationPane.this,
-                                message,
-                                "Simulation Created",
-                                JOptionPane.INFORMATION_MESSAGE);
+            // Show a dialog with the JTextField containing the Simulation ID
+            JOptionPane.showMessageDialog(
+                    ModifySimulationPane.this,
+                    message,
+                    "Simulation Created",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-                        // Reset fields and simulation ID display to blank
-                        simulationNameField.setText("");
-                        numberOfSprintsField.setText("");
-                        sprintLengthCycleField.setText("");
-                        simulationIdDisplay.setText("");
-                    });
+            // Reset fields and simulation ID display to blank
+            simulationNameField.setText("");
+            numberOfSprintsField.setText("");
+            sprintLengthCycleField.setText("");
+            simulationIdDisplay.setText("");
+        });
 
         panel.add(
                 submitButton,
