@@ -30,4 +30,25 @@ public class BlockerSolutionStore {
         }
         return null;
     }
+
+    public static List<BlockerSolution> getBlockerSolutions() {
+        return blockerSolutions;
+    }
+
+    public static BlockerSolution getBlockerSolution(String name) {
+        for (BlockerSolution solution : blockerSolutions) {
+            if (solution.getName().equals(name)) {
+                return solution;
+            }
+        }
+        return null;
+    }
+
+    public static void addBlockerSolution(BlockerSolution solution) {
+        blockerSolutions.add(solution);
+    }
+
+    public static void removeBlockerSolution(BlockerSolution solution) {
+        blockerSolutions.remove(solution);
+    }
 }

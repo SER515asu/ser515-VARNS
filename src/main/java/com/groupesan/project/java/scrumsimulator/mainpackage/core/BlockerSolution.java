@@ -16,4 +16,12 @@ public class BlockerSolution {
     public int getChance() {
         return chance;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setChance(int chance) {
+        this.chance = chance;
+    }
 }
