@@ -116,8 +116,6 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
 
         myPanel.add(probabilityLabel,
                 new CustomConstraints(0, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
-        myPanel.add(probabilityChanceField,
-                new CustomConstraints(1, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         myPanel.add(randomModeCheckBox,
                 new CustomConstraints(0, 3, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
@@ -148,6 +146,9 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
 
             myPanel.add(probabilityPanel,
                     new CustomConstraints(1, 1, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
+        } else {
+            myPanel.add(probabilityChanceField,
+                    new CustomConstraints(1, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
         }
 
         myPanel.revalidate();
