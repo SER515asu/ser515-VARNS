@@ -238,22 +238,28 @@ public class SimulationStateManager {
         // TODO - Figure out a random or linear way of setting the status of the user story.
 
 
-        List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
+        try {
+            List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
 
-        int randNumb =  rand.nextInt(usList.size());
+            int randNumb =  rand.nextInt(usList.size());
 
 
-        UserStory selectedStory = usList.get(randNumb);
+            UserStory selectedStory = usList.get(randNumb);
 
-        if(selectedStory.getUserStoryState() instanceof UserStoryAddedState) {
-            selectedStory.changeState(new UserStorySelectedState(selectedStory));
-            notifyStoryStatusChange(selectedStory);
-        } else if (selectedStory.getUserStoryState() instanceof UserStorySelectedState) {
-            selectedStory.changeState(new UserStoryCompletedState(selectedStory));
-            notifyStoryStatusChange(selectedStory);
-        } else {
-            notifyStoryStatusChange(selectedStory);
+            if(selectedStory.getUserStoryState() instanceof UserStoryAddedState) {
+                selectedStory.changeState(new UserStorySelectedState(selectedStory));
+                notifyStoryStatusChange(selectedStory);
+            } else if (selectedStory.getUserStoryState() instanceof UserStorySelectedState) {
+                selectedStory.changeState(new UserStoryCompletedState(selectedStory));
+                notifyStoryStatusChange(selectedStory);
+            } else {
+                notifyStoryStatusChange(selectedStory);
+            }
+        } catch (IllegalArgumentException ie) {
+            // The code should detect the lack of assigned user stories from the backlog and send a message, before closing the simulation
+            //ie.printStackTrace();
         }
+
     }
 
     /**

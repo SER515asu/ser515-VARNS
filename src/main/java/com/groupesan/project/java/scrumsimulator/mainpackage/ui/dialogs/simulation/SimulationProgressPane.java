@@ -49,7 +49,12 @@ public class SimulationProgressPane {
 
 
         String[] userStoryColumnNames = { "User Story Name", "Status" };
-        model = new DefaultTableModel(userStoryColumnNames, 0);
+        model = new DefaultTableModel(userStoryColumnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         userStoryContainer = new JTable(model);
 
         userStoryScrollPane = new JScrollPane(userStoryContainer);
