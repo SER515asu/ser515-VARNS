@@ -11,10 +11,10 @@ import java.nio.charset.StandardCharsets;
 public class SimulationFileHandler {
     private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
 
-    public static JSONObject getSimulationData() {
+    public static JSONArray getSimulationData() {
         try (FileInputStream fis = new FileInputStream(JSON_FILE_PATH)) {
             JSONTokener tokener = new JSONTokener(fis);
-            return new JSONObject(tokener);
+            return new JSONArray(tokener);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error reading from simulation.JSON");
             return null;

@@ -1,26 +1,14 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import javax.swing.*;
 
 import static com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationFileHandler.getSimulationData;
 import static com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationFileHandler.updateSimulationData;
 
-/**
- * SimulationManager acts as an intermediary between the UI and
- * SimulationStateManager. It handles the creation and updating of simulations.
- */
 public class SimulationSingleton {
 
     private static final List<Simulation> simulations = new ArrayList<>();
@@ -33,6 +21,7 @@ public class SimulationSingleton {
     public static synchronized SimulationSingleton getInstance() {
         if (instance == null) {
             instance = new SimulationSingleton();
+            loadSimulations();
         }
         return instance;
     }
@@ -58,11 +47,18 @@ public class SimulationSingleton {
      * Saves the details of a new simulation to a JSON file.
      *
      */
-    public static void saveSimulationDetails() {
+    public void saveSimulationDetails() {
         JSONArray simulationsArray = new JSONArray();
         simulations.forEach(simulation -> simulationsArray.put(jsonMapper(simulation)));
 
         updateSimulationData(simulationsArray);
+    }
+
+    private static void loadSimulations() {
+        JSONArray simulationsFromFile = getSimulationData();
+        if (simulationsFromFile != null) {
+            simulationsFromFile.forEach(simulation -> simulations.add((Simulation) simulation));
+        }
     }
 
     private static JSONObject jsonMapper(Simulation simulation) {

@@ -10,8 +10,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 
-import static com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton.saveSimulationDetails;
-
 /**
  * SimulationStateManager manages the state of a simulation, including whether
  * it is running and saving its ID.
@@ -134,7 +132,7 @@ public class SimulationStateManager {
         init();
 
         notifySimulationStopped();
-        saveSimulationDetails();
+        SimulationSingleton.getInstance().saveSimulationDetails();
     }
 
     private void runSimulation() {
