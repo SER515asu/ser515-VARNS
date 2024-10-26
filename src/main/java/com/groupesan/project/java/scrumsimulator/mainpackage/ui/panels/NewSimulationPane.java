@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-class NewSimulationPane extends JDialog implements BaseComponent {
+class NewSimulationPane extends JFrame implements BaseComponent {
     private final DataModel<String> simulationModel;
     private final DataModel<Object> sprintModel;
     private final DataModel<Object> sprintLengthModel;
@@ -49,7 +49,6 @@ class NewSimulationPane extends JDialog implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 
         JPanel container = new JPanel(new BorderLayout());
 
