@@ -21,7 +21,7 @@ public class UserRoleSingleton {
     public static synchronized UserRoleSingleton getInstance() {
         if (instance == null) {
             instance = new UserRoleSingleton();
-            instance.userRole = UserRole.SCRUM_MASTER;
+            instance.userRole = UserRole.SCRUM_ADMIN;
         }
         return instance;
     }
