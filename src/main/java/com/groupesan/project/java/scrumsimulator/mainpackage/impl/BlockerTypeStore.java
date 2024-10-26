@@ -56,7 +56,7 @@ public class BlockerTypeStore {
     public BlockerObject rollForBlocker() {
         
         for (BlockerType blocker : blockers) {
-            int roll = RandomUtils.getRandomInt(100);
+            int roll = RandomUtils.getCurrentSeededInstance().getRandomInt(100);
             
             if (roll < blocker.getEncounterChance()) {
                 return new BlockerObject(blocker);

@@ -216,7 +216,7 @@ public class SimulationStateManager {
      */
 
     public static void saveNewSimulationDetails(String simId, String simName, Integer numberOfSprints,
-            Integer sprintDuration) {
+            Integer sprintDuration, long seed) {
         JSONObject simulationData = getSimulationData();
         if (simulationData == null) {
             simulationData = new JSONObject();
@@ -232,6 +232,7 @@ public class SimulationStateManager {
         newSimulation.put("Sprints", new JSONArray());
         newSimulation.put("Events", new JSONArray());
         newSimulation.put("Users", new JSONArray());
+        newSimulation.put("Seed", seed);
 
         JSONArray simulations = simulationData.optJSONArray("Simulations");
         if (simulations == null) {

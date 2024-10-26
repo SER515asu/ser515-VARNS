@@ -30,7 +30,7 @@ public class BlockerObject {
     }
 
     public boolean attemptResolve() {
-        if (RandomUtils.getRandomInt(100) < type.getResolveChance()) {
+        if (RandomUtils.getCurrentSeededInstance().getRandomInt(100) < type.getResolveChance()) {
             this.solution = BlockerSolutionStore.getInstance().getRandomBlockerSolution();
             return true;
         } else {

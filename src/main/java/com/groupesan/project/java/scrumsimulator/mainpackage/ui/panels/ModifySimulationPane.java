@@ -5,6 +5,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.sql.Date;
 import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,6 +28,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
     private JTextField numberOfSprintsField;
     private JTextField sprintLengthCycleField;
     private JTextArea simulationIdDisplay;
+    private JTextField randomSeedField;
 
     private JFrame parent;
 
@@ -59,6 +61,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
         JLabel nameLabel = new JLabel("Simulation Name:");
         JLabel sprintsLabel = new JLabel("Number of Sprints:");
         JLabel sprintLengthLabel = new JLabel("Length of Sprint:");
+        JLabel randomSeedLabel = new JLabel("Random Seed:");
 
         panel.add(
                 nameLabel,
@@ -85,6 +88,11 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 sprintLengthCycleField,
                 new CustomConstraints(
                         1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+        
+        panel.add(
+                randomSeedLabel,
+                new CustomConstraints(
+                        0, 3, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         JButton submitButton = new JButton("Create Simulation");
         submitButton.addActionListener(e -> {
@@ -114,7 +122,20 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle);
+
+            long seed = 0;
+            try {
+                seed = Long.parseLong(randomSeedField.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        ModifySimulationPane.this,
+                        "Random seed must be an integer.",
+                        "Invalid Input",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            simulationManager.createSimulation(simId, simName, numberOfSprints, sprintLengthCycle, seed);
 
             // Prepare a JTextField to display the Simulation ID
             JTextField simIdField = new JTextField(simId);
