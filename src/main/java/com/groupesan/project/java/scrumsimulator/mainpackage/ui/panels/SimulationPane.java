@@ -64,10 +64,12 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
         });
     }
 
+    private JComboBox<String> roleComboBox;
+
     private JPanel createRoleSelector() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
-        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Master", "Developer", "Product Owner" });
+        roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
         
         UserRole currentRole = UserRoleSingleton.getInstance().getUserRole();
         String currentRoleLabel = UserRoleSingleton.getLabelFromUserRole(currentRole);
@@ -77,6 +79,7 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
             String selectedRole = (String) roleComboBox.getSelectedItem();
             UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
             UserRoleSingleton.getInstance().setUserRole(role);
+            ((DemoPane)parent).roleComboBox.setSelectedItem(selectedRole);
         });
         
         panel.add(roleLabel);

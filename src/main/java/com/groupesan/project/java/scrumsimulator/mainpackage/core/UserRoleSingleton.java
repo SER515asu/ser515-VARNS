@@ -51,8 +51,10 @@ public class UserRoleSingleton {
                 return "Developer";
             case PRODUCT_OWNER:
                 return "Product Owner";
+            case SCRUM_ADMIN:
+                return "Scrum Administrator";
             default:
-                return "Developer";
+                return "Scrum Administrator";
         }
     }
 }
