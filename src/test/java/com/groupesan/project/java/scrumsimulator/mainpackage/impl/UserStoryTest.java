@@ -1,8 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumIdentifier;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,9 +15,7 @@ public class UserStoryTest {
     }
 
     @Test
-    public void testUserStoryRegistered() {
-        ScrumIdentifier id = myUserStory.getId();
-
-        assertNotNull(id);
+    public void testUserStoryInitialized() {
+        Assertions.assertTrue(myUserStory.getUserStoryState() instanceof UserStoryUnselectedState);
     }
 }
