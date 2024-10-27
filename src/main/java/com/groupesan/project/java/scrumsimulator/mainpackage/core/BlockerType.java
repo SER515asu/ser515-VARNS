@@ -1,12 +1,18 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BlockerType {
 
     private String name;
     private int encounterChance;
     private int resolveChance;
 
-    public BlockerType(String name, int encounterChance, int resolveChance) {
+    @JsonCreator
+    public BlockerType(@JsonProperty("name") String name,
+                       @JsonProperty("encounterChance") int encounterChance,
+                       @JsonProperty("resolveChance") int resolveChance) {
         this.name = name;
         this.encounterChance = encounterChance;
         this.resolveChance = resolveChance;

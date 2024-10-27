@@ -189,6 +189,7 @@ public class SimulationStateManager {
                 }
 
                 if (blocker.attemptResolve()) {
+                    blocker.resolve();
                     System.out.println("Blocker resolved: " + blocker.getType().getName() + " by " + blocker.getSolution().getName());
                     notifyBlockerResolved(blocker);
                 }

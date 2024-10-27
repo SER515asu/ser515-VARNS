@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.JSONException;
 import org.json.JSONTokener;
 
 import javax.swing.*;
@@ -15,9 +15,8 @@ public class SimulationFileHandler {
         try (FileInputStream fis = new FileInputStream(JSON_FILE_PATH)) {
             JSONTokener tokener = new JSONTokener(fis);
             return new JSONArray(tokener);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error reading from simulation.JSON");
-            return null;
+        } catch (IOException | JSONException e) {
+            return new JSONArray();
         }
     }
 

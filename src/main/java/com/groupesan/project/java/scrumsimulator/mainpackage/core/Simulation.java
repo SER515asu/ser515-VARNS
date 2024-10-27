@@ -34,6 +34,14 @@ public class Simulation {
         this.sprints = SprintStore.getInstance().getSprints();
     }
 
+    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays, List<Sprint> sprints) {
+        this.simulationId = id;
+        this.simulationName = name;
+        this.sprintCount = sprintCount;
+        this.sprintDuration = sprintDurationDays;
+        this.sprints = sprints;
+    }
+
     public UUID getSimulationId() {
         return simulationId;
     }

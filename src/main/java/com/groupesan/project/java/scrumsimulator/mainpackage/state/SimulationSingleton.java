@@ -2,7 +2,10 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
 import java.util.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -49,19 +52,43 @@ public class SimulationSingleton {
      */
     public void saveSimulationDetails() {
         JSONArray simulationsArray = new JSONArray();
-        simulations.forEach(simulation -> simulationsArray.put(jsonMapper(simulation)));
+        simulations.forEach(simulation -> simulationsArray.put(simulationToJson(simulation)));
 
         updateSimulationData(simulationsArray);
     }
 
     private static void loadSimulations() {
         JSONArray simulationsFromFile = getSimulationData();
-        if (simulationsFromFile != null) {
-            simulationsFromFile.forEach(simulation -> simulations.add((Simulation) simulation));
+
+        if (!simulationsFromFile.isEmpty()) {
+            simulationsFromFile.forEach(simulation -> simulations.add(jsonToSimulation((JSONObject) simulation)));
         }
     }
 
-    private static JSONObject jsonMapper(Simulation simulation) {
+    private static Simulation jsonToSimulation(JSONObject simulationJson) {
+        ObjectMapper mapper = new ObjectMapper();
+        JSONArray sprintsFromJson = simulationJson.getJSONArray("Sprints");
+        List<Sprint> sprints = new ArrayList<>();
+        if (!sprintsFromJson.isEmpty()) {
+            sprintsFromJson.forEach(sprintJson -> {
+                try {
+                    sprints.add(mapper.readValue(sprintJson.toString(), Sprint.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        return new Simulation(
+                UUID.fromString(simulationJson.getString("ID")),
+                simulationJson.getString("Name"),
+                simulationJson.getInt("SprintDuration"),
+                simulationJson.getInt("NumberOfSprints"),
+                sprints
+        );
+    }
+
+    private static JSONObject simulationToJson(Simulation simulation) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ID", simulation.getSimulationId());
         jsonObject.put("Name", simulation.getSimulationName());

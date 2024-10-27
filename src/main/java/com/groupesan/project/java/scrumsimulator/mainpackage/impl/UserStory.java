@@ -1,30 +1,40 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumIdentifier;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserStory extends ScrumObject {
+public class UserStory {
+    @JsonProperty
     private UserStoryIdentifier id;
 
+    @JsonProperty
     private String name;
 
+    @JsonProperty
     private String description;
 
+    @JsonProperty
     private double pointValue;
 
+    @JsonIgnore
     private UserStoryState state;
 
+    @JsonIgnore
     private Player owner;
 
+    @JsonProperty
     private int businessValuePoint;
 
-    private ArrayList<BlockerObject> blockers = new ArrayList<>();
+    @JsonProperty
+    private List<BlockerObject> blockers = new ArrayList<>();
 
     // private ArrayList<Task> tasks; TODO: implement tasks
 
@@ -60,6 +70,20 @@ public class UserStory extends ScrumObject {
         this.pointValue = pointValue;
         this.businessValuePoint = businessValuePoint; // added buisness value point
         this.state = new UserStoryUnselectedState(this);
+        this.register();
+    }
+
+    @JsonCreator
+    public UserStory(@JsonProperty("businessValuePoint") int businessValuePoint,
+                     @JsonProperty("pointValue") int pointValue,
+                     @JsonProperty("name") String name,
+                     @JsonProperty("description") String description,
+                     @JsonProperty("blockers") List<BlockerObject> blockers) {
+        this.businessValuePoint = businessValuePoint;
+        this.pointValue = pointValue;
+        this.name = name;
+        this.description = description;
+        this.blockers = blockers;
     }
 
     protected void register() {
@@ -74,10 +98,6 @@ public class UserStory extends ScrumObject {
      * @return The ScrumIdentifier for this user story
      */
     public ScrumIdentifier getId() {
-        if (!isRegistered()) {
-            throw new IllegalStateException(
-                    "This UserStory has not been registered and does not have an ID yet!");
-        }
         return id;
     }
 
@@ -137,16 +157,6 @@ public class UserStory extends ScrumObject {
     }
 
     /**
-     * [NOT IMPLEMENTED] return all child scrum objects of this object. Usually this
-     * would be tasks.
-     *
-     * @return a List containing all child ScrumObjects of this UserStory
-     */
-    public List<ScrumObject> getChildren() {
-        return new ArrayList<>(); // TODO: implement tasks
-    }
-
-    /**
      * returns this user story's ID and name as text in the following format: US #3
      * - foo
      *
@@ -154,10 +164,7 @@ public class UserStory extends ScrumObject {
      */
     @Override
     public String toString() {
-        if (isRegistered()) {
-            return this.getId().toString() + " - " + name;
-        }
-        return "(unregistered) - " + getName();
+        return this.getId().toString() + " - " + name;
     }
 
     // State Management, need Player class to implement final selection logic
@@ -177,6 +184,7 @@ public class UserStory extends ScrumObject {
      *
      * @return a UserStoryState object containing the state for this UserStory
      */
+    @JsonIgnore
     public UserStoryState getUserStoryState() {
         return state;
     }
@@ -210,6 +218,7 @@ public class UserStory extends ScrumObject {
         this.businessValuePoint = businessValuePoint;
     }
 
+    @JsonIgnore
     public boolean isBlocked() {
         for (BlockerObject blocker : blockers) {
             if (!blocker.isResolved()) {
