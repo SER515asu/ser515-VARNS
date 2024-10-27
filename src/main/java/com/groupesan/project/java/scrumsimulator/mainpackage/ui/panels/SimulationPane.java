@@ -5,6 +5,15 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRole;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
+
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationListener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
@@ -34,8 +43,11 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         setTitle("Simulation Pane");
-        add(progressPane.getSimPan());
 
+        setLayout(new BorderLayout());
+        add(createRoleSelector(), BorderLayout.NORTH);
+        add(progressPane.getSimPan(), BorderLayout.CENTER);
+        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent evt) {
@@ -50,6 +62,30 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
                 dispose();
             }
         });
+    }
+
+    private JComboBox<String> roleComboBox;
+
+    private JPanel createRoleSelector() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel roleLabel = new JLabel("Current Role:");
+        roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
+        
+        UserRole currentRole = UserRoleSingleton.getInstance().getUserRole();
+        String currentRoleLabel = UserRoleSingleton.getLabelFromUserRole(currentRole);
+        roleComboBox.setSelectedItem(currentRoleLabel);
+        
+        roleComboBox.addActionListener(e -> {
+            String selectedRole = (String) roleComboBox.getSelectedItem();
+            UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
+            UserRoleSingleton.getInstance().setUserRole(role);
+            ((DemoPane)parent).updateRoleSelection(selectedRole);
+        });
+        
+        panel.add(roleLabel);
+        panel.add(roleComboBox);
+        
+        return panel; 
     }
 
     @Override
