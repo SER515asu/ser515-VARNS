@@ -18,6 +18,7 @@ import org.json.JSONTokener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
@@ -134,8 +135,10 @@ public class SimulationStateManager {
         sprint = 1;
         progressValue = 0;
 
-        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
-            userStory.removeAllBlockers();
+        for (Sprint sprint : currentSimulation.getSprints()) {
+            for (UserStory userStory : sprint.getUserStories()) {
+                userStory.removeAllBlockers();
+            }
         }
 
         state = SprintStateEnum.RUNNING;
