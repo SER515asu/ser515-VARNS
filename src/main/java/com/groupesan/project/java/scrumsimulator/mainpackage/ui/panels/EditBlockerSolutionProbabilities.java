@@ -162,7 +162,7 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
             int finalProbability;
 
             if (randomMode) {
-                finalProbability = RandomUtils.getCurrentSeededInstance().getRandomInt(
+                finalProbability = RandomUtils.getInstance().getRandomInt(
                         lowerBoundRandomProbabilitySlider.getValue(),
                         upperBoundRandomProbabilitySlider.getValue());
             } else {

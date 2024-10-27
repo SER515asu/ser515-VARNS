@@ -16,7 +16,7 @@ public class Simulation {
     private Teacher teacher;
     private final List<Player> players = new ArrayList<>();
     private int sprintCount;
-    private int sprintDuration; // In days
+    private int sprintDuration;
     private final List<Sprint> sprints;
     private long randomSeed;
 
@@ -146,7 +146,7 @@ public class Simulation {
         int numberOfSprints = sprints.size();
 
         for (UserStory userStory : userStoriesList) {
-            int sprintIndex = RandomUtils.getInstance(randomSeed).getRandomInt(numberOfSprints);
+            int sprintIndex = RandomUtils.getInstance().getRandomInt(numberOfSprints);
             Sprint sprint = sprints.get(sprintIndex);
             sprint.addUserStory(userStory);
             userStory.changeState(new UserStoryAddedState(userStory));

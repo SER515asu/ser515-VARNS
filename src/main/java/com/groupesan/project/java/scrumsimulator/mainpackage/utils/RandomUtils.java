@@ -1,44 +1,41 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.utils;
 
-import java.security.SecureRandom;
+import java.util.Random;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class RandomUtils {
 
-    private static RandomUtils instance;
-    private final SecureRandom random;
+    private static volatile RandomUtils instance;
+    private final Random random;
 
+    @SuppressFBWarnings(value = "PREDICTABLE_RANDOM", justification = "Predictable random is used intentionally for reproducibility")
     private RandomUtils(long seed) {
-        this.random = new SecureRandom();
-        this.random.setSeed(seed);
+        this.random = new Random(seed);
     }
 
-    public static RandomUtils getInstance(long seed) {
+    public static synchronized void resetInstance(long seed) {
+        instance = new RandomUtils(seed);
+    }
+
+    public static RandomUtils getInstance() {
         if (instance == null) {
-            instance = new RandomUtils(seed);
+            instance = new RandomUtils(System.currentTimeMillis());
         }
         return instance;
     }
 
     public int getRandomInt(int bound) {
+        if (bound <= 0) {
+            throw new IllegalArgumentException("Bound must be greater than 0");
+        }
         return random.nextInt(bound);
     }
 
     public int getRandomInt(int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException("max must be greater than min");
+        if (min >= max) {
+            throw new IllegalArgumentException("Max must be greater than min");
         }
-
-        if (min < 0) {
-            throw new IllegalArgumentException("min must be greater than 0");
-        }
-
-        if (min == max) {
-            return min;
-        }
-
         return random.nextInt(max - min) + min;
     }
 
@@ -50,18 +47,7 @@ public class RandomUtils {
         return random.nextBoolean();
     }
 
-    public static long getRandomSeed() {
-        return new SecureRandom().nextLong();
-    }
-
-    public static RandomUtils getCurrentSeededInstance() {
-        Simulation currentSimulation = SimulationStateManager.getInstance().getCurrentSimulation();
-
-        if (currentSimulation == null) {
-            System.out.println("Current simulation is not set, using random seed");
-            return getInstance(getRandomSeed());
-        }
-
-        return getInstance(SimulationStateManager.getInstance().getCurrentSimulation().getRandomSeed());
+    public Long getRandomLong() {
+        return random.nextLong();
     }
 }

@@ -42,7 +42,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         this.simulationModel = new DataModel<>("New Simulation");
         this.sprintModel = new DataModel<>(1);
         this.sprintLengthModel = new DataModel<>(14);
-        this.seedModel = new DataModel<>(RandomUtils.getRandomSeed());
+        this.seedModel = new DataModel<>(RandomUtils.getInstance().getRandomLong());
         this.users = new DataModel<>(new ArrayList<>());
         init();
     }
@@ -199,9 +199,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
     }
 
     private void applyAutoFillValues() {
-        int randomSprintLength = RandomUtils.getCurrentSeededInstance().getRandomInt(sprintLengthStartSlider.getValue(),
+        int randomSprintLength = RandomUtils.getInstance().getRandomInt(sprintLengthStartSlider.getValue(),
                 sprintLengthEndSlider.getValue());
-        int randomSprintNumber = RandomUtils.getCurrentSeededInstance().getRandomInt(sprintNumberStartSlider.getValue(),
+        int randomSprintNumber = RandomUtils.getInstance().getRandomInt(sprintNumberStartSlider.getValue(),
                 sprintNumberEndSlider.getValue());
 
         sprintLengthModel.setData(randomSprintLength);

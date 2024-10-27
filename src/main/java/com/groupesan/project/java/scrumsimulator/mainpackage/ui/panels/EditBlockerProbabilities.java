@@ -226,10 +226,10 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
             int resolveChance;
 
             if (randomMode) {
-                encounterChance = RandomUtils.getCurrentSeededInstance().getRandomInt(lowerBoundRandomEncounterSlider.getValue(),
+                encounterChance = RandomUtils.getInstance().getRandomInt(lowerBoundRandomEncounterSlider.getValue(),
                         upperBoundRandomEncounterSlider.getValue());
 
-                resolveChance = RandomUtils.getCurrentSeededInstance().getRandomInt(lowerBoundRandomResolveSlider.getValue(),
+                resolveChance = RandomUtils.getInstance().getRandomInt(lowerBoundRandomResolveSlider.getValue(),
                         upperBoundRandomResolveSlider.getValue());
 
             } else {
