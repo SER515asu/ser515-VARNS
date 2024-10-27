@@ -1,0 +1,96 @@
+[{
+  "Status": "New",
+  "Sprints": [{
+    "length": 14,
+    "userStories": [{
+      "businessValuePoint": 1,
+      "pointValue": 1,
+      "blocked": true,
+      "userStoryState": {},
+      "name": "predefinedUS1",
+      "description": "description1",
+      "blockers": [
+        {
+          "solution": {
+            "chance": 100,
+            "name": "Solution 1"
+          },
+          "state": "RESOLVED",
+          "type": {
+            "name": "Bug",
+            "encounterChance": 20,
+            "resolveChance": 80
+          },
+          "resolved": true
+        },
+        {
+          "solution": {
+            "chance": 100,
+            "name": "Solution 1"
+          },
+          "state": "RESOLVED",
+          "type": {
+            "name": "Unknown",
+            "encounterChance": 10,
+            "resolveChance": 90
+          },
+          "resolved": true
+        },
+        {
+          "solution": {
+            "chance": 100,
+            "name": "Solution 2"
+          },
+          "state": "RESOLVED",
+          "type": {
+            "name": "Dependency",
+            "encounterChance": 10,
+            "resolveChance": 50
+          },
+          "resolved": true
+        },
+        {
+          "solution": {
+            "chance": 100,
+            "name": "Solution 3"
+          },
+          "state": "RESOLVED",
+          "type": {
+            "name": "Bug",
+            "encounterChance": 20,
+            "resolveChance": 80
+          },
+          "resolved": true
+        },
+        {
+          "solution": {
+            "chance": 100,
+            "name": "Solution 3"
+          },
+          "state": "RESOLVED",
+          "type": {
+            "name": "Bug",
+            "encounterChance": 20,
+            "resolveChance": 80
+          },
+          "resolved": true
+        },
+        {
+          "state": "UNRESOLVED",
+          "type": {
+            "name": "Bug",
+            "encounterChance": 20,
+            "resolveChance": 80
+          },
+          "resolved": false
+        }
+      ],
+      "id": {"value": 0}
+    }],
+    "id": 1
+  }],
+  "NumberOfSprints": 1,
+  "ID": "f801aa89-8ce8-49fc-9f73-bc297eba610b",
+  "SprintDuration": 14,
+  "Name": "Test Simulation"
+}]
