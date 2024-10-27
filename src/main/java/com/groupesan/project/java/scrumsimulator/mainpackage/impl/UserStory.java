@@ -5,15 +5,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.ScrumIdentifier;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class UserStory {
     @JsonProperty
-    private UserStoryIdentifier id;
+    private UUID id;
+
+    @JsonIgnore
+    private String label;
 
     @JsonProperty
     private String name;
@@ -70,7 +73,7 @@ public class UserStory {
         this.pointValue = pointValue;
         this.businessValuePoint = businessValuePoint; // added buisness value point
         this.state = new UserStoryUnselectedState(this);
-        this.register();
+        this.id = UUID.randomUUID();
     }
 
     @JsonCreator
@@ -78,27 +81,33 @@ public class UserStory {
                      @JsonProperty("pointValue") int pointValue,
                      @JsonProperty("name") String name,
                      @JsonProperty("description") String description,
-                     @JsonProperty("blockers") List<BlockerObject> blockers) {
+                     @JsonProperty("blockers") List<BlockerObject> blockers,
+                     @JsonProperty("id") UUID id) {
         this.businessValuePoint = businessValuePoint;
         this.pointValue = pointValue;
         this.name = name;
         this.description = description;
         this.blockers = blockers;
-    }
-
-    protected void register() {
-        this.id = new UserStoryIdentifier(ScrumIdentifierStoreSingleton.get().getNextId());
+        this.id = id;
     }
 
     /**
-     * Gets the identifier object for this UserStory. **This will throw an exception
-     * if register()
-     * has not been called yet.**
+     * Gets the identifier for this UserStory.
      *
-     * @return The ScrumIdentifier for this user story
+     * @return The UUID for this user story
      */
-    public ScrumIdentifier getId() {
+    public UUID getId() {
         return id;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+
+    @JsonIgnore
+    public String getLabel() {
+        return label;
     }
 
     /**
@@ -164,7 +173,7 @@ public class UserStory {
      */
     @Override
     public String toString() {
-        return this.getId().toString() + " - " + name;
+        return "US - " + name;
     }
 
     // State Management, need Player class to implement final selection logic

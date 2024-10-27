@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -63,6 +64,14 @@ public class SimulationSingleton {
         if (!simulationsFromFile.isEmpty()) {
             simulationsFromFile.forEach(simulation -> simulations.add(jsonToSimulation((JSONObject) simulation)));
         }
+        loadUserStoriesIntoStore();
+    }
+
+    private static void loadUserStoriesIntoStore() {
+        simulations.forEach(
+                simulation -> simulation.getSprints().forEach(
+                        sprint -> UserStoryStore.getInstance().addAllUserStories(sprint.getUserStories()))
+        );
     }
 
     private static Simulation jsonToSimulation(JSONObject simulationJson) {

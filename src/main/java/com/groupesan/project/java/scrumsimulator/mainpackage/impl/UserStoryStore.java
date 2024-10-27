@@ -20,14 +20,19 @@ public class UserStoryStore {
         return userStoryStore;
     }
 
-    private List<UserStory> userStories;
+    private final List<UserStory> userStories;
 
     private UserStoryStore() {
         userStories = new ArrayList<>();
     }
 
     public void addUserStory(UserStory userStory) {
+        userStory.setLabel("US #%d".formatted(userStories.size()));
         userStories.add(userStory);
+    }
+
+    public void addAllUserStories(List<UserStory> userStories) {
+       userStories.forEach(this::addUserStory);
     }
 
     public void removeUserStory(UserStory userStory) {
