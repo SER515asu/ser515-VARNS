@@ -12,11 +12,11 @@ public class SimulationFileHandlerTest {
         JSONArray allSimulationData = SimulationFileHandler.getSimulationData();
         JSONObject simulationData = allSimulationData.getJSONObject(0);
 
-        Assertions.assertEquals(1, allSimulationData.length());
-        Assertions.assertEquals("Test Simulation", simulationData.getString("Name"));
-        Assertions.assertEquals(14, simulationData.getInt("SprintDuration"));
-        Assertions.assertEquals("f801aa89-8ce8-49fc-9f73-bc297eba610b", simulationData.getString("ID"));
-        Assertions.assertEquals(1, simulationData.getInt("NumberOfSprints"));
-        Assertions.assertEquals(1, simulationData.getJSONArray("Sprints").length());
+        Assertions.assertEquals(1, allSimulationData.length(), "Only 1 simulation should be present");
+        Assertions.assertEquals("Test Simulation", simulationData.getString("Name"), "Name should be Test Simulation but was %s".formatted(simulationData.getString("Name")));
+        Assertions.assertEquals(14, simulationData.getInt("SprintDuration"), "SprintDuration should be 14 but was %d".formatted(simulationData.getInt("SprintDuration")));
+        Assertions.assertEquals("f801aa89-8ce8-49fc-9f73-bc297eba610b", simulationData.getString("ID"), "ID should be f801aa89-8ce8-49fc-9f73-bc297eba610b but was %s".formatted(simulationData.getString("ID")));
+        Assertions.assertEquals(1, simulationData.getInt("NumberOfSprints"), "NumberOfSprints should be 1 but was %d".formatted(simulationData.getInt("NumberOfSprints")));
+        Assertions.assertEquals(1, simulationData.getJSONArray("Sprints").length(), "Only 1 Sprint should be present");
     }
 }
