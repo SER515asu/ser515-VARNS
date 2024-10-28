@@ -212,13 +212,13 @@ public class SimulationStateManager {
 
             } else {
                 day++;
-                setRandomStates();
+//                setRandomStates();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
                     resetPanel();
-                    addUserStory();
-                    detectInProgressUserStory();
+//                    addUserStory();
+//                    detectInProgressUserStory();
                 }
             }
         }
