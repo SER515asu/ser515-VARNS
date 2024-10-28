@@ -14,7 +14,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

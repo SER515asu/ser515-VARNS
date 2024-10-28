@@ -30,19 +30,6 @@ public class SimulationSingleton {
         return instance;
     }
 
-    /**
-     * Creates a simulation with the provided simulation ID, name and sprint count.
-     *
-     * @param simId           The simulation ID.
-     * @param simName         The simulation name.
-     * @param numberOfSprints The total sprint count.
-     * @param sprintDuration  The duration of each sprint.
-     */
-    public void createSimulation(UUID simId, String simName, Integer numberOfSprints, Integer sprintDuration) {
-        simulations.add(new Simulation(simId, simName, numberOfSprints, sprintDuration));
-        saveSimulationDetails();
-    }
-
     public void addSimulation(Simulation simulation) {
         simulations.add(simulation);
 

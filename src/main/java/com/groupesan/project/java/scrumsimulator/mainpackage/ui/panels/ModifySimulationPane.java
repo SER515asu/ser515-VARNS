@@ -101,7 +101,6 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
 
         JButton submitButton = new JButton("Update Simulation");
         submitButton.addActionListener(e -> {
-            UUID simId = UUID.randomUUID();
             String simName = simulationNameField.getText();
             Integer sprintLengthCycle;
             try {
@@ -129,7 +128,6 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 return;
             }
 
-            currentSimulation.setId(simId);
             currentSimulation.setSimulationName(simName);
             currentSimulation.setSprintCount(numberOfSprints);
             currentSimulation.setSprintDuration(sprintLengthCycle);
