@@ -7,6 +7,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstra
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -109,7 +110,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 JOptionPane.showMessageDialog(this, "Length of a sprint must be an integer.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             Integer numberOfSprints;
             try {
                 numberOfSprints = numberOfSprintsField.getText().isEmpty() ? 0
@@ -118,7 +119,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 JOptionPane.showMessageDialog(this, "Number of sprints must be an integer.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             long seed;
             try {
                 seed = Long.parseLong(randomSeedField.getText());
@@ -126,19 +127,19 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 JOptionPane.showMessageDialog(this, "Random seed must be an integer.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             currentSimulation.setSimulationName(simName);
             currentSimulation.setSprintCount(numberOfSprints);
             currentSimulation.setSprintDuration(sprintLengthCycle);
-            
+
             if (currentSimulation.getRandomSeed() != seed) {
                 System.out.println("Random seed changed from " + currentSimulation.getRandomSeed() + " to " + seed);
                 currentSimulation.setRandomSeed(seed);
             }
-        
+
             JOptionPane.showMessageDialog(this, "Simulation updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
         });
-        
+
 
         panel.add(submitButton, new CustomConstraints(0, gridy, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
         panel.add(simulationIdDisplay, new CustomConstraints(1, gridy, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));

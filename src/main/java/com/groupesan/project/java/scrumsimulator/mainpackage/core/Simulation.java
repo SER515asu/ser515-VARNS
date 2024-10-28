@@ -7,11 +7,13 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JList;
 
 public class Simulation {
 
+    private final UUID simulationId;
     private String simulationName;
     private Teacher teacher;
     private final List<Player> players = new ArrayList<>();
@@ -20,7 +22,8 @@ public class Simulation {
     private final List<Sprint> sprints;
     private long randomSeed;
 
-    public Simulation(String simulationName, int sprintCount, int sprintDurationDays, long randomSeed) {
+    public Simulation(UUID simulationId, String simulationName, int sprintCount, int sprintDurationDays, long randomSeed) {
+        this.simulationId = simulationId;
         this.simulationName = simulationName;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
@@ -31,6 +34,18 @@ public class Simulation {
                     .addSprint(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
         }
         this.sprints = SprintStore.getInstance().getSprints();
+    }
+
+    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays, List<Sprint> sprints) {
+        this.simulationId = id;
+        this.simulationName = name;
+        this.sprintCount = sprintCount;
+        this.sprintDuration = sprintDurationDays;
+        this.sprints = sprints;
+    }
+
+    public UUID getSimulationId() {
+        return simulationId;
     }
 
     public void addPlayer(Player player) {

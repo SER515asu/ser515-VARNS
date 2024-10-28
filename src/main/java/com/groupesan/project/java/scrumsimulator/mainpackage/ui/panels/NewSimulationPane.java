@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.DataModel;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
@@ -13,9 +14,9 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 class NewSimulationPane extends JFrame implements BaseComponent {
     private final DataModel<String> simulationModel;
@@ -76,7 +77,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
                 "Sprint Length (days): ",
                 new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
                 sprintLengthModel);
-        
+
         seedInput = new LongInput(
                 "Seed: ", new JTextField(seedModel.getData().toString()), seedModel);
 
@@ -110,16 +111,16 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         cancelButton.addActionListener(e -> dispose());
 
         submitButton = new JButton("Submit");
-        submitButton.addActionListener((ActionListener) e -> {
-            Simulation simulation = new Simulation(simulationModel.getData(),
+        submitButton.addActionListener(e -> {
+            Simulation simulation = new Simulation(UUID.randomUUID(), simulationModel.getData(),
                     (int) sprintModel.getData(), (int) sprintLengthModel.getData(), seedModel.getData());
             for (Player player : users.getData()) {
                 player.doRegister();
                 simulation.addPlayer(player);
             }
 
-            SimulationStateManager.getInstance().setCurrentSimulation(simulation); // TODO - Should be added to a store as well as set as current
-
+            SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+            SimulationSingleton.getInstance().addSimulation(simulation);
             dispose();
         });
 
