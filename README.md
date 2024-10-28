@@ -29,3 +29,8 @@ To clean the project (remove all build artifacts), run the following gradle comm
 
 ### Mac/Linux/Git Bash/WSL:
 `./gradlew clean`
+
+### Running the Fat Jar
+To run the fat jar, run the following command in the root directory of the project, or double click the jar file:
+
+`java -jar build/libs/ser515-VARNS-0.1-all.jar`
