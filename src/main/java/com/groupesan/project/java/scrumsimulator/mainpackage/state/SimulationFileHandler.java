@@ -12,7 +12,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 public class SimulationFileHandler {
-    private static String SIMULATION_JSON_FILE_PATH = "data/simulation.JSON";
+    private static String SIMULATION_JSON_FILE_PATH = "data/simulation.json";
 
     public static void setSimulationJsonFilePath(String filePath) {
         SIMULATION_JSON_FILE_PATH = filePath;
@@ -22,7 +22,7 @@ public class SimulationFileHandler {
     private static File getSimulationJsonFile() {
         File file = new File(SIMULATION_JSON_FILE_PATH);
         if (!file.exists()) {
-            System.out.println("Creating new simulation.JSON file in " + SIMULATION_JSON_FILE_PATH);
+            System.out.println("Creating new simulation.json file in " + SIMULATION_JSON_FILE_PATH);
             try {
                 if (file.createNewFile()) {
                     try (OutputStreamWriter writer = new OutputStreamWriter(

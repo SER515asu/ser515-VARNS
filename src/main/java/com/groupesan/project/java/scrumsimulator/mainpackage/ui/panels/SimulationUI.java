@@ -58,7 +58,7 @@ public class SimulationUI extends JFrame implements BaseComponent {
 
     // Method to read simulations from JSON file
     private JSONArray getSimulations() {
-        try (FileInputStream fis = new FileInputStream("src/main/resources/simulation.JSON")) {
+        try (FileInputStream fis = new FileInputStream("src/main/resources/simulation.json")) {
             JSONTokener tokener = new JSONTokener(fis);
             JSONObject obj = new JSONObject(tokener);
             return obj.getJSONArray("Simulations");

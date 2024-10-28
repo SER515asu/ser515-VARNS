@@ -2,8 +2,6 @@
 build/*
 .idea
 .DS_STORE
-.JSON
-src/main/resources/simulation.JSON
 data/*.json
 
 temp_test_resources/*
