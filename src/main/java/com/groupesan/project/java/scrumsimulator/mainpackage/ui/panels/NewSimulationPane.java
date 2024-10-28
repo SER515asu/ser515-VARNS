@@ -8,6 +8,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.ResuableHeader;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SpinnerInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.TextInput;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.LongInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import javax.swing.*;
@@ -20,9 +21,11 @@ class NewSimulationPane extends JFrame implements BaseComponent {
     private final DataModel<String> simulationModel;
     private final DataModel<Object> sprintModel;
     private final DataModel<Object> sprintLengthModel;
+    private final DataModel<Long> seedModel;
     private final DataModel<List<Player>> users;
     private SpinnerInput sprintInput;
     private SpinnerInput sprintLengthInput;
+    private LongInput seedInput;
     private JToggleButton autoFillToggleButton;
     private JSlider sprintLengthStartSlider;
     private JSlider sprintLengthEndSlider;
@@ -39,6 +42,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         this.simulationModel = new DataModel<>("New Simulation");
         this.sprintModel = new DataModel<>(1);
         this.sprintLengthModel = new DataModel<>(14);
+        this.seedModel = new DataModel<>(RandomUtils.getInstance().getRandomLong());
         this.users = new DataModel<>(new ArrayList<>());
         init();
     }
@@ -72,6 +76,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
                 "Sprint Length (days): ",
                 new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
                 sprintLengthModel);
+        
+        seedInput = new LongInput(
+                "Seed: ", new JTextField(seedModel.getData().toString()), seedModel);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -85,6 +92,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
 
         gbc.gridy++;
         inputs.add(sprintLengthInput, gbc);
+
+        gbc.gridy++;
+        inputs.add(seedInput, gbc);
 
         autoFillToggleButton = new JToggleButton("Auto Fill OFF");
         autoFillToggleButton.addActionListener(e -> toggleAutoFillPanel());
@@ -102,7 +112,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         submitButton = new JButton("Submit");
         submitButton.addActionListener((ActionListener) e -> {
             Simulation simulation = new Simulation(simulationModel.getData(),
-                    (int) sprintModel.getData(), (int) sprintLengthModel.getData());
+                    (int) sprintModel.getData(), (int) sprintLengthModel.getData(), seedModel.getData());
             for (Player player : users.getData()) {
                 player.doRegister();
                 simulation.addPlayer(player);
@@ -189,9 +199,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
     }
 
     private void applyAutoFillValues() {
-        int randomSprintLength = RandomUtils.getRandomInt(sprintLengthStartSlider.getValue(),
+        int randomSprintLength = RandomUtils.getInstance().getRandomInt(sprintLengthStartSlider.getValue(),
                 sprintLengthEndSlider.getValue());
-        int randomSprintNumber = RandomUtils.getRandomInt(sprintNumberStartSlider.getValue(),
+        int randomSprintNumber = RandomUtils.getInstance().getRandomInt(sprintNumberStartSlider.getValue(),
                 sprintNumberEndSlider.getValue());
 
         sprintLengthModel.setData(randomSprintLength);

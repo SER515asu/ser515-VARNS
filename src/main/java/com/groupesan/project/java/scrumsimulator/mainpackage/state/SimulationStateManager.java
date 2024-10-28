@@ -18,7 +18,9 @@ import org.json.JSONTokener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 /**
  * SimulationStateManager manages the state of a simulation, including whether
@@ -129,7 +131,19 @@ public class SimulationStateManager {
             return;
         }
 
+        day = 1;
+        sprint = 1;
+        progressValue = 0;
+
+        for (Sprint sprint : currentSimulation.getSprints()) {
+            for (UserStory userStory : sprint.getUserStories()) {
+                userStory.removeAllBlockers();
+            }
+        }
+
         state = SprintStateEnum.RUNNING;
+        RandomUtils.resetInstance(currentSimulation.getRandomSeed());
+
         notifySimulationStarted();
         new Thread(this::runSimulation).start();
     }
@@ -161,6 +175,8 @@ public class SimulationStateManager {
             if (state == SprintStateEnum.PAUSED) {
                 continue;
             }
+
+            System.out.println("Day: " + day + " Sprint: " + sprint);
 
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
             notifyProgressUpdate();
@@ -216,7 +232,7 @@ public class SimulationStateManager {
      */
 
     public static void saveNewSimulationDetails(String simId, String simName, Integer numberOfSprints,
-            Integer sprintDuration) {
+            Integer sprintDuration, long seed) {
         JSONObject simulationData = getSimulationData();
         if (simulationData == null) {
             simulationData = new JSONObject();
@@ -232,6 +248,7 @@ public class SimulationStateManager {
         newSimulation.put("Sprints", new JSONArray());
         newSimulation.put("Events", new JSONArray());
         newSimulation.put("Users", new JSONArray());
+        newSimulation.put("Seed", seed);
 
         JSONArray simulations = simulationData.optJSONArray("Simulations");
         if (simulations == null) {
