@@ -183,7 +183,8 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
-        addUserStory();
+//        addUserStory();
+//        detectInProgressUserStory();
         while (state == SprintStateEnum.RUNNING) {
             try {
                 for (int i = 0; i < 10; i++) {
@@ -205,14 +206,13 @@ public class SimulationStateManager {
 
             resolveBlockers();
             detectBlockers();
-            detectInProgressUserStory();
+
 
 
             if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
                 stopSimulation();
             } else {
                 day++;
-                setRandomStates();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
