@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -42,19 +41,21 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         myJpanel.add(new JLabel("Double click on any blocker below to edit its probabilities"), BorderLayout.NORTH);
 
         JButton addBlockerButton = new JButton("Add Blocker");
-        addBlockerButton.addActionListener(e -> openEditForm("", 0, 0));
+        addBlockerButton.addActionListener(e -> openEditForm("", 0, 0, 0));
         myJpanel.add(addBlockerButton, BorderLayout.SOUTH);
 
-        String[] columnNames = { "Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)", "" };
+        String[] columnNames = { "Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)", "Spike Chance (%)",
+                "Actions" };
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3;
+                return column == 4;
             }
         };
+
         blockersTable = new JTable(tableModel);
-        blockersTable.getColumn("").setCellRenderer(new ButtonRenderer());
-        blockersTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
+        blockersTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
+        blockersTable.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
         refreshTableData();
 
         blockersTable.addMouseListener(new MouseAdapter() {
@@ -67,7 +68,8 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
                         Object id = blockersTable.getValueAt(row, 0);
                         int encounterChance = (int) blockersTable.getValueAt(row, 1);
                         int resolveChance = (int) blockersTable.getValueAt(row, 2);
-                        openEditForm(id, encounterChance, resolveChance);
+                        int spikeChance = (int) blockersTable.getValueAt(row, 3);
+                        openEditForm(id, encounterChance, resolveChance, spikeChance);
                     }
                 }
             }
@@ -82,8 +84,9 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         add(myJpanel);
     }
 
-    private void openEditForm(Object id, int encounterChance, int resolveChance) {
-        EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance);
+    private void openEditForm(Object id, int encounterChance, int resolveChance, int spikeChance) {
+        EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance,
+                spikeChance);
         this.setAlwaysOnTop(false);
         form.setAlwaysOnTop(true);
         setGlassPaneVisible(true);
@@ -99,17 +102,15 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
     }
 
     private void refreshTableData() {
-        int i = tableModel.getRowCount() - 1;
-        while (i > -1) {
-            tableModel.removeRow(i);
-            i--;
-        }
+
+        tableModel.setRowCount(0);
 
         BlockerTypeStore.get().getBlockerTypes().forEach(blockerType -> {
             Object[] rowData = {
                     blockerType.getName(),
                     blockerType.getEncounterChance(),
                     blockerType.getResolveChance(),
+                    blockerType.getSpikeChance(),
                     "Actions"
             };
             tableModel.addRow(rowData);
@@ -183,14 +184,16 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
                 JMenuItem duplicateItem = new JMenuItem("Duplicate");
 
                 editItem.addActionListener(e -> openEditForm(blockerType.getName(),
-                        blockerType.getEncounterChance(), blockerType.getResolveChance()));
+                        blockerType.getEncounterChance(), blockerType.getResolveChance(),
+                        blockerType.getSpikeChance()));
                 deleteItem.addActionListener(e -> {
                     BlockerTypeStore.get().removeBlocker(blockerType);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
                     BlockerType duplicate = new BlockerType(blockerType.getName() + " - Copy",
-                            blockerType.getEncounterChance(), blockerType.getResolveChance());
+                            blockerType.getEncounterChance(), blockerType.getResolveChance(),
+                            blockerType.getSpikeChance());
                     BlockerTypeStore.get().addBlockerType(duplicate);
                     refreshTableData();
                 });

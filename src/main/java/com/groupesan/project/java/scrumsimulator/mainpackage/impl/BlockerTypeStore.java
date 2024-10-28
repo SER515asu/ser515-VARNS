@@ -16,9 +16,9 @@ public class BlockerTypeStore {
     private BlockerTypeStore() {
         blockers = new ArrayList<>(
                 List.of(
-                        new BlockerType("Dependency", 10, 50),
-                        new BlockerType("Bug", 20, 80),
-                        new BlockerType("Unknown", 10, 90)));
+                        new BlockerType("Dependency", 10, 50, 20),
+                        new BlockerType("Bug", 20, 80, 10),
+                        new BlockerType("Unknown", 10, 90, 5)));
     }
 
     public static BlockerTypeStore get() {
@@ -58,8 +58,6 @@ public class BlockerTypeStore {
         for (BlockerType blocker : blockers) {
             int roll = RandomUtils.getInstance().getRandomInt(100);
 
-            System.out.println("Roll: " + roll + " Blocker Chance: " + blocker.getEncounterChance());
-            
             if (roll < blocker.getEncounterChance()) {
                 return new BlockerObject(blocker);
             }

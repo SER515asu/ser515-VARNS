@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-import static com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.EditBlockerProbabilities.getEncounterResolveProbabilities;
+import static com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.EditBlockerProbabilities.getEncounterResolveSpikeProbabilities;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -24,6 +24,7 @@ public class BlockerTypeStoreTest {
         blocker.setName("TestBlocker");
         blocker.setEncounterChance(25);
         blocker.setResolveChance(60);
+        blocker.setSpikeChance(10);
     }
 
     @Test
@@ -35,8 +36,9 @@ public class BlockerTypeStoreTest {
 
         JTextField encounterChanceField = new JTextField("75");
         JTextField resolveChanceField = new JTextField("90");
+        JTextField spikeChanceField = new JTextField("10");
 
-        EditBlockerProbabilities.EncounterResolveProbabilities result = getEncounterResolveProbabilities(encounterChanceField, resolveChanceField);
+        EditBlockerProbabilities.EncounterResolveSpikeProbabilities result = getEncounterResolveSpikeProbabilities(encounterChanceField, resolveChanceField, spikeChanceField);
 
         assertNotNull(result);
         assertEquals(75, result.newEncounterChance());
@@ -47,10 +49,11 @@ public class BlockerTypeStoreTest {
     public void editBlockerPropertiesWithBadEncounterData() {
         JTextField encounterChanceField = new JTextField("75test");
         JTextField resolveChanceField = new JTextField("90");
-        EditBlockerProbabilities.EncounterResolveProbabilities result = null;
+        JTextField spikeChanceField = new JTextField("10");
+        EditBlockerProbabilities.EncounterResolveSpikeProbabilities result = null;
 
         try {
-            result = getEncounterResolveProbabilities(encounterChanceField, resolveChanceField);
+            result = getEncounterResolveSpikeProbabilities(encounterChanceField, resolveChanceField, spikeChanceField);
         } catch (HeadlessException e) {
             // Expected error
         }
@@ -61,10 +64,11 @@ public class BlockerTypeStoreTest {
     public void editBlockerPropertiesWithBadResolveData() {
         JTextField encounterChanceField = new JTextField("75");
         JTextField resolveChanceField = new JTextField("90test");
-        EditBlockerProbabilities.EncounterResolveProbabilities result = null;
+        JTextField spikeChanceField = new JTextField("10");
+        EditBlockerProbabilities.EncounterResolveSpikeProbabilities result = null;
 
         try {
-            result = getEncounterResolveProbabilities(encounterChanceField, resolveChanceField);
+            result = getEncounterResolveSpikeProbabilities(encounterChanceField, resolveChanceField, spikeChanceField);
         } catch (HeadlessException e) {
             // Expected error
         }
@@ -75,10 +79,11 @@ public class BlockerTypeStoreTest {
     public void editBlockerPropertiesWithBadEncounterRange() {
         JTextField encounterChanceField = new JTextField("150");
         JTextField resolveChanceField = new JTextField("90");
-        EditBlockerProbabilities.EncounterResolveProbabilities result = null;
+        JTextField spikeChanceField = new JTextField("10");
+        EditBlockerProbabilities.EncounterResolveSpikeProbabilities result = null;
 
         try {
-            result = getEncounterResolveProbabilities(encounterChanceField, resolveChanceField);
+            result = getEncounterResolveSpikeProbabilities(encounterChanceField, resolveChanceField, spikeChanceField);
         } catch (HeadlessException e) {
             // Expected error
         }
@@ -89,10 +94,11 @@ public class BlockerTypeStoreTest {
     public void editBlockerPropertiesWithBadResolveRange() {
         JTextField encounterChanceField = new JTextField("50");
         JTextField resolveChanceField = new JTextField("-1");
-        EditBlockerProbabilities.EncounterResolveProbabilities result = null;
+        JTextField spikeChanceField = new JTextField("10");
+        EditBlockerProbabilities.EncounterResolveSpikeProbabilities result = null;
 
         try {
-            result = getEncounterResolveProbabilities(encounterChanceField, resolveChanceField);
+            result = getEncounterResolveSpikeProbabilities(encounterChanceField, resolveChanceField, spikeChanceField);
         } catch (HeadlessException e) {
             // Expected error
         }
