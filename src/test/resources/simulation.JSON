@@ -1,96 +1,98 @@
 [{
-  "Status": "New",
-  "Sprints": [{
-    "length": 14,
-    "userStories": [{
-      "businessValuePoint": 1,
-      "pointValue": 1,
-      "blocked": true,
-      "userStoryState": {},
-      "name": "predefinedUS1",
-      "description": "description1",
-      "blockers": [
-        {
-          "solution": {
-            "chance": 100,
-            "name": "Solution 1"
-          },
-          "state": "RESOLVED",
-          "type": {
-            "name": "Bug",
-            "encounterChance": 20,
-            "resolveChance": 80
-          },
-          "resolved": true
-        },
-        {
-          "solution": {
-            "chance": 100,
-            "name": "Solution 1"
-          },
-          "state": "RESOLVED",
-          "type": {
-            "name": "Unknown",
-            "encounterChance": 10,
-            "resolveChance": 90
-          },
-          "resolved": true
-        },
-        {
-          "solution": {
-            "chance": 100,
-            "name": "Solution 2"
-          },
-          "state": "RESOLVED",
-          "type": {
-            "name": "Dependency",
-            "encounterChance": 10,
-            "resolveChance": 50
-          },
-          "resolved": true
-        },
-        {
-          "solution": {
-            "chance": 100,
-            "name": "Solution 3"
-          },
-          "state": "RESOLVED",
-          "type": {
-            "name": "Bug",
-            "encounterChance": 20,
-            "resolveChance": 80
-          },
-          "resolved": true
-        },
-        {
-          "solution": {
-            "chance": 100,
-            "name": "Solution 3"
-          },
-          "state": "RESOLVED",
-          "type": {
-            "name": "Bug",
-            "encounterChance": 20,
-            "resolveChance": 80
-          },
-          "resolved": true
-        },
-        {
-          "state": "UNRESOLVED",
-          "type": {
-            "name": "Bug",
-            "encounterChance": 20,
-            "resolveChance": 80
-          },
-          "resolved": false
-        }
-      ],
-      "id": "f801ba89-8ce8-49fc-8f73-bc397ebd619c"
+    "Status": "New",
+    "Sprints": [{
+        "name": "",
+        "length": 14,
+        "description": "",
+        "userStories": [{
+            "businessValuePoint": 1,
+            "pointValue": 1,
+            "blocked": true,
+            "name": "predefinedUS1",
+            "description": "description1",
+            "blockers": [
+                {
+                    "solution": {
+                        "chance": 100,
+                        "name": "Solution 1"
+                    },
+                    "state": "RESOLVED",
+                    "type": {
+                        "encounterChance": 20,
+                        "name": "Bug",
+                        "resolveChance": 80
+                    },
+                    "resolved": true
+                },
+                {
+                    "solution": {
+                        "chance": 100,
+                        "name": "Solution 1"
+                    },
+                    "state": "RESOLVED",
+                    "type": {
+                        "encounterChance": 10,
+                        "name": "Unknown",
+                        "resolveChance": 90
+                    },
+                    "resolved": true
+                },
+                {
+                    "solution": {
+                        "chance": 100,
+                        "name": "Solution 2"
+                    },
+                    "state": "RESOLVED",
+                    "type": {
+                        "encounterChance": 10,
+                        "name": "Dependency",
+                        "resolveChance": 50
+                    },
+                    "resolved": true
+                },
+                {
+                    "solution": {
+                        "chance": 100,
+                        "name": "Solution 3"
+                    },
+                    "state": "RESOLVED",
+                    "type": {
+                        "encounterChance": 20,
+                        "name": "Bug",
+                        "resolveChance": 80
+                    },
+                    "resolved": true
+                },
+                {
+                    "solution": {
+                        "chance": 100,
+                        "name": "Solution 3"
+                    },
+                    "state": "RESOLVED",
+                    "type": {
+                        "encounterChance": 20,
+                        "name": "Bug",
+                        "resolveChance": 80
+                    },
+                    "resolved": true
+                },
+                {
+                    "state": "UNRESOLVED",
+                    "type": {
+                        "encounterChance": 20,
+                        "name": "Bug",
+                        "resolveChance": 80
+                    },
+                    "resolved": false
+                }
+            ],
+            "label": "US #0",
+            "id": "f801ba89-8ce8-49fc-8f73-bc397ebd619c"
+        }],
+        "id": 1
     }],
-    "id": 1
-  }],
-  "SprintDuration": 14,
-  "ID": "f801aa89-8ce8-49fc-9f73-bc297eba610b",
-  "NumberOfSprints": 1,
-  "Name": "Test Simulation"
+    "NumberOfSprints": 1,
+    "ID": "f801aa89-8ce8-49fc-9f73-bc297eba610b",
+    "SprintDuration": 14,
+    "Name": "Test Simulation"
 }]
