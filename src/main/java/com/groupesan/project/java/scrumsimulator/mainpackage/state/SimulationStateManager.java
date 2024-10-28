@@ -8,7 +8,9 @@ import javax.swing.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 /**
  * SimulationStateManager manages the state of a simulation, including whether
@@ -118,7 +120,19 @@ public class SimulationStateManager {
             return;
         }
 
+        day = 1;
+        sprint = 1;
+        progressValue = 0;
+
+        for (Sprint sprint : currentSimulation.getSprints()) {
+            for (UserStory userStory : sprint.getUserStories()) {
+                userStory.removeAllBlockers();
+            }
+        }
+
         state = SprintStateEnum.RUNNING;
+        RandomUtils.resetInstance(currentSimulation.getRandomSeed());
+
         notifySimulationStarted();
         new Thread(this::runSimulation).start();
     }
@@ -151,6 +165,8 @@ public class SimulationStateManager {
             if (state == SprintStateEnum.PAUSED) {
                 continue;
             }
+
+            System.out.println("Day: " + day + " Sprint: " + sprint);
 
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
             notifyProgressUpdate();

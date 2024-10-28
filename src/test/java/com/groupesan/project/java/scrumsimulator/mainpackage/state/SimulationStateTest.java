@@ -48,7 +48,7 @@ public class SimulationStateTest {
         if (simulationStateManager != null) {
             try {
                 simulationStateManager.setCurrentSimulation(
-                        new Simulation(UUID.randomUUID(), "Test Simulation", 0, 0));
+                        new Simulation(UUID.randomUUID(), "Test Simulation", 0, 0, 0));
                 simulationStateManager.startSimulation();
                 assertTrue(simulationStateManager.getState() == SprintStateEnum.RUNNING);
             } catch (HeadlessException e) {
@@ -61,7 +61,7 @@ public class SimulationStateTest {
 
         if (simulationStateManager != null) {
             simulationStateManager.setCurrentSimulation(
-                    new Simulation( UUID.randomUUID(),"Test Simulation", 0, 0));
+                    new Simulation( UUID.randomUUID(),"Test Simulation", 0, 0, 0));
             simulationStateManager.stopSimulation();
             assertFalse(simulationStateManager.getState() == SprintStateEnum.RUNNING);
         }

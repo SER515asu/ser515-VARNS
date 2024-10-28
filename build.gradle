@@ -70,8 +70,8 @@ classes {
 apply plugin: 'checkstyle'
 checkstyle {
     // Keep checkstyle a little quieter
-    ignoreFailures = true
-    showViolations = false
+    //ignoreFailures = true
+    //showViolations = false
 }
 
 //tasks.withType(Checkstyle) {

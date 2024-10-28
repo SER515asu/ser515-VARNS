@@ -238,9 +238,12 @@ public class UserStory {
         return false;
     }
 
-    // using this to add blocker to the user story
     public void setBlocker(BlockerObject blocker) {
         blockers.add(blocker);
+    }
+
+    public void removeAllBlockers() {
+        blockers.clear();
     }
 
     public List<BlockerObject> getBlockers() {
@@ -260,7 +263,6 @@ public class UserStory {
 
             if (blocker.attemptResolve()) {
                 blocker.resolve();
-                System.out.println("Blocker resolved: " + blocker.getType().getName());
             }
         }
     }

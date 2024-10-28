@@ -18,14 +18,16 @@ public class Simulation {
     private Teacher teacher;
     private final List<Player> players = new ArrayList<>();
     private int sprintCount;
-    private int sprintDuration; // In days
+    private int sprintDuration;
     private final List<Sprint> sprints;
+    private long randomSeed;
 
-    public Simulation(UUID simulationId, String simulationName, int sprintCount, int sprintDurationDays) {
+    public Simulation(UUID simulationId, String simulationName, int sprintCount, int sprintDurationDays, long randomSeed) {
         this.simulationId = simulationId;
         this.simulationName = simulationName;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
+        this.randomSeed = randomSeed;
 
         for (int i = 0; i < sprintCount; i++) {
             SprintStore.getInstance()
@@ -94,6 +96,14 @@ public class Simulation {
         return this.sprints;
     }
 
+    public long getRandomSeed() {
+        return randomSeed;
+    }
+
+    public void setRandomSeed(long seed) {
+        randomSeed = seed;
+    }
+
     public void addUserStories(Sprint sprint, List<UserStory> userStories) {
         if (!userStories.isEmpty()) {
             userStories.forEach(sprint::addUserStory);
@@ -151,7 +161,7 @@ public class Simulation {
         int numberOfSprints = sprints.size();
 
         for (UserStory userStory : userStoriesList) {
-            int sprintIndex = RandomUtils.getRandomInt(numberOfSprints);
+            int sprintIndex = RandomUtils.getInstance().getRandomInt(numberOfSprints);
             Sprint sprint = sprints.get(sprintIndex);
             sprint.addUserStory(userStory);
             userStory.changeState(new UserStoryAddedState(userStory));

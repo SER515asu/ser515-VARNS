@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
@@ -161,7 +162,7 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
             int finalProbability;
 
             if (randomMode) {
-                finalProbability = RandomUtils.getRandomInt(
+                finalProbability = RandomUtils.getInstance().getRandomInt(
                         lowerBoundRandomProbabilitySlider.getValue(),
                         upperBoundRandomProbabilitySlider.getValue());
             } else {
