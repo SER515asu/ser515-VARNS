@@ -60,6 +60,27 @@ task createProperties(dependsOn: processResources) {
     }
 }
 
+
+// REF https://www.baeldung.com/gradle-fat-jar
+task fatJar(type: Jar) {
+    group = 'build'
+    description = 'Assembles a fat JAR containing all runtime dependencies.'
+
+    archiveFileName = "${project.name}-${project.version}-all.jar"
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+build.dependsOn fatJar
+
 classes {
     dependsOn createProperties
 }
