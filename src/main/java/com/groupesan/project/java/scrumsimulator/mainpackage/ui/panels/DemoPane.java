@@ -43,7 +43,7 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     public void init() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Demo");
+        setTitle("Scrum Simulator");
         setSize(1000, 700);
         setLayout(new BorderLayout(10, 10));
 

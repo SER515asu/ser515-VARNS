@@ -16,7 +16,7 @@ apply plugin: "com.github.spotbugs"
 sourceCompatibility = '21'
 targetCompatibility = '21'
 
-mainClassName = 'com.groupesan.project.java.scrumsimulator.mainpackage.StartSimulator' //TODO: this is a bit much, we should probably simplify it at some point
+mainClassName = 'com.groupesan.project.java.scrumsimulator.mainpackage.ScrumSimulator'
 
 compileJava.options.encoding = 'UTF-8'
 
