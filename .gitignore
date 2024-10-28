@@ -4,6 +4,7 @@ build/*
 .DS_STORE
 .JSON
 src/main/resources/simulation.JSON
+data/*.json
 
 bin/
 

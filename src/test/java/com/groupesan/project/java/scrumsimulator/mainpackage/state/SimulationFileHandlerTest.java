@@ -9,6 +9,8 @@ public class SimulationFileHandlerTest {
 
     @Test
     public void testLoadingFile() {
+        SimulationFileHandler.setSimulationJsonFilePath("src/test/resources/simulation.json");
+        
         JSONArray allSimulationData = SimulationFileHandler.getSimulationData();
         JSONObject simulationData = allSimulationData.getJSONObject(0);
 
