@@ -89,8 +89,8 @@
     }],
     "id": 1
   }],
-  "NumberOfSprints": 1,
-  "ID": "f801aa89-8ce8-49fc-9f73-bc297eba610b",
   "SprintDuration": 14,
+  "ID": "f801aa89-8ce8-49fc-9f73-bc297eba610b",
+  "NumberOfSprints": 1,
   "Name": "Test Simulation"
 }]
