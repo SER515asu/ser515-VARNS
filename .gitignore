@@ -6,6 +6,8 @@ build/*
 src/main/resources/simulation.JSON
 data/*.json
 
+temp_test_resources/*
+
 bin/
 
 # Sourced from https://github.com/github/gitignore/blob/main/Java.gitignore
