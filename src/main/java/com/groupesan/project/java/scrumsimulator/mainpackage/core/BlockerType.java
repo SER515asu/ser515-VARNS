@@ -8,14 +8,17 @@ public class BlockerType {
     private String name;
     private int encounterChance;
     private int resolveChance;
+    private int spikeChance;
 
     @JsonCreator
     public BlockerType(@JsonProperty("name") String name,
                        @JsonProperty("encounterChance") int encounterChance,
-                       @JsonProperty("resolveChance") int resolveChance) {
+                       @JsonProperty("resolveChance") int resolveChance,
+                       @JsonProperty("spikeChance") int spikeChance) {
         this.name = name;
         this.encounterChance = encounterChance;
         this.resolveChance = resolveChance;
+        this.spikeChance = spikeChance;
     }
 
     public String getName() {
@@ -40,6 +43,14 @@ public class BlockerType {
 
     public void setResolveChance(int resolveChance) {
         this.resolveChance = resolveChance;
+    }
+
+    public int getSpikeChance() {
+        return spikeChance;
+    }
+
+    public void setSpikeChance(int spikeChance) {
+        this.spikeChance = spikeChance;
     }
 
     public String toString() {

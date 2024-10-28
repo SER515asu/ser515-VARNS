@@ -14,33 +14,43 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
     private final String blockerName;
     private final int encounterChance;
     private final int resolveChance;
+    private final int spikeChance;
     private boolean randomMode;
 
     private JLabel nameLabel;
     private JLabel encounterLabel;
     private JLabel resolveLabel;
+    private JLabel spikeLabel;
+
     private JLabel lowerBoundEncounterValueLabel;
     private JLabel upperBoundEncounterValueLabel;
     private JLabel lowerBoundResolveValueLabel;
     private JLabel upperBoundResolveValueLabel;
+    private JLabel lowerBoundSpikeValueLabel;
+    private JLabel upperBoundSpikeValueLabel;
 
     private JPanel myPanel;
     private JCheckBox randomModeCheckBox;
     private JTextField nameField;
     private JTextField encounterChanceField;
     private JTextField resolveChanceField;
+    private JTextField spikeChanceField;
     private JSlider lowerBoundRandomEncounterSlider;
     private JSlider upperBoundRandomEncounterSlider;
     private JSlider lowerBoundRandomResolveSlider;
     private JSlider upperBoundRandomResolveSlider;
+    private JSlider lowerBoundRandomSpikeSlider;
+    private JSlider upperBoundRandomSpikeSlider;
     private JButton saveButton;
     private JButton cancelButton;
     private JButton deleteButton;
 
-    public EditBlockerProbabilities(String blockerName, int encounterChance, int resolveChance) {
+    public EditBlockerProbabilities(String blockerName, int encounterChance, int resolveChance, int spikeChance) {
         this.blockerName = blockerName;
         this.encounterChance = encounterChance;
         this.resolveChance = resolveChance;
+        this.spikeChance = spikeChance;
+
         this.randomMode = false;
         this.init();
     }
@@ -57,6 +67,7 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         nameLabel = new JLabel("Blocker Name:");
         encounterLabel = new JLabel("Encounter Chance (%):");
         resolveLabel = new JLabel("Resolve Chance (%):");
+        spikeLabel = new JLabel("Spike Chance (%):");
 
         randomModeCheckBox = new JCheckBox("Random Mode");
         randomModeCheckBox.setName("randomModeCheckBox");
@@ -67,6 +78,7 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         encounterChanceField.setName("encounterChanceField");
         resolveChanceField = new JTextField(String.valueOf(resolveChance), 5);
         resolveChanceField.setName("resolveChanceField");
+        spikeChanceField = new JTextField(String.valueOf(spikeChance), 5);
 
         lowerBoundRandomEncounterSlider = new JSlider(0, 100, 0);
         upperBoundRandomEncounterSlider = new JSlider(0, 100, 100);
@@ -79,6 +91,12 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
 
         lowerBoundResolveValueLabel = new JLabel(String.valueOf(lowerBoundRandomResolveSlider.getValue()));
         upperBoundResolveValueLabel = new JLabel(String.valueOf(upperBoundRandomResolveSlider.getValue()));
+
+        lowerBoundRandomSpikeSlider = new JSlider(0, 100, 0);
+        upperBoundRandomSpikeSlider = new JSlider(0, 100, 100);
+
+        lowerBoundSpikeValueLabel = new JLabel(String.valueOf(lowerBoundRandomSpikeSlider.getValue()));
+        upperBoundSpikeValueLabel = new JLabel(String.valueOf(upperBoundRandomSpikeSlider.getValue()));
 
         lowerBoundRandomEncounterSlider.addChangeListener(e -> {
             if (lowerBoundRandomEncounterSlider.getValue() > upperBoundRandomEncounterSlider.getValue()) {
@@ -112,6 +130,22 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
             resolveChanceField.setText(String.valueOf(upperBoundRandomResolveSlider.getValue()));
         });
 
+        lowerBoundRandomSpikeSlider.addChangeListener(e -> {
+            if (lowerBoundRandomSpikeSlider.getValue() > upperBoundRandomSpikeSlider.getValue()) {
+                lowerBoundRandomSpikeSlider.setValue(upperBoundRandomSpikeSlider.getValue());
+            }
+            lowerBoundSpikeValueLabel.setText(String.valueOf(lowerBoundRandomSpikeSlider.getValue()));
+            spikeChanceField.setText(String.valueOf(lowerBoundRandomSpikeSlider.getValue()));
+        });
+
+        upperBoundRandomSpikeSlider.addChangeListener(e -> {
+            if (upperBoundRandomSpikeSlider.getValue() < lowerBoundRandomSpikeSlider.getValue()) {
+                upperBoundRandomSpikeSlider.setValue(lowerBoundRandomSpikeSlider.getValue());
+            }
+            upperBoundSpikeValueLabel.setText(String.valueOf(upperBoundRandomSpikeSlider.getValue()));
+            spikeChanceField.setText(String.valueOf(upperBoundRandomSpikeSlider.getValue()));
+        });
+
         this.saveButton = getSaveButton(encounterChanceField, resolveChanceField, nameField);
         saveButton.setName("saveButton");
 
@@ -142,29 +176,36 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
     private void rebuildPanel() {
         myPanel.removeAll();
 
+        int gridy = 0;
+
         myPanel.add(nameLabel,
-                new CustomConstraints(0, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(0, gridy, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
         myPanel.add(nameField,
-                new CustomConstraints(1, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(1, gridy++, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         myPanel.add(encounterLabel,
-                new CustomConstraints(0, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(0, gridy, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         myPanel.add(resolveLabel,
-                new CustomConstraints(0, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(0, gridy + 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+
+        myPanel.add(spikeLabel,
+                new CustomConstraints(0, gridy + 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
         myPanel.add(randomModeCheckBox,
-                new CustomConstraints(0, 3, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(0, gridy + 3, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
         myPanel.add(saveButton,
-                new CustomConstraints(0, 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(0, gridy + 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
         myPanel.add(cancelButton,
-                new CustomConstraints(1, 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(1, gridy + 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
         myPanel.add(deleteButton,
-                new CustomConstraints(2, 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+                new CustomConstraints(2, gridy + 4, GridBagConstraints.WEST, 0.5, 1.0, GridBagConstraints.HORIZONTAL));
+
+        gridy += 5;
 
         if (randomMode) {
-            JPanel encounterPanel = new JPanel();
-            encounterPanel.setLayout(new GridBagLayout());
+
+            JPanel encounterPanel = new JPanel(new GridBagLayout());
 
             encounterPanel.add(new JLabel("Lower Bound:"),
                     new CustomConstraints(0, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
@@ -181,10 +222,9 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
                     new CustomConstraints(2, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
             myPanel.add(encounterPanel,
-                    new CustomConstraints(1, 1, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
+                    new CustomConstraints(1, gridy, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
 
-            JPanel resolvePanel = new JPanel();
-            resolvePanel.setLayout(new GridBagLayout());
+            JPanel resolvePanel = new JPanel(new GridBagLayout());
 
             resolvePanel.add(new JLabel("Lower Bound:"),
                     new CustomConstraints(0, 0, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
@@ -201,17 +241,22 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
                     new CustomConstraints(2, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
             myPanel.add(resolvePanel,
-                    new CustomConstraints(1, 2, GridBagConstraints.WEST, 2.0, 1.0, GridBagConstraints.HORIZONTAL));
+                    new CustomConstraints(1, gridy + 1, GridBagConstraints.WEST, 2.0, 1.0,
+                            GridBagConstraints.HORIZONTAL));
+
         } else {
+
             myPanel.add(encounterLabel,
-                    new CustomConstraints(0, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                    new CustomConstraints(0, gridy, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
             myPanel.add(encounterChanceField,
-                    new CustomConstraints(1, 1, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                    new CustomConstraints(1, gridy, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
 
             myPanel.add(resolveLabel,
-                    new CustomConstraints(0, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                    new CustomConstraints(0, gridy + 1, GridBagConstraints.WEST, 1.0, 1.0,
+                            GridBagConstraints.HORIZONTAL));
             myPanel.add(resolveChanceField,
-                    new CustomConstraints(1, 2, GridBagConstraints.WEST, 1.0, 1.0, GridBagConstraints.HORIZONTAL));
+                    new CustomConstraints(1, gridy + 1, GridBagConstraints.WEST, 1.0, 1.0,
+                            GridBagConstraints.HORIZONTAL));
         }
 
         myPanel.revalidate();
@@ -224,6 +269,7 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         saveButton.addActionListener(e -> {
             int encounterChance;
             int resolveChance;
+            int spikeChance;
 
             if (randomMode) {
                 encounterChance = RandomUtils.getInstance().getRandomInt(lowerBoundRandomEncounterSlider.getValue(),
@@ -232,20 +278,24 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
                 resolveChance = RandomUtils.getInstance().getRandomInt(lowerBoundRandomResolveSlider.getValue(),
                         upperBoundRandomResolveSlider.getValue());
 
+                spikeChance = RandomUtils.getInstance().getRandomInt(lowerBoundRandomSpikeSlider.getValue(),
+                        upperBoundRandomSpikeSlider.getValue());
+
             } else {
-                EncounterResolveProbabilities result = getEncounterResolveProbabilities(encounterChanceField,
-                        resolveChanceField);
+                EncounterResolveSpikeProbabilities result = getEncounterResolveSpikeProbabilities(encounterChanceField,
+                        resolveChanceField, spikeChanceField);
 
                 if (result == null)
                     return;
 
                 encounterChance = result.newEncounterChance();
                 resolveChance = result.newResolveChance();
+                spikeChance = result.newSpikeChance();
             }
 
             BlockerType blocker = BlockerTypeStore.get().getBlockerType(blockerName);
             if (blocker == null) {
-                blocker = new BlockerType(nameField.getText(), encounterChance, resolveChance);
+                blocker = new BlockerType(nameField.getText(), encounterChance, resolveChance, spikeChance);
                 BlockerTypeStore.get().addBlockerType(blocker);
             } else {
                 blocker.setName(nameField.getText());
@@ -257,8 +307,9 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
         return saveButton;
     }
 
-    public static EncounterResolveProbabilities getEncounterResolveProbabilities(JTextField encounterChanceField,
-            JTextField resolveChanceField) {
+    public static EncounterResolveSpikeProbabilities getEncounterResolveSpikeProbabilities(
+            JTextField encounterChanceField,
+            JTextField resolveChanceField, JTextField spikeChanceField) {
         int newEncounterChance;
         try {
             newEncounterChance = encounterChanceField.getText().isEmpty() ? 0
@@ -285,7 +336,21 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
             return null;
         }
 
-        if (chanceNotInRange(newEncounterChance) || chanceNotInRange(newResolveChance)) {
+        int newSpikeChance;
+        try {
+            newSpikeChance = spikeChanceField.getText().isEmpty() ? 0
+                    : Integer.parseInt(spikeChanceField.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Probability of spike chance must be an integer.",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+        if (chanceNotInRange(newEncounterChance) || chanceNotInRange(newResolveChance)
+                || chanceNotInRange(newSpikeChance)) {
             JOptionPane.showMessageDialog(
                     null,
                     "Probability must be an integer between 0 and 100.",
@@ -293,10 +358,10 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
                     JOptionPane.ERROR_MESSAGE);
             return null;
         }
-        return new EncounterResolveProbabilities(newEncounterChance, newResolveChance);
+        return new EncounterResolveSpikeProbabilities(newEncounterChance, newResolveChance, newSpikeChance);
     }
 
-    public record EncounterResolveProbabilities(int newEncounterChance, int newResolveChance) {
+    public record EncounterResolveSpikeProbabilities(int newEncounterChance, int newResolveChance, int newSpikeChance) {
     }
 
     private static boolean chanceNotInRange(int chance) {

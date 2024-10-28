@@ -12,6 +12,7 @@ public class BlockerObject {
 
     public enum BlockerState {
         UNRESOLVED,
+        SPIKED,
         RESOLVED
     }
 
@@ -42,10 +43,22 @@ public class BlockerObject {
     }
 
     public boolean attemptResolve() {
-        if (RandomUtils.getInstance().getRandomInt(100) < type.getResolveChance()) {
+        int resolveChance = type.getResolveChance();
+
+        if (state == BlockerState.SPIKED) {
+            resolveChance /= 2;
+        }
+
+        if (RandomUtils.getInstance().getRandomInt(100) < resolveChance) {
             this.solution = BlockerSolutionStore.getInstance().getRandomBlockerSolution();
             return true;
         } else {
+
+            if (RandomUtils.getInstance().getRandomInt(100) < type.getSpikeChance()) {
+                System.out.println("Blocker " + this.toString() + " has been spiked.");
+                state = BlockerState.SPIKED;
+            }
+
             return false;
         }
     }
