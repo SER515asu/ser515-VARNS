@@ -77,6 +77,13 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
         };
     }
 
+    private ActionListener handleInitializeUserStoriesAction() {
+        return e -> {
+            UserStoryStore.getInstance().initializeUserStories();
+            reloadUserStories();
+        };
+    }
+
     public void disableWindow() {
         isEditWindowOpen = true;
         setEnabled(false);
@@ -115,6 +122,15 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
                     newUserStory,
                     new CustomConstraints(
                             0, 1, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL));
+
+            JButton initializeUserStories = new JButton("Add Default User Stories");
+            initializeUserStories.addActionListener(handleInitializeUserStoriesAction());
+            myJpanel.add(
+                    initializeUserStories,
+                    new CustomConstraints(
+                            0, 2, GridBagConstraints.WEST, 1.0, 0.2, GridBagConstraints.HORIZONTAL
+                    )
+            );
         }
 
         add(myJpanel);
