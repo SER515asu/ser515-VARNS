@@ -89,6 +89,7 @@ public class SimulationProgressPane {
         else if(userStoryState instanceof UserStoryCompletedState) {
             setStatus(userStory, "Completed");
         }
+        userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
@@ -118,6 +119,7 @@ public class SimulationProgressPane {
                     }
                 }
          );
+        userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
@@ -170,6 +172,8 @@ public class SimulationProgressPane {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
 
+        System.out.println("Pause button pressed");
+        System.out.println(state);
         if (state == SprintStateEnum.RUNNING) {
             stateManager.setState(SprintStateEnum.PAUSED);
             pauseSimulationButton.setText("Start Simulation");

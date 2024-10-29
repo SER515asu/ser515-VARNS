@@ -185,7 +185,7 @@ public class SimulationStateManager {
     private void runSimulation() {
         addUserStory();
         detectInProgressUserStory();
-        while (state == SprintStateEnum.RUNNING) {
+        while (true) {
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
@@ -201,24 +201,26 @@ public class SimulationStateManager {
                 continue;
             }
 
+            System.out.println("Day: " + day + " Sprint: " + sprint);
+
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
             notifyProgressUpdate();
 
-//            resolveBlockers();
-//            detectBlockers(); - These will be reused. - Suparno
+            resolveBlockers();
+            detectBlockers();
+
 
             if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
                 stopSimulation();
-
             } else {
                 day++;
-//                setRandomStates();
+                setRandomStates();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
                     resetPanel();
-//                    addUserStory();
-//                    detectInProgressUserStory();
+                    addUserStory();
+                    detectInProgressUserStory();
                 }
             }
         }
