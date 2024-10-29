@@ -226,9 +226,9 @@ public class SimulationStateManager {
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
-                    resetPanel();
-                    addUserStory();
-                    detectInProgressUserStory();
+                    resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if they're completed or not.
+                    addUserStory(); // Add the user stories from the new sprint
+                    detectInProgressUserStory(); // Get the stories and detect if they're in progress
                 }
             }
         }
