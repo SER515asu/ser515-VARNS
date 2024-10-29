@@ -5,10 +5,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
@@ -132,7 +128,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
-        roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
+        roleComboBox = new JComboBox<>(new String[]{"Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
         roleComboBox.setPreferredSize(new Dimension(150, 25));
         UserRoleSingleton.getInstance().setUserRole(UserRole.SCRUM_ADMIN);
         roleComboBox.addActionListener(e -> {
@@ -155,7 +151,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createCenterPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
-    
+
         switch (role) {
             case SCRUM_MASTER:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
@@ -180,13 +176,13 @@ public class DemoPane extends JFrame implements BaseComponent {
                         () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
                 break;
         }
-    
+
         // TODO: Potentially remove below buttons
         // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
         return panel;
     }
-    
+
 
     private JPanel createRightPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -230,7 +226,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         setGlassPaneVisible(true);
         pane.setVisible(true);
         pane.setAlwaysOnTop(true);
-        
+
         pane.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                 setMenuButtonsEnabled(true);
