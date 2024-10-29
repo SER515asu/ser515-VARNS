@@ -11,7 +11,7 @@ public class UserStoryStore {
      * returns the shared instance of the UserStoryStore which contains all user stories in the
      * system.
      *
-     * @return
+     * @return UserStory Singleton instance
      */
     public static UserStoryStore getInstance() {
         if (userStoryStore == null) {

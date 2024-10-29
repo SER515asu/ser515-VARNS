@@ -8,7 +8,6 @@ import java.awt.*;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
-    private final Player player = new Player("bob", new ScrumRole("demo"));
     private JPanel myJpanel;
     private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
@@ -18,6 +17,7 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     public DemoPane() {
         this.init();
+        Player player = new Player("bob", new ScrumRole("demo"));
         player.doRegister();
     }
 
