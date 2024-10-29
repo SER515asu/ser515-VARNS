@@ -48,9 +48,6 @@ public class SimulationProgressPane {
         pauseSimulationButton = new JButton("Pause Simulation");
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
 
-        TableColumn statusColumn = userStoryContainer.getColumnModel().getColumn(1);
-        JComboBox<String> statusComboBox = new JComboBox<>(new String[] {"In Progress", "Spiked", "Blocked", "Completed"});
-        statusColumn.setCellEditor(new DefaultCellEditor(statusComboBox));
 
 
         String[] userStoryColumnNames = { "User Story Name", "Status" };
@@ -77,7 +74,14 @@ public class SimulationProgressPane {
     public void addUserStory(UserStory USText) {
         String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "In Progress");
 
-        model.addRow(new Object[] { USText.getName(), status});
+        TableColumn statusColumn = userStoryContainer.getColumnModel().getColumn(1);
+        JComboBox<String> statusComboBox = new JComboBox<>(new String[] {"In Progress", "Spiked", "Blocked", "Completed"});
+        statusComboBox.setSelectedItem(status);
+
+        statusColumn.setCellEditor(new DefaultCellEditor(statusComboBox));
+
+
+        model.addRow(new Object[] { USText.getName(), statusColumn.getCellEditor().getCellEditorValue()});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
@@ -88,8 +92,8 @@ public class SimulationProgressPane {
         System.out.println(userStory.getName());
         System.out.println(userStoryState instanceof UserStorySelectedState);
 
-        if(userStoryState instanceof UserStorySelectedState) {
-                setStatus(userStory, "Selected");
+        if(userStoryState instanceof UserStoryAddedState) {
+                setStatus(userStory, "In Progress");
         }
         else if(userStoryState instanceof UserStoryCompletedState) {
             setStatus(userStory, "Completed");
@@ -111,7 +115,10 @@ public class SimulationProgressPane {
                         if ("Added".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
                         }
-                        else if ("Selected".equals(progress)) {
+                        else if ("Spiked".equals(progress)) {
+                            userStoryCell.setForeground(Color.RED);
+                        }
+                        else if ("In Progress".equals(progress)) {
                             userStoryCell.setForeground(Color.BLUE);
                         }
                         else if ("Completed".equals(progress)) {
