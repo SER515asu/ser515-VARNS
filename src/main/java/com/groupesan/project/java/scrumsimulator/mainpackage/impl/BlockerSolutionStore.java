@@ -29,7 +29,7 @@ public class BlockerSolutionStore {
 
     public BlockerSolution getRandomBlockerSolution() {
         int totalWeight = blockerSolutions.stream().mapToInt(BlockerSolution::getChance).sum();
-        int randomValue = RandomUtils.getRandomInt(totalWeight);
+        int randomValue = RandomUtils.getInstance().getRandomInt(totalWeight);
 
         int cumulativeWeight = 0;
         for (BlockerSolution solution : blockerSolutions) {

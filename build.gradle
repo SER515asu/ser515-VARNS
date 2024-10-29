@@ -16,7 +16,7 @@ apply plugin: "com.github.spotbugs"
 sourceCompatibility = '21'
 targetCompatibility = '21'
 
-mainClassName = 'com.groupesan.project.java.scrumsimulator.mainpackage.StartSimulator' //TODO: this is a bit much, we should probably simplify it at some point
+mainClassName = 'com.groupesan.project.java.scrumsimulator.mainpackage.ScrumSimulator'
 
 compileJava.options.encoding = 'UTF-8'
 
@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.json:json:20230618' // org.json in maven repo
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
     spotbugs 'com.github.spotbugs:spotbugs:4.8.0'
+    implementation 'com.github.spotbugs:spotbugs-annotations:4.7.3'
     implementation 'com.formdev:flatlaf:3.2.5'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5' // potential spotbugs issue
 
@@ -59,6 +60,27 @@ task createProperties(dependsOn: processResources) {
     }
 }
 
+
+// REF https://www.baeldung.com/gradle-fat-jar
+task fatJar(type: Jar) {
+    group = 'build'
+    description = 'Assembles a fat JAR containing all runtime dependencies.'
+
+    archiveFileName = "${project.name}-${project.version}-all.jar"
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+build.dependsOn fatJar
+
 classes {
     dependsOn createProperties
 }
@@ -69,8 +91,8 @@ classes {
 apply plugin: 'checkstyle'
 checkstyle {
     // Keep checkstyle a little quieter
-    ignoreFailures = true
-    showViolations = false
+    //ignoreFailures = true
+    //showViolations = false
 }
 
 //tasks.withType(Checkstyle) {

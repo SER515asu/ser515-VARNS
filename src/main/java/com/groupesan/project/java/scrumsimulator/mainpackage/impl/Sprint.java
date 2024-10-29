@@ -1,17 +1,22 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sprint {
+    @JsonProperty
     private final ArrayList<UserStory> userStories = new ArrayList<>();
+
     private final String name;
 
+    @JsonProperty
     private final String description;
 
+    @JsonProperty
     private final int length;
-
-    private int remainingDays;
 
     private final int id;
 
@@ -19,7 +24,17 @@ public class Sprint {
         this.name = name;
         this.description = description;
         this.length = length;
-        this.remainingDays = length;
+        this.id = id;
+    }
+
+    @JsonCreator
+    public Sprint(@JsonProperty("length") int length,
+                  @JsonProperty("userStories") List<UserStory> userStories,
+                  @JsonProperty("id") int id) {
+        this.name = "";
+        this.description = "";
+        this.length = length;
+        this.userStories.addAll(userStories);
         this.id = id;
     }
 
@@ -45,14 +60,6 @@ public class Sprint {
 
     public int getLength() {
         return length;
-    }
-
-    public int getDaysRemaining() {
-        return remainingDays;
-    }
-
-    public void decrementRemainingDays() {
-        if (remainingDays > 0) remainingDays--;
     }
 
     public int getId() {

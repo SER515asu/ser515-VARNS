@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.*;
+import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,7 @@ public class SimulationStateTest {
         if (simulationStateManager != null) {
             try {
                 simulationStateManager.setCurrentSimulation(
-                        new Simulation("Test Simulation", 0, 0));
+                        new Simulation(UUID.randomUUID(), "Test Simulation", 0, 0, 0));
                 simulationStateManager.startSimulation();
                 assertTrue(simulationStateManager.getState() == SprintStateEnum.RUNNING);
             } catch (HeadlessException e) {
@@ -60,7 +61,7 @@ public class SimulationStateTest {
 
         if (simulationStateManager != null) {
             simulationStateManager.setCurrentSimulation(
-                    new Simulation("Test Simulation", 0, 0));
+                    new Simulation( UUID.randomUUID(),"Test Simulation", 0, 0, 0));
             simulationStateManager.stopSimulation();
             assertFalse(simulationStateManager.getState() == SprintStateEnum.RUNNING);
         }

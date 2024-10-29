@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 
 public class UserStoryWidget extends JPanel implements BaseComponent {
 
-    JLabel id;
+    JLabel label;
     JLabel points;
     JLabel name;
     JLabel desc;
@@ -85,7 +85,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         if (this.getMouseListeners().length == 0 && reactToMouseHover)
             this.addMouseListener(openEditDialog);
 
-        id = new JLabel(userStory.getId().toString());
+        label = new JLabel(userStory.getLabel());
         points = new JLabel(Double.toString(userStory.getPointValue()));
         name = new JLabel(userStory.getName());
         desc = new JLabel(userStory.getDescription());
@@ -96,7 +96,7 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         setLayout(myGridBagLayout);
 
         add(
-                id,
+                label,
                 new CustomConstraints(
                         0, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
         add(

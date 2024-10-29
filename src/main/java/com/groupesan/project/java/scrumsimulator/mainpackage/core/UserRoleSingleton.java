@@ -43,4 +43,18 @@ public class UserRoleSingleton {
         }
         return null;
     }
+    public static String getLabelFromUserRole(UserRole role) {
+        switch (role) {
+            case SCRUM_MASTER:
+                return "Scrum Master";
+            case DEVELOPER:
+                return "Developer";
+            case PRODUCT_OWNER:
+                return "Product Owner";
+            case SCRUM_ADMIN:
+                return "Scrum Administrator";
+            default:
+                return "Scrum Administrator";
+        }
+    }
 }

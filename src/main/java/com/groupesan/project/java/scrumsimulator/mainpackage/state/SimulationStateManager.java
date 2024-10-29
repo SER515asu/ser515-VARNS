@@ -5,24 +5,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javax.swing.*;
-
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 /**
  * SimulationStateManager manages the state of a simulation, including whether
@@ -36,7 +32,6 @@ public class SimulationStateManager {
         PAUSED
     }
 
-    private static final String JSON_FILE_PATH = "src/main/resources/simulation.JSON";
     private Simulation currentSimulation;
     private SprintStateEnum state;
     private Integer day;
@@ -166,7 +161,19 @@ public class SimulationStateManager {
             return;
         }
 
+        day = 1;
+        sprint = 1;
+        progressValue = 0;
+
+        for (Sprint sprint : currentSimulation.getSprints()) {
+            for (UserStory userStory : sprint.getUserStories()) {
+                userStory.removeAllBlockers();
+            }
+        }
+
         state = SprintStateEnum.RUNNING;
+        RandomUtils.resetInstance(currentSimulation.getRandomSeed());
+
         notifySimulationStarted();
         new Thread(this::runSimulation).start();
     }
@@ -180,6 +187,7 @@ public class SimulationStateManager {
         init();
 
         notifySimulationStopped();
+        SimulationSingleton.getInstance().saveSimulationDetails();
     }
 
     private void runSimulation() {
@@ -292,66 +300,11 @@ public class SimulationStateManager {
                 }
 
                 if (blocker.attemptResolve()) {
+                    blocker.resolve();
                     System.out.println("Blocker resolved: " + blocker.getType().getName() + " by " + blocker.getSolution().getName());
                     notifyBlockerResolved(blocker);
                 }
             }
-        }
-    }
-
-    /**
-     * Saves the details of a new simulation to a JSON file.
-     *
-     * @param simId           The ID of the simulation.
-     * @param simName         The name of the simulation.
-     * @param numberOfSprints The number of sprints in the simulation.
-     * @param sprintDuration  The duration of each sprint in the simulation.
-     */
-
-    public static void saveNewSimulationDetails(String simId, String simName, Integer numberOfSprints,
-                                                Integer sprintDuration) {
-        JSONObject simulationData = getSimulationData();
-        if (simulationData == null) {
-            simulationData = new JSONObject();
-        }
-
-        JSONObject newSimulation = new JSONObject();
-        newSimulation.put("ID", simId);
-        newSimulation.put("Name", simName);
-        newSimulation.put("Status", "New");
-        newSimulation.put("SprintDuration", sprintDuration);
-        newSimulation.put("NumberOfSprints", numberOfSprints);
-        newSimulation.put("sprintDuration", sprintDuration);
-        newSimulation.put("Sprints", new JSONArray());
-        newSimulation.put("Events", new JSONArray());
-        newSimulation.put("Users", new JSONArray());
-
-        JSONArray simulations = simulationData.optJSONArray("Simulations");
-        if (simulations == null) {
-            simulations = new JSONArray();
-            simulationData.put("Simulations", simulations);
-        }
-        simulations.put(newSimulation);
-
-        updateSimulationData(simulationData);
-    }
-
-    private static JSONObject getSimulationData() {
-        try (FileInputStream fis = new FileInputStream(JSON_FILE_PATH)) {
-            JSONTokener tokener = new JSONTokener(fis);
-            return new JSONObject(tokener);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error reading from simulation.JSON");
-            return null;
-        }
-    }
-
-    private static void updateSimulationData(JSONObject updatedData) {
-        try (OutputStreamWriter writer = new OutputStreamWriter(
-                new FileOutputStream(JSON_FILE_PATH), StandardCharsets.UTF_8)) {
-            writer.write(updatedData.toString(4));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error writing to simulation.JSON");
         }
     }
 

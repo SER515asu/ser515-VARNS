@@ -1,14 +1,18 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 public class BlockerObject {
 
-    private BlockerType type;
+    private final BlockerType type;
 
-    private enum BlockerState {
+    public enum BlockerState {
         UNRESOLVED,
+        SPIKED,
         RESOLVED
     }
 
@@ -21,6 +25,15 @@ public class BlockerObject {
         this.state = BlockerState.UNRESOLVED;
     }
 
+    @JsonCreator
+    public BlockerObject(@JsonProperty("solution") BlockerSolution solution,
+                         @JsonProperty("type") BlockerType type,
+                         @JsonProperty("state") BlockerState state) {
+        this.solution = solution;
+        this.type = type;
+        this.state = state;
+    }
+
     public BlockerType getType() {
         return type;
     }
@@ -30,23 +43,40 @@ public class BlockerObject {
     }
 
     public boolean attemptResolve() {
-        if (RandomUtils.getRandomInt(100) < type.getResolveChance()) {
+        int resolveChance = type.getResolveChance();
+
+        if (state == BlockerState.SPIKED) {
+            resolveChance /= 2;
+        }
+
+        if (RandomUtils.getInstance().getRandomInt(100) < resolveChance) {
             this.solution = BlockerSolutionStore.getInstance().getRandomBlockerSolution();
             return true;
         } else {
+
+            if (RandomUtils.getInstance().getRandomInt(100) < type.getSpikeChance()) {
+                System.out.println("Blocker " + this.toString() + " has been spiked.");
+                state = BlockerState.SPIKED;
+            }
+
             return false;
         }
     }
 
     public void resolve() {
-        state = BlockerState.RESOLVED;
+        this.state = BlockerState.RESOLVED;
     }
 
+    @JsonIgnore
     public boolean isResolved() {
         return state == BlockerState.RESOLVED;
     }
 
     public BlockerSolution getSolution() {
         return solution;
+    }
+
+    public BlockerState getState() {
+        return state;
     }
 }

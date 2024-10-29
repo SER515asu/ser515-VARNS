@@ -119,7 +119,7 @@ public class SimulationProgressPane {
                     }
                 }
          );
-        userStoryContainer.revalidate();
+        //userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
@@ -131,7 +131,7 @@ public class SimulationProgressPane {
         for(int i = 0; i < model.getRowCount(); i++) {
             model.removeRow(i);
         }
-        userStoryContainer.revalidate();
+        //userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 

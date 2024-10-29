@@ -2,27 +2,31 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.DataModel;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.ResuableHeader;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.SpinnerInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.TextInput;
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.LongInput;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 class NewSimulationPane extends JFrame implements BaseComponent {
     private final DataModel<String> simulationModel;
     private final DataModel<Object> sprintModel;
     private final DataModel<Object> sprintLengthModel;
+    private final DataModel<Long> seedModel;
     private final DataModel<List<Player>> users;
     private SpinnerInput sprintInput;
     private SpinnerInput sprintLengthInput;
+    private LongInput seedInput;
     private JToggleButton autoFillToggleButton;
     private JSlider sprintLengthStartSlider;
     private JSlider sprintLengthEndSlider;
@@ -39,6 +43,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         this.simulationModel = new DataModel<>("New Simulation");
         this.sprintModel = new DataModel<>(1);
         this.sprintLengthModel = new DataModel<>(14);
+        this.seedModel = new DataModel<>(RandomUtils.getInstance().getRandomLong());
         this.users = new DataModel<>(new ArrayList<>());
         init();
     }
@@ -73,6 +78,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
                 new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
                 sprintLengthModel);
 
+        seedInput = new LongInput(
+                "Seed: ", new JTextField(seedModel.getData().toString()), seedModel);
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         inputs.add(resuableHeader, gbc);
@@ -85,6 +93,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
 
         gbc.gridy++;
         inputs.add(sprintLengthInput, gbc);
+
+        gbc.gridy++;
+        inputs.add(seedInput, gbc);
 
         autoFillToggleButton = new JToggleButton("Auto Fill OFF");
         autoFillToggleButton.addActionListener(e -> toggleAutoFillPanel());
@@ -100,16 +111,16 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         cancelButton.addActionListener(e -> dispose());
 
         submitButton = new JButton("Submit");
-        submitButton.addActionListener((ActionListener) e -> {
-            Simulation simulation = new Simulation(simulationModel.getData(),
-                    (int) sprintModel.getData(), (int) sprintLengthModel.getData());
+        submitButton.addActionListener(e -> {
+            Simulation simulation = new Simulation(UUID.randomUUID(), simulationModel.getData(),
+                    (int) sprintModel.getData(), (int) sprintLengthModel.getData(), seedModel.getData());
             for (Player player : users.getData()) {
                 player.doRegister();
                 simulation.addPlayer(player);
             }
 
-            SimulationStateManager.getInstance().setCurrentSimulation(simulation); // TODO - Should be added to a store as well as set as current
-
+            SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+            SimulationSingleton.getInstance().addSimulation(simulation);
             dispose();
         });
 
@@ -189,9 +200,9 @@ class NewSimulationPane extends JFrame implements BaseComponent {
     }
 
     private void applyAutoFillValues() {
-        int randomSprintLength = RandomUtils.getRandomInt(sprintLengthStartSlider.getValue(),
+        int randomSprintLength = RandomUtils.getInstance().getRandomInt(sprintLengthStartSlider.getValue(),
                 sprintLengthEndSlider.getValue());
-        int randomSprintNumber = RandomUtils.getRandomInt(sprintNumberStartSlider.getValue(),
+        int randomSprintNumber = RandomUtils.getInstance().getRandomInt(sprintNumberStartSlider.getValue(),
                 sprintNumberEndSlider.getValue());
 
         sprintLengthModel.setData(randomSprintLength);

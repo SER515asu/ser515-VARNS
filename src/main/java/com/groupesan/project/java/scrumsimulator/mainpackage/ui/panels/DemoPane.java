@@ -43,7 +43,7 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     public void init() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Demo");
+        setTitle("Scrum Simulator");
         setSize(1000, 700);
         setLayout(new BorderLayout(10, 10));
 
@@ -143,10 +143,12 @@ public class DemoPane extends JFrame implements BaseComponent {
         add(myJpanel);
     }
 
+    private JComboBox<String> roleComboBox;
+
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
-        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
+        roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
         roleComboBox.setPreferredSize(new Dimension(150, 25));
         UserRoleSingleton.getInstance().setUserRole(UserRole.SCRUM_ADMIN);
         roleComboBox.addActionListener(e -> {
@@ -160,6 +162,10 @@ public class DemoPane extends JFrame implements BaseComponent {
         panel.add(roleLabel);
         panel.add(roleComboBox);
         return panel;
+    }
+
+    public void updateRoleSelection(String selectedRole) {
+        roleComboBox.setSelectedItem(selectedRole);
     }
 
     private JPanel createCenterPanel(UserRole role) {
