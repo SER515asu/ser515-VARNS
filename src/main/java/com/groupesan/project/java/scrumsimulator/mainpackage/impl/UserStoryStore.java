@@ -42,4 +42,18 @@ public class UserStoryStore {
     public List<UserStory> getUserStories() {
         return new ArrayList<>(userStories);
     }
+
+    public void initializeUserStories() {
+        UserStory a = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS1", "description1", 1.0, 1);
+        UserStoryStore.getInstance().addUserStory(a);
+
+        UserStory b = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS2", "description2", 2.0, 8);
+        UserStoryStore.getInstance().addUserStory(b);
+
+        UserStory c = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS3", "description3", 3.0, 13);
+        UserStoryStore.getInstance().addUserStory(c);
+    }
 }

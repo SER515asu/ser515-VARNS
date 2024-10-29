@@ -1,9 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFactory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.DemoPane;
 import javax.swing.*;
 
@@ -15,27 +13,13 @@ public class App {
         this.loadTheme();
         SwingUtilities.invokeLater(
                 () -> {
-                    // Initialize User Stories in helper function now
-                    initializeUserStories();
+                    // Load simulations from data store
+                    SimulationSingleton.getInstance();
 
                     // Load DemoPane
                     DemoPane form = new DemoPane();
                     form.setVisible(true);
                 });
-    }
-
-    private void initializeUserStories() {
-        UserStory a = UserStoryFactory.getInstance()
-                .createNewUserStory("predefinedUS1", "description1", 1.0, 1);
-        UserStoryStore.getInstance().addUserStory(a);
-
-        UserStory b = UserStoryFactory.getInstance()
-                .createNewUserStory("predefinedUS2", "description2", 2.0, 8);
-        UserStoryStore.getInstance().addUserStory(b);
-
-        UserStory c = UserStoryFactory.getInstance()
-                .createNewUserStory("predefinedUS3", "description3", 3.0, 13);
-        UserStoryStore.getInstance().addUserStory(c);
     }
 
     private void loadTheme() {
