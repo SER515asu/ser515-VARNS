@@ -18,27 +18,11 @@ public class DemoPane extends JFrame implements BaseComponent {
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
             variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
 
-    private Map<UserRole, Set<JButton>> roleToButton;
     private JPanel bottomPanel;
 
     public DemoPane() {
         this.init();
         player.doRegister();
-        roleToButton = new HashMap<>(Map.of(
-                UserRole.SCRUM_MASTER, new HashSet<>(Set.of(
-                        newSimulationButton,
-                        sprintBacklogsButton
-                // spike activities button
-                )),
-                UserRole.DEVELOPER, new HashSet<>(Set.of(
-                        userStoriesButton
-                // spike activities button
-                )),
-                UserRole.PRODUCT_OWNER, new HashSet<>(Set.of(
-                        userStoriesButton)),
-                UserRole.SCRUM_ADMIN, new HashSet<>(Set.of(
-                        potentialBlockersButton,
-                        startSimulationButton))));
     }
 
     public void init() {
