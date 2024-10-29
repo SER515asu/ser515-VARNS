@@ -7,6 +7,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
@@ -47,12 +48,16 @@ public class SimulationProgressPane {
         pauseSimulationButton = new JButton("Pause Simulation");
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
 
+        TableColumn statusColumn = userStoryContainer.getColumnModel().getColumn(1);
+        JComboBox<String> statusComboBox = new JComboBox<>(new String[] {"In Progress", "Spiked", "Blocked", "Completed"});
+        statusColumn.setCellEditor(new DefaultCellEditor(statusComboBox));
+
 
         String[] userStoryColumnNames = { "User Story Name", "Status" };
         model = new DefaultTableModel(userStoryColumnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == 1;
             }
         };
         userStoryContainer = new JTable(model);
@@ -70,7 +75,7 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "Added");
+        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "In Progress");
 
         model.addRow(new Object[] { USText.getName(), status});
         userStoryContainer.revalidate();
