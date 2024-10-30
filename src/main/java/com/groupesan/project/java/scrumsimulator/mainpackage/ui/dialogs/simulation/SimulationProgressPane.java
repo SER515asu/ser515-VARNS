@@ -112,11 +112,14 @@ public class SimulationProgressPane {
                     public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
                         Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
 
-                        if ("Added".equals(progress)) {
+                        if ("New".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
                         }
                         else if ("Spiked".equals(progress)) {
                             userStoryCell.setForeground(Color.RED);
+                        }
+                        else if ("Blocked".equals(progress)) {
+                            userStoryCell.setForeground(Color.PINK);
                         }
                         else if ("In Progress".equals(progress)) {
                             userStoryCell.setForeground(Color.BLUE);

@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryNewState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
@@ -134,7 +134,7 @@ public class Simulation {
                 .filter(us -> us.toString().equals(userStory))
                 .toList()
                 .getFirst();
-        userStoryToBeAdded.changeState(new UserStoryAddedState(userStoryToBeAdded));
+        userStoryToBeAdded.changeState(new UserStoryNewState(userStoryToBeAdded));
         sprint.addUserStory(userStoryToBeAdded);
     }
 
@@ -164,7 +164,7 @@ public class Simulation {
             int sprintIndex = RandomUtils.getInstance().getRandomInt(numberOfSprints);
             Sprint sprint = sprints.get(sprintIndex);
             sprint.addUserStory(userStory);
-            userStory.changeState(new UserStoryAddedState(userStory));
+            userStory.changeState(new UserStoryNewState(userStory));
         }
     }
 }
