@@ -1,6 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 import java.awt.*;
@@ -61,7 +62,7 @@ public class SimulationProgressPane {
         userStoryScrollPane = new JScrollPane(userStoryContainer);
         for(int i = 2; i < userStoryColumnNames.length; i++) {
             userStoryContainer.getColumn(userStoryColumnNames[i]).setCellRenderer(new ButtonRenderer());
-            userStoryContainer.
+            userStoryContainer.getColumn(userStoryColumnNames[i]).setCellEditor(new ButtonEditor(new JCheckBox(), model));
         }
         // userStoryScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -274,5 +275,71 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
         setText((value == null) ? "Actions" : value.toString());
         return this;
+    }
+}
+
+/**
+ * Borrowing elements of PotentialBlockerSolutionsPane
+ */
+class ButtonEditor extends DefaultCellEditor {
+    protected JButton button;
+    private String label;
+    private boolean isPushed;
+    private DefaultTableModel tabModel;
+    private int column;
+    private int row;
+    public ButtonEditor(JCheckBox checkBox, DefaultTableModel model) {
+        super(checkBox);
+        button = new JButton();
+        tabModel = model;
+        button.setVisible(false);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireEditingStopped();
+                if(column == 2) {
+                    model.setValueAt("In Progress", row, 1);
+                }
+                if(column == 3) {
+                    model.setValueAt("Blocked", row, 1);
+                }
+                if(column == 4) {
+                    model.setValueAt("Spiked", row, 1);
+                }
+                if(column == 5) {
+                    model.setValueAt("Completed", row, 1);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        if (value instanceof JButton) {
+            button = (JButton) value;
+            this.isPushed = true;
+            this.row = row;
+            this.column = column;
+            return button;
+        }
+        return null;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        isPushed = false;
+        return button;
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        isPushed = false;
+        return super.stopCellEditing();
+    }
+
+    @Override
+    protected void fireEditingStopped() {
+        super.fireEditingStopped();
     }
 }
