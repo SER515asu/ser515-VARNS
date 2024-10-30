@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
-    private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
+    private JButton userStoriesButton, startSimulationButton, potentialBlockersButton,
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
             variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
 
@@ -61,10 +61,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         newSimulationButton.addActionListener(
                 e -> handleButtonAction(new NewSimulationPane(this)));
 
-        sprintsButton = new JButton("Sprints");
-        sprintsButton.addActionListener(
-                e -> handleButtonAction(new SprintListPane(this)));
-
         userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
                 e -> handleButtonAction(new UserStoryListPane(this)));
@@ -107,17 +103,16 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         new DemoPaneBuilder(myJpanel)
                 .addComponent(newSimulationButton, 0, 0)
-                .addComponent(sprintsButton, 1, 0)
-                .addComponent(userStoriesButton, 2, 0)
-                .addComponent(startSimulationButton, 3, 0)
-                .addComponent(potentialBlockersButton, 4, 0)
-                .addComponent(potentialBlockerSolutionsButton, 5, 0)
-                .addComponent(updateStoryStatusButton, 6, 0)
-                .addComponent(simulationButton, 7, 0)
-                .addComponent(modifySimulationButton, 8, 0)
-                .addComponent(joinSimulationButton, 9, 0)
-                .addComponent(variantSimulationUIButton, 10, 0)
-                .addComponent(sprintBacklogsButton, 11, 0)
+                .addComponent(userStoriesButton, 1, 0)
+                .addComponent(startSimulationButton, 2, 0)
+                .addComponent(potentialBlockersButton, 3, 0)
+                .addComponent(potentialBlockerSolutionsButton, 4, 0)
+                .addComponent(updateStoryStatusButton, 5, 0)
+                .addComponent(simulationButton, 6, 0)
+                .addComponent(modifySimulationButton, 7, 0)
+                .addComponent(joinSimulationButton, 8, 0)
+                .addComponent(variantSimulationUIButton, 9, 0)
+                .addComponent(sprintBacklogsButton, 10, 0)
                 .buildPanel();
 
         add(myJpanel);
@@ -259,7 +254,6 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     private void setMenuButtonsEnabled(boolean enabled) {
         newSimulationButton.setEnabled(enabled);
-        sprintsButton.setEnabled(enabled);
         userStoriesButton.setEnabled(enabled);
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
