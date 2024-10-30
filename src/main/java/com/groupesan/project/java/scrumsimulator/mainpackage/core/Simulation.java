@@ -3,7 +3,6 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
@@ -138,6 +137,12 @@ public class Simulation {
 
     public void addUserStories(List<UserStory> userStories) {
         this.userStories.addAll(userStories);
+    }
+
+    public void removeUserStory(UserStory userStory) {
+        if (userStory == null) return;
+        sprints.forEach(sprint -> sprint.removeUserStory(userStory.getId()));
+        userStories.remove(userStory);
     }
 
     public void removeUserStoryFromSprint(Sprint sprint, String userStory) {
