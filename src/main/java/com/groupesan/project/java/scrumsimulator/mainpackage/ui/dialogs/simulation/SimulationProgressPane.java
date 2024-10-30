@@ -50,11 +50,11 @@ public class SimulationProgressPane {
 
 
 
-        String[] userStoryColumnNames = { "User Story Name", "Status" };
+        String[] userStoryColumnNames = { "User Story Name", "Status", "Set In Progress", "Set Blocked" , "Set Spiked", "Set Completed"};
         model = new DefaultTableModel(userStoryColumnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 1;
+                return false;
             }
         };
         userStoryContainer = new JTable(model);
@@ -72,16 +72,9 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "In Progress");
+        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "Added");
 
-        TableColumn statusColumn = userStoryContainer.getColumnModel().getColumn(1);
-        JComboBox<String> statusComboBox = new JComboBox<>(new String[] {"In Progress", "Spiked", "Blocked", "Completed"});
-        statusComboBox.setSelectedItem(status);
-
-        statusColumn.setCellEditor(new DefaultCellEditor(statusComboBox));
-
-
-        model.addRow(new Object[] { USText.getName(), statusColumn.getCellEditor().getCellEditorValue()});
+        model.addRow(new Object[] { USText.getName(), status});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
