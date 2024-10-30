@@ -13,8 +13,8 @@ import javax.swing.border.EmptyBorder;
 public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton userStoriesButton, startSimulationButton, potentialBlockersButton,
-            updateStoryStatusButton, simulationButton, joinSimulationButton,
-             sprintBacklogsButton, simulationConfigButton, potentialBlockerSolutionsButton;
+            updateStoryStatusButton, simulationButton, sprintBacklogsButton, simulationConfigButton,
+            potentialBlockerSolutionsButton;
 
     private JPanel bottomPanel;
 
@@ -96,10 +96,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         simulationButton.addActionListener(
                 e -> handleButtonAction(new AddUserPane(this)));
 
-        joinSimulationButton = new JButton("Join Simulation");
-        joinSimulationButton.addActionListener(
-                e -> handleButtonAction(new SimulationUI(this)));
-
         sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
         sprintBacklogsButton.addActionListener(
                 e -> handleButtonAction(new SprintBacklogPane(this)));
@@ -112,8 +108,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(potentialBlockerSolutionsButton, 4, 0)
                 .addComponent(updateStoryStatusButton, 5, 0)
                 .addComponent(simulationButton, 6, 0)
-                .addComponent(joinSimulationButton, 7, 0)
-                .addComponent(sprintBacklogsButton, 8, 0)
+                .addComponent(sprintBacklogsButton, 7, 0)
                 .buildPanel();
 
         add(myJpanel);
@@ -200,8 +195,6 @@ public class DemoPane extends JFrame implements BaseComponent {
                 // TODO: Add Show Simulation History Button here
                 break;
         }
-
-        panel.add(createButton("Join Simulation", () -> handleButtonAction(new SimulationUI(this))));
         panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
 
         return panel;
@@ -257,7 +250,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         potentialBlockerSolutionsButton.setEnabled(enabled);
         updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
-        joinSimulationButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
     }
 }
