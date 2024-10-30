@@ -1,10 +1,13 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.*;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
@@ -37,6 +40,14 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         bottomPanel = new JPanel(new BorderLayout(10, 10));
         redrawUIBasedOnRole();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                SimulationSingleton.getInstance().saveSimulationDetails();
+            }
+        });
     }
 
     public void redrawUIBasedOnRole() {
