@@ -129,8 +129,8 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
             }
 
             currentSimulation.setSimulationName(simName);
-            currentSimulation.setSprintCount(numberOfSprints);
             currentSimulation.setSprintDuration(sprintLengthCycle);
+            currentSimulation.setSprintCount(numberOfSprints);
 
             if (currentSimulation.getRandomSeed() != seed) {
                 System.out.println("Random seed changed from " + currentSimulation.getRandomSeed() + " to " + seed);

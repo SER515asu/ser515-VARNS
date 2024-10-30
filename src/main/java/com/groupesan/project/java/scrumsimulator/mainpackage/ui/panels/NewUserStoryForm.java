@@ -6,6 +6,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingle
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFactory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
@@ -106,7 +107,7 @@ public class NewUserStoryForm extends JFrame implements BaseComponent {
         submitButton.addActionListener(
                 e -> {
                     UserStory userStory = getUserStoryObject();
-                    UserStoryStore.getInstance().addUserStory(userStory);
+                    SimulationStateManager.getInstance().getCurrentSimulation().addUserStory(userStory);
                     dispose();
                 });
 

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -51,20 +51,33 @@ public class SimulationSingleton {
         updateSimulationData(simulationsArray);
     }
 
+    public Simulation getLatestSimulation() {
+        if (simulations.isEmpty()) return null;
+        return simulations.getLast();
+    }
+
+    public void initializeDefaultSimulation() {
+        Simulation simulation = new Simulation(
+                UUID.randomUUID(),
+                "Default",
+                1,
+                14,
+                0
+        );
+        simulations.add(simulation);
+        SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+    }
+
     private static void loadSimulations() {
         JSONArray simulationsFromFile = getSimulationData();
 
         if (!simulationsFromFile.isEmpty()) {
-            simulationsFromFile.forEach(simulation -> simulations.add(jsonToSimulation((JSONObject) simulation)));
+            try {
+                simulationsFromFile.forEach(simulation -> simulations.add(jsonToSimulation((JSONObject) simulation)));
+            } catch (Exception e) {
+                updateSimulationData(new JSONArray());
+            }
         }
-        loadUserStoriesIntoStore();
-    }
-
-    private static void loadUserStoriesIntoStore() {
-        simulations.forEach(
-                simulation -> simulation.getSprints().forEach(
-                        sprint -> UserStoryStore.getInstance().addAllUserStories(sprint.getUserStories()))
-        );
     }
 
     private static Simulation jsonToSimulation(JSONObject simulationJson) {
@@ -75,6 +88,18 @@ public class SimulationSingleton {
             sprintsFromJson.forEach(sprintJson -> {
                 try {
                     sprints.add(mapper.readValue(sprintJson.toString(), Sprint.class));
+                } catch (JsonProcessingException | NullPointerException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        JSONArray userStoriesFromJson = simulationJson.getJSONArray("UserStories");
+        List<UserStory> userStories = new ArrayList<>();
+        if (!userStoriesFromJson.isEmpty()) {
+            userStoriesFromJson.forEach(userStoryJson -> {
+                try {
+                    userStories.add(mapper.readValue(userStoryJson.toString(), UserStory.class));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
@@ -84,9 +109,10 @@ public class SimulationSingleton {
         return new Simulation(
                 UUID.fromString(simulationJson.getString("ID")),
                 simulationJson.getString("Name"),
-                simulationJson.getInt("SprintDuration"),
-                simulationJson.getInt("NumberOfSprints"),
-                sprints
+                simulationJson.getInt("Count"),
+                simulationJson.getInt("DurationDays"),
+                sprints,
+                userStories
         );
     }
 
@@ -95,9 +121,10 @@ public class SimulationSingleton {
         jsonObject.put("ID", simulation.getSimulationId());
         jsonObject.put("Name", simulation.getSimulationName());
         jsonObject.put("Status", "New");
-        jsonObject.put("SprintDuration", simulation.getSprintDuration());
-        jsonObject.put("NumberOfSprints", simulation.getSprintCount());
+        jsonObject.put("DurationDays", simulation.getSprintDuration());
+        jsonObject.put("Count", simulation.getSprintCount());
         jsonObject.put("Sprints", simulation.getSprints());
+        jsonObject.put("UserStories", simulation.getUserStories());
         return jsonObject;
     }
 }

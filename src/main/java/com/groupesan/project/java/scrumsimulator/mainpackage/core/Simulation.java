@@ -1,8 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class Simulation {
     private int sprintDuration;
     private final List<Sprint> sprints;
     private long randomSeed;
+    private final List<UserStory> userStories;
 
     public Simulation(UUID simulationId, String simulationName, int sprintCount, int sprintDurationDays, long randomSeed) {
         this.simulationId = simulationId;
@@ -34,14 +34,16 @@ public class Simulation {
                     .addSprint(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
         }
         this.sprints = SprintStore.getInstance().getSprints();
+        this.userStories = new ArrayList<>();
     }
 
-    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays, List<Sprint> sprints) {
+    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays, List<Sprint> sprints, List<UserStory> userStories) {
         this.simulationId = id;
         this.simulationName = name;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.sprints = sprints;
+        this.userStories = userStories;
     }
 
     public UUID getSimulationId() {
@@ -77,6 +79,17 @@ public class Simulation {
     }
 
     public void setSprintCount(int sprintCount) {
+        if (this.sprintCount == sprintCount) return;
+
+        if (sprintCount > this.sprintCount) {
+            for (int i = this.sprintCount; i < sprintCount; i++) {
+                sprints.add(new Sprint("", "", sprintDuration, sprintCount));
+            }
+        } else {
+            for (int i = sprintCount; i < this.sprintCount; i++) {
+                sprints.removeLast();
+            }
+        }
         this.sprintCount = sprintCount;
     }
 
@@ -96,6 +109,10 @@ public class Simulation {
         return this.sprints;
     }
 
+    public Sprint getSprintByString(String sprintString) {
+        return sprints.stream().filter(s -> s.toString().equals(sprintString)).toList().getFirst();
+    }
+
     public long getRandomSeed() {
         return randomSeed;
     }
@@ -110,31 +127,45 @@ public class Simulation {
         }
     }
 
-    public void removeUserStory(Sprint sprint, String userStory) {
-        if (userStory == null || sprint == null)
-            return;
-        UserStory userStoryToBeRemoved = UserStoryStore
-                .getInstance()
-                .getUserStories()
-                .stream()
-                .filter(us -> us.toString().equals(userStory))
-                .toList()
-                .getFirst();
-        userStoryToBeRemoved.changeState(new UserStoryUnselectedState(userStoryToBeRemoved));
-        sprint.removeUserStory(userStoryToBeRemoved);
+    public List<UserStory> getUserStories() {
+        return userStories;
     }
 
-    public void addUserStory(Sprint sprint, String userStory) {
+    public void addUserStory(UserStory userStory) {
+        userStories.add(userStory);
+    }
+
+    public void addUserStories(List<UserStory> userStories) {
+        this.userStories.addAll(userStories);
+    }
+
+    public void removeUserStoryFromSprint(Sprint sprint, String userStory) {
         if (userStory == null || sprint == null)
             return;
-        UserStory userStoryToBeAdded = UserStoryStore
+        UserStory userStoryToBeRemoved = SimulationStateManager
                 .getInstance()
+                .getCurrentSimulation()
                 .getUserStories()
                 .stream()
                 .filter(us -> us.toString().equals(userStory))
                 .toList()
                 .getFirst();
-        userStoryToBeAdded.changeState(new UserStoryAddedState(userStoryToBeAdded));
+        userStoryToBeRemoved.changeState(UserStory.UserStoryState.UNSELECTED);
+        sprint.removeUserStory(userStoryToBeRemoved.getId());
+    }
+
+    public void addUserStoryToSprint(Sprint sprint, String userStory) {
+        if (userStory == null || sprint == null)
+            return;
+        UserStory userStoryToBeAdded = SimulationStateManager
+                .getInstance()
+                .getCurrentSimulation()
+                .getUserStories()
+                .stream()
+                .filter(us -> us.toString().equals(userStory))
+                .toList()
+                .getFirst();
+        userStoryToBeAdded.changeState(UserStory.UserStoryState.ADDED);
         sprint.addUserStory(userStoryToBeAdded);
     }
 
@@ -150,9 +181,9 @@ public class Simulation {
     }
 
     public void randomizeSprintBacklog(JList<String> userStories) {
-        List<UserStory> userStoriesList = UserStoryStore.getInstance().getUserStories();
+        List<UserStory> userStoriesList = SimulationStateManager.getInstance().getCurrentSimulation().getUserStories();
         for (UserStory userStory : userStoriesList) {
-            userStory.changeState(new UserStoryUnselectedState(userStory));
+            userStory.changeState(UserStory.UserStoryState.UNSELECTED);
         }
         for (Sprint sprint : sprints) {
             sprint.clearUserStories();
@@ -164,7 +195,7 @@ public class Simulation {
             int sprintIndex = RandomUtils.getInstance().getRandomInt(numberOfSprints);
             Sprint sprint = sprints.get(sprintIndex);
             sprint.addUserStory(userStory);
-            userStory.changeState(new UserStoryAddedState(userStory));
+            userStory.changeState(UserStory.UserStoryState.ADDED);
         }
     }
 }

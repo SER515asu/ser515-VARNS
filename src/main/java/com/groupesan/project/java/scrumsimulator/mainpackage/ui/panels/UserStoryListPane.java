@@ -16,6 +16,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermis
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
@@ -37,7 +38,7 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
         widgets.clear();
         subPanel.removeAll();
 
-        for (UserStory userStory : UserStoryStore.getInstance().getUserStories()) {
+        for (UserStory userStory : SimulationStateManager.getInstance().getCurrentSimulation().getUserStories()) {
             UserStoryWidget userStoryWidget = new UserStoryWidget(userStory, true, this)
                     .setCloseEditDialogActionListener(
                             e -> reloadUserStories());
@@ -60,6 +61,8 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
 
         subPanel.revalidate();
         subPanel.repaint();
+        this.revalidate();
+        this.repaint();
     }
 
     private ActionListener handleNewUserStoryAction() {
@@ -79,7 +82,8 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
 
     private ActionListener handleInitializeUserStoriesAction() {
         return e -> {
-            UserStoryStore.getInstance().initializeUserStories();
+            List<UserStory> userStories = UserStoryStore.getInstance().initializeUserStories();
+            SimulationStateManager.getInstance().getCurrentSimulation().addUserStories(userStories);
             reloadUserStories();
         };
     }
@@ -95,7 +99,7 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
     }
 
     public void init() {
-        setSize(800, 600);
+        setSize(800, 800);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

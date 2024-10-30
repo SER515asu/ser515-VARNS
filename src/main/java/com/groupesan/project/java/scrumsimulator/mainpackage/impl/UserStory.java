@@ -5,13 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class UserStory {
+    public enum UserStoryState {
+        UNSELECTED,
+        ADDED
+    }
+
     @JsonProperty
     private UUID id;
 
@@ -27,7 +31,7 @@ public class UserStory {
     @JsonProperty
     private double pointValue;
 
-    @JsonIgnore
+    @JsonProperty
     private UserStoryState state;
 
     @JsonIgnore
@@ -52,9 +56,8 @@ public class UserStory {
         this.name = name;
         this.description = "";
         this.pointValue = pointValue;
-        this.businessValuePoint = businessValuePoint; // added buisness value point
-        this.state = new UserStoryUnselectedState(this);
-        // added buisness value point to the constructor
+        this.businessValuePoint = businessValuePoint;
+        this.state = UserStoryState.UNSELECTED;
     }
 
     /**
@@ -72,7 +75,7 @@ public class UserStory {
         this.description = description;
         this.pointValue = pointValue;
         this.businessValuePoint = businessValuePoint; // added buisness value point
-        this.state = new UserStoryUnselectedState(this);
+        this.state = UserStoryState.UNSELECTED;
         this.id = UUID.randomUUID();
     }
 
@@ -82,13 +85,15 @@ public class UserStory {
                      @JsonProperty("name") String name,
                      @JsonProperty("description") String description,
                      @JsonProperty("blockers") List<BlockerObject> blockers,
-                     @JsonProperty("id") UUID id) {
+                     @JsonProperty("id") UUID id,
+                     @JsonProperty("userStoryState") String state) {
         this.businessValuePoint = businessValuePoint;
         this.pointValue = pointValue;
         this.name = name;
         this.description = description;
         this.blockers = blockers;
         this.id = id;
+        this.state = UserStoryState.valueOf(state);
     }
 
     /**

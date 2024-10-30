@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Sprint {
     @JsonProperty
@@ -42,8 +43,12 @@ public class Sprint {
         userStories.add(us);
     }
 
-    public void removeUserStory(UserStory us) {
-       userStories.remove(us);
+    public void removeUserStory(UUID id) {
+        UserStory storyToRemove = userStories.stream()
+                .filter(userStory -> userStory.getId().equals(id))
+                .toList()
+                .getFirst();
+        userStories.remove(storyToRemove);
     }
 
     public List<UserStory> getUserStories() {
