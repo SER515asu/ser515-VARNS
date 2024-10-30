@@ -31,12 +31,10 @@ public class Simulation {
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.randomSeed = randomSeed;
-
+        this.sprints = new ArrayList<>();
         for (int i = 0; i < sprintCount; i++) {
-            SprintStore.getInstance()
-                    .addSprint(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
+            sprints.add(new Sprint("", "", sprintDurationDays, i + 1));
         }
-        this.sprints = SprintStore.getInstance().getSprints();
         this.userStories = new ArrayList<>();
     }
 

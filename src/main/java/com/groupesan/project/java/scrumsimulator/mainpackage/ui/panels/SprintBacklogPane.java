@@ -71,6 +71,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                         .setFill(GridBagConstraints.HORIZONTAL));
 
         if (SimulationStateManager.getInstance().getCurrentSimulation() != null) {
+            selectSprintComboBox.removeAllItems();
             for (Sprint sprint : SimulationStateManager.getInstance().getCurrentSimulation().getSprints()) {
                 selectSprintComboBox.addItem(sprint.toString());
             }
