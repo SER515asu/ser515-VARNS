@@ -30,6 +30,10 @@ public class SimulationSingleton {
         return instance;
     }
 
+    public List<Simulation> getAllSimulations() {
+        return simulations;
+    }
+
     public void addSimulation(Simulation simulation) {
         simulations.add(simulation);
 
