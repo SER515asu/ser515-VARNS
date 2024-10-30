@@ -16,7 +16,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
             updateStoryStatusButton, simulationButton, modifySimulationButton, joinSimulationButton,
-            variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
+             sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
 
     private Map<UserRole, Set<JButton>> roleToButton;
     private JPanel bottomPanel;
@@ -117,10 +117,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         joinSimulationButton.addActionListener(
                 e -> handleButtonAction(new SimulationUI(this)));
 
-        variantSimulationUIButton = new JButton("Variant Simulation UI");
-        variantSimulationUIButton.addActionListener(
-                e -> handleButtonAction(new VariantSimulationUI(this)));
-
         sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
         sprintBacklogsButton.addActionListener(
                 e -> handleButtonAction(new SprintBacklogPane(this)));
@@ -136,7 +132,6 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(simulationButton, 7, 0)
                 .addComponent(modifySimulationButton, 8, 0)
                 .addComponent(joinSimulationButton, 9, 0)
-                .addComponent(variantSimulationUIButton, 10, 0)
                 .addComponent(sprintBacklogsButton, 11, 0)
                 .buildPanel();
 
@@ -230,7 +225,6 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         panel.add(createButton("Join Simulation", () -> handleButtonAction(new SimulationUI(this))));
         panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
-        panel.add(createButton("Variant Simulation UI", () -> handleButtonAction(new VariantSimulationUI(this))));
 
         return panel;
     }
@@ -288,7 +282,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         simulationButton.setEnabled(enabled);
         modifySimulationButton.setEnabled(enabled);
         joinSimulationButton.setEnabled(enabled);
-        variantSimulationUIButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
     }
 }
