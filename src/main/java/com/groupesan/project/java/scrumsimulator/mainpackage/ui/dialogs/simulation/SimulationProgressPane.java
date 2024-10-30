@@ -92,7 +92,7 @@ public class SimulationProgressPane {
         System.out.println(userStory.getName());
         System.out.println(userStoryState instanceof UserStorySelectedState);
 
-        if(userStoryState instanceof UserStoryAddedState) {
+        if(userStoryState instanceof UserStoryNewState) {
                 setStatus(userStory, "In Progress");
         }
         else if(userStoryState instanceof UserStoryCompletedState) {
