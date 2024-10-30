@@ -182,6 +182,8 @@ public class Simulation {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("[Simulation] " + getSimulationName() + "\n");
+        result.append("ID: ").append(simulationId).append("\n");
+        result.append("Seed: ").append(randomSeed).append("\n");
         result.append("Sprints: ").append(sprintCount).append("\n");
         result.append("Sprint Length: ").append(sprintDuration).append(" days\n");
         for (Player player : players) {
@@ -207,5 +209,32 @@ public class Simulation {
             sprint.addUserStory(userStory);
             userStory.updateStatus(UserStory.UserStoryStatus.ADDED);
         }
+    }
+
+    public Simulation deepClone() {
+        // Clone sprints and added user stories
+        List<UserStory> deepClonedUserStories = new ArrayList<>();
+        List<Sprint> deepClonedSprints = new ArrayList<>();
+        sprints.forEach(sprint -> {
+            Sprint clonedSprint = sprint.deepClone();
+            deepClonedSprints.add(clonedSprint);
+            deepClonedUserStories.addAll(clonedSprint.getUserStories());
+        });
+
+        // Clone unselected user stories
+        List<UserStory> unselectedUserStories = userStories.stream()
+                .filter(userStory -> userStory.getStatus().equals(UserStory.UserStoryStatus.UNSELECTED))
+                .toList();
+        unselectedUserStories.forEach(userStory -> deepClonedUserStories.add(userStory.deepClone()));
+
+        return new Simulation(
+                UUID.randomUUID(),
+                this.simulationName,
+                this.sprintCount,
+                this.sprintDuration,
+                deepClonedSprints,
+                deepClonedUserStories,
+                this.randomSeed
+        );
     }
 }

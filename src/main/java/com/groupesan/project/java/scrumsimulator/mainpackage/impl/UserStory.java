@@ -89,7 +89,7 @@ public class UserStory {
 
     @JsonCreator
     public UserStory(@JsonProperty("businessValuePoint") int businessValuePoint,
-                     @JsonProperty("pointValue") int pointValue,
+                     @JsonProperty("pointValue") double pointValue,
                      @JsonProperty("name") String name,
                      @JsonProperty("description") String description,
                      @JsonProperty("blockers") List<BlockerObject> blockers,
@@ -107,6 +107,18 @@ public class UserStory {
         } else {
             this.state = new UserStoryUnselectedState(this);
         }
+    }
+
+    public UserStory deepClone() {
+        return new UserStory(
+                this.businessValuePoint,
+                this.pointValue,
+                this.name,
+                this.description,
+                this.blockers,
+                UUID.randomUUID(),
+                this.status.toString()
+        );
     }
 
     /**

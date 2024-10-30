@@ -61,6 +61,17 @@ public class SimulationSingleton {
         return simulations.getLast();
     }
 
+    public Simulation getSimulationById(UUID id) {
+        return simulations.stream()
+                .filter(simulation -> simulation.getSimulationId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void removeSimulation(Simulation simulation) {
+        simulations.remove(simulation);
+    }
+
     public void initializeDefaultSimulation() {
         Simulation simulation = new Simulation(
                 UUID.randomUUID(),

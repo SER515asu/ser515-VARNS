@@ -1,8 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -14,14 +14,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.UUID;
 
-public class SimulationHistoryPane extends JFrame implements BaseComponent {
+public class SimulationConfigurationPane extends JFrame implements BaseComponent {
     private DefaultTableModel tableModel;
     private JTable simulationsTable;
     private JPanel glassPane;
     private JFrame parent;
+    private JPanel myJpanel;
 
-    public SimulationHistoryPane(JFrame parent) {
+    public SimulationConfigurationPane(JFrame parent) {
         this.parent = parent;
         this.init();
         setupGlassPane();
@@ -34,18 +36,17 @@ public class SimulationHistoryPane extends JFrame implements BaseComponent {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("All Simulations List");
 
-        JPanel myJpanel = new JPanel();
+        myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(new BorderLayout());
 
         myJpanel.add(new JLabel("Double click on any simulation below to set as the current simulation context"), BorderLayout.NORTH);
 
-        JButton addBlockerButton = new JButton("Add Simulation");
-        addBlockerButton.addActionListener(e -> openEditForm("", 0, 0, 0));
-        myJpanel.add(addBlockerButton, BorderLayout.SOUTH);
+        JButton addSimulationButton = initializeAddSimulationButton();
+        myJpanel.add(addSimulationButton, BorderLayout.SOUTH);
 
-        String[] columnNames = { "ID", "Name", "Random Seed", "Sprint Count", "Sprint Duration (Days)", "# of User Stories",
-                "Actions" };
+        String[] columnNames = {"ID", "Name", "Random Seed", "Sprint Count", "Sprint Duration (Days)", "# of User Stories",
+                "Actions"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -54,8 +55,8 @@ public class SimulationHistoryPane extends JFrame implements BaseComponent {
         };
 
         simulationsTable = new JTable(tableModel);
-        simulationsTable.getColumn("Actions").setCellRenderer(new SimulationHistoryPane.ButtonRenderer());
-        simulationsTable.getColumn("Actions").setCellEditor(new SimulationHistoryPane.ButtonEditor(new JCheckBox()));
+        simulationsTable.getColumn("Actions").setCellRenderer(new SimulationConfigurationPane.ButtonRenderer());
+        simulationsTable.getColumn("Actions").setCellEditor(new SimulationConfigurationPane.ButtonEditor(new JCheckBox()));
         refreshTableData();
 
         simulationsTable.addMouseListener(new MouseAdapter() {
@@ -66,10 +67,9 @@ public class SimulationHistoryPane extends JFrame implements BaseComponent {
                     int row = simulationsTable.getSelectedRow();
                     if (row != -1) {
                         Object id = simulationsTable.getValueAt(row, 0);
-                        int encounterChance = (int) simulationsTable.getValueAt(row, 1);
-                        int resolveChance = (int) simulationsTable.getValueAt(row, 2);
-                        int spikeChance = (int) simulationsTable.getValueAt(row, 3);
-                        openEditForm(id, encounterChance, resolveChance, spikeChance);
+                        Simulation simulation = SimulationSingleton.getInstance().getSimulationById((UUID) id);
+                        SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+                        JOptionPane.showMessageDialog(myJpanel, "Simulation: '%s' loaded as current context".formatted(simulationsTable.getValueAt(row, 1)));
                     }
                 }
             }
@@ -84,9 +84,25 @@ public class SimulationHistoryPane extends JFrame implements BaseComponent {
         add(myJpanel);
     }
 
-    private void openEditForm(Object id, int encounterChance, int resolveChance, int spikeChance) {
-        EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance,
-                spikeChance);
+    private JButton initializeAddSimulationButton() {
+        JButton addSimulationButton = new JButton("Add Simulation");
+        addSimulationButton.addActionListener(e -> {
+            NewSimulationPane newSimulationPane = new NewSimulationPane(this);
+            newSimulationPane.setVisible(true);
+            newSimulationPane.setAlwaysOnTop(true);
+            newSimulationPane.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    super.windowClosed(e);
+                    refreshTableData();
+                }
+            });
+        });
+        return addSimulationButton;
+    }
+
+    private void openEditForm(Simulation simulation) {
+        ModifySimulationPane form = new ModifySimulationPane(this, simulation);
         this.setAlwaysOnTop(false);
         form.setAlwaysOnTop(true);
         setGlassPaneVisible(true);
@@ -176,28 +192,31 @@ public class SimulationHistoryPane extends JFrame implements BaseComponent {
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerType blockerType = BlockerTypeStore.get()
-                        .getBlockerType((String) tableModel.getValueAt(simulationsTable.getSelectedRow(), 0));
+                Simulation simulation = SimulationSingleton.getInstance().getSimulationById(
+                        (UUID) tableModel.getValueAt(simulationsTable.getSelectedRow(), 0)
+                );
                 JPopupMenu popupMenu = new JPopupMenu();
+                JMenuItem setContextItem = new JMenuItem("Set As Current Context");
                 JMenuItem editItem = new JMenuItem("Edit");
                 JMenuItem deleteItem = new JMenuItem("Delete");
                 JMenuItem duplicateItem = new JMenuItem("Duplicate");
 
-                editItem.addActionListener(e -> openEditForm(blockerType.getName(),
-                        blockerType.getEncounterChance(), blockerType.getResolveChance(),
-                        blockerType.getSpikeChance()));
+                setContextItem.addActionListener(e -> {
+                    SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+                    JOptionPane.showMessageDialog(myJpanel, "Simulation: '%s' loaded as current context"
+                            .formatted(simulationsTable.getValueAt(simulationsTable.getSelectedRow(), 1)));
+                });
+                editItem.addActionListener(e -> openEditForm(simulation));
                 deleteItem.addActionListener(e -> {
-                    BlockerTypeStore.get().removeBlocker(blockerType);
+                    SimulationSingleton.getInstance().removeSimulation(simulation);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
-                    BlockerType duplicate = new BlockerType(blockerType.getName() + " - Copy",
-                            blockerType.getEncounterChance(), blockerType.getResolveChance(),
-                            blockerType.getSpikeChance());
-                    BlockerTypeStore.get().addBlockerType(duplicate);
+                    SimulationSingleton.getInstance().addSimulation(simulation.deepClone());
                     refreshTableData();
                 });
 
+                popupMenu.add(setContextItem);
                 popupMenu.add(editItem);
                 popupMenu.add(deleteItem);
                 popupMenu.add(duplicateItem);
