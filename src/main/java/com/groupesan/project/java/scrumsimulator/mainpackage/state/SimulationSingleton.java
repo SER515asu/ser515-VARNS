@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -66,6 +67,19 @@ public class SimulationSingleton {
         );
         simulations.add(simulation);
         SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+    }
+
+    public void initializeDefaultUserStories() {
+        UserStory a = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS1", "description1", 1.0, 1);
+
+        UserStory b = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS2", "description2", 2.0, 8);
+
+        UserStory c = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS3", "description3", 3.0, 13);
+
+        SimulationStateManager.getInstance().getCurrentSimulation().addUserStories(new ArrayList<>(List.of(a, b, c)));
     }
 
     private static void loadSimulations() {
