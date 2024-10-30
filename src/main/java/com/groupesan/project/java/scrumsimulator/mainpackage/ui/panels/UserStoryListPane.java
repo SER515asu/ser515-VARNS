@@ -15,7 +15,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.UserStoryWidget;
@@ -82,8 +82,7 @@ public class UserStoryListPane extends JFrame implements BaseComponent {
 
     private ActionListener handleInitializeUserStoriesAction() {
         return e -> {
-            List<UserStory> userStories = UserStoryStore.getInstance().initializeUserStories();
-            SimulationStateManager.getInstance().getCurrentSimulation().addUserStories(userStories);
+            SimulationSingleton.getInstance().initializeDefaultUserStories();
             reloadUserStories();
         };
     }

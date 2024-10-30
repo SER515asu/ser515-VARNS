@@ -3,7 +3,6 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
@@ -31,22 +30,22 @@ public class Simulation {
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.randomSeed = randomSeed;
-
+        this.sprints = new ArrayList<>();
         for (int i = 0; i < sprintCount; i++) {
-            SprintStore.getInstance()
-                    .addSprint(SprintFactory.getSprintFactory().createNewSprint(null, null, sprintDuration));
+            sprints.add(new Sprint("", "", sprintDurationDays, i + 1));
         }
-        this.sprints = SprintStore.getInstance().getSprints();
         this.userStories = new ArrayList<>();
     }
 
-    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays, List<Sprint> sprints, List<UserStory> userStories) {
+    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays,
+                      List<Sprint> sprints, List<UserStory> userStories, long randomSeed) {
         this.simulationId = id;
         this.simulationName = name;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.sprints = sprints;
         this.userStories = userStories;
+        this.randomSeed = randomSeed;
     }
 
     public UUID getSimulationId() {
@@ -140,6 +139,12 @@ public class Simulation {
 
     public void addUserStories(List<UserStory> userStories) {
         this.userStories.addAll(userStories);
+    }
+
+    public void removeUserStory(UserStory userStory) {
+        if (userStory == null) return;
+        sprints.forEach(sprint -> sprint.removeUserStory(userStory.getId()));
+        userStories.remove(userStory);
     }
 
     public void removeUserStoryFromSprint(Sprint sprint, String userStory) {
