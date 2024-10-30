@@ -37,13 +37,15 @@ public class Simulation {
         this.userStories = new ArrayList<>();
     }
 
-    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays, List<Sprint> sprints, List<UserStory> userStories) {
+    public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays,
+                      List<Sprint> sprints, List<UserStory> userStories, long randomSeed) {
         this.simulationId = id;
         this.simulationName = name;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.sprints = sprints;
         this.userStories = userStories;
+        this.randomSeed = randomSeed;
     }
 
     public UUID getSimulationId() {

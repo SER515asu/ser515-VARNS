@@ -126,7 +126,8 @@ public class SimulationSingleton {
                 simulationJson.getInt("Count"),
                 simulationJson.getInt("DurationDays"),
                 sprints,
-                userStories
+                userStories,
+                simulationJson.getLong("Seed")
         );
     }
 
@@ -134,6 +135,7 @@ public class SimulationSingleton {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ID", simulation.getSimulationId());
         jsonObject.put("Name", simulation.getSimulationName());
+        jsonObject.put("Seed", simulation.getRandomSeed());
         jsonObject.put("Status", "New");
         jsonObject.put("DurationDays", simulation.getSprintDuration());
         jsonObject.put("Count", simulation.getSprintCount());
