@@ -7,7 +7,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstra
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -129,8 +128,8 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
             }
 
             currentSimulation.setSimulationName(simName);
-            currentSimulation.setSprintCount(numberOfSprints);
             currentSimulation.setSprintDuration(sprintLengthCycle);
+            currentSimulation.setSprintCount(numberOfSprints);
 
             if (currentSimulation.getRandomSeed() != seed) {
                 System.out.println("Random seed changed from " + currentSimulation.getRandomSeed() + " to " + seed);

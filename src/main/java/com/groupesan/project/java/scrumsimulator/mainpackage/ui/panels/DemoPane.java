@@ -1,44 +1,29 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.*;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
-    private final Player player = new Player("bob", new ScrumRole("demo"));
     private JPanel myJpanel;
-    private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
-            updateStoryStatusButton, simulationButton, modifySimulationButton,
-            variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
 
-    private Map<UserRole, Set<JButton>> roleToButton;
+    private JButton userStoriesButton, startSimulationButton, potentialBlockersButton,
+            updateStoryStatusButton, simulationButton, modifySimulationButton,
+             sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
+
+
     private JPanel bottomPanel;
 
     public DemoPane() {
         this.init();
+        Player player = new Player("bob", new ScrumRole("demo"));
         player.doRegister();
-        roleToButton = new HashMap<>(Map.of(
-                UserRole.SCRUM_MASTER, new HashSet<>(Set.of(
-                        newSimulationButton,
-                        sprintBacklogsButton
-                // spike activities button
-                )),
-                UserRole.DEVELOPER, new HashSet<>(Set.of(
-                        userStoriesButton
-                // spike activities button
-                )),
-                UserRole.PRODUCT_OWNER, new HashSet<>(Set.of(
-                        userStoriesButton)),
-                UserRole.SCRUM_ADMIN, new HashSet<>(Set.of(
-                        potentialBlockersButton,
-                        startSimulationButton))));
     }
 
     public void init() {
@@ -57,6 +42,14 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         bottomPanel = new JPanel(new BorderLayout(10, 10));
         redrawUIBasedOnRole();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                SimulationSingleton.getInstance().saveSimulationDetails();
+            }
+        });
     }
 
     public void redrawUIBasedOnRole() {
@@ -80,10 +73,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         newSimulationButton = new JButton("New Simulation");
         newSimulationButton.addActionListener(
                 e -> handleButtonAction(new NewSimulationPane(this)));
-
-        sprintsButton = new JButton("Sprints");
-        sprintsButton.addActionListener(
-                e -> handleButtonAction(new SprintListPane(this)));
 
         userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
@@ -114,26 +103,22 @@ public class DemoPane extends JFrame implements BaseComponent {
                 e -> handleButtonAction(new ModifySimulationPane(this)));
 
 
-        variantSimulationUIButton = new JButton("Variant Simulation UI");
-        variantSimulationUIButton.addActionListener(
-                e -> handleButtonAction(new VariantSimulationUI(this)));
-
         sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
         sprintBacklogsButton.addActionListener(
                 e -> handleButtonAction(new SprintBacklogPane(this)));
 
         new DemoPaneBuilder(myJpanel)
                 .addComponent(newSimulationButton, 0, 0)
-                .addComponent(sprintsButton, 1, 0)
-                .addComponent(userStoriesButton, 2, 0)
-                .addComponent(startSimulationButton, 3, 0)
-                .addComponent(potentialBlockersButton, 4, 0)
-                .addComponent(potentialBlockerSolutionsButton, 5, 0)
-                .addComponent(updateStoryStatusButton, 6, 0)
-                .addComponent(simulationButton, 7, 0)
-                .addComponent(modifySimulationButton, 8, 0)
-                .addComponent(variantSimulationUIButton, 10, 0)
-                .addComponent(sprintBacklogsButton, 11, 0)
+
+                .addComponent(userStoriesButton, 1, 0)
+                .addComponent(startSimulationButton, 2, 0)
+                .addComponent(potentialBlockersButton, 3, 0)
+                .addComponent(potentialBlockerSolutionsButton, 4, 0)
+                .addComponent(updateStoryStatusButton, 5, 0)
+                .addComponent(simulationButton, 6, 0)
+                .addComponent(modifySimulationButton, 7, 0)
+                .addComponent(sprintBacklogsButton, 9, 0)
+
                 .buildPanel();
 
         add(myJpanel);
@@ -144,7 +129,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
-        roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
+        roleComboBox = new JComboBox<>(new String[]{"Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
         roleComboBox.setPreferredSize(new Dimension(150, 25));
         UserRoleSingleton.getInstance().setUserRole(UserRole.SCRUM_ADMIN);
         roleComboBox.addActionListener(e -> {
@@ -167,7 +152,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createCenterPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
-    
+
         switch (role) {
             case SCRUM_MASTER:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
@@ -192,13 +177,13 @@ public class DemoPane extends JFrame implements BaseComponent {
                         () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
                 break;
         }
-    
+
         // TODO: Potentially remove below buttons
         // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
         return panel;
     }
-    
+
 
     private JPanel createRightPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -224,7 +209,6 @@ public class DemoPane extends JFrame implements BaseComponent {
                 break;
         }
         panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
-        panel.add(createButton("Variant Simulation UI", () -> handleButtonAction(new VariantSimulationUI(this))));
 
         return panel;
     }
@@ -240,7 +224,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         setGlassPaneVisible(true);
         pane.setVisible(true);
         pane.setAlwaysOnTop(true);
-        
+
         pane.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                 setMenuButtonsEnabled(true);
@@ -273,7 +257,6 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     private void setMenuButtonsEnabled(boolean enabled) {
         newSimulationButton.setEnabled(enabled);
-        sprintsButton.setEnabled(enabled);
         userStoriesButton.setEnabled(enabled);
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
@@ -281,7 +264,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
         modifySimulationButton.setEnabled(enabled);
-        variantSimulationUIButton.setEnabled(enabled);
+
         sprintBacklogsButton.setEnabled(enabled);
     }
 }

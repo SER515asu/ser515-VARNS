@@ -4,7 +4,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
@@ -31,7 +31,7 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
         this.init();
     }
 
-    private UserStory userStory;
+    private final UserStory userStory;
 
     private JTextField nameField = new JTextField();
     private JTextArea descArea = new JTextArea();
@@ -111,7 +111,7 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
 
             deleteButton.addActionListener(
                     e -> {
-                        UserStoryStore.getInstance().removeUserStory(userStory);
+                        SimulationStateManager.getInstance().getCurrentSimulation().removeUserStory(userStory);
                         dispose();
                     });
             myJpanel.add(
