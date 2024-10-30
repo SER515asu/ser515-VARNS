@@ -15,6 +15,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRole;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationListener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
@@ -94,13 +95,36 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
     }
 
     @Override
+    public void onInProgressUserStory(){
+        progressPane.inProgressState();
+    }
+
+    @Override
+    public void onUserStoryStatusChange(UserStory userStory) {
+        progressPane.changeState(userStory);
+    }
+
+
+    @Override
     public void onBlockerDetected(BlockerObject blocker) {
-        progressPane.addBlocker(blocker);
+        // This will need to be refactored later. - Suparno
+        //progressPane.addBlocker(blocker);
+
     }
 
     @Override
     public void onBlockerResolved(BlockerObject blocker) {
-        progressPane.removeBlocker(blocker);
+        // This will need to be refactored later. - Suparno
+        //progressPane.removeBlocker(blocker);
+    }
+
+    public void onChangeStoryStatus(UserStory userStory) {
+        progressPane.changeState(userStory);
+    }
+
+    @Override
+    public void onUserStory(UserStory userStory){
+        progressPane.addUserStory(userStory);
     }
 
     @Override
@@ -111,6 +135,11 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
     @Override
     public void onSimulationStarted() {
         System.out.println("Simulation started");
+    }
+
+    @Override
+    public void onSprintCompletion() {
+        progressPane.resetPanel();
     }
 
     @Override

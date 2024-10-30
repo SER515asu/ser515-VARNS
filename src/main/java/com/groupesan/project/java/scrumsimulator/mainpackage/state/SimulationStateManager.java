@@ -1,10 +1,18 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.*;
-
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation.SimulationProgressPane;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
@@ -29,6 +37,8 @@ public class SimulationStateManager {
     private Integer day;
     private Integer sprint;
     private Integer progressValue;
+
+    private SecureRandom rand = new SecureRandom();
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -114,6 +124,37 @@ public class SimulationStateManager {
         }
     }
 
+    private void notifyUserStory(UserStory userStory) {
+        for (SimulationListener listener : listeners) {
+            listener.onUserStory(userStory);
+        }
+    }
+
+    private void notifyInProgressUserStory() {
+        for (SimulationListener listener : listeners) {
+            listener.onInProgressUserStory();
+        }
+    }
+
+    private void notifyResetUserStoryPanel() {
+        for (SimulationListener listener : listeners) {
+            listener.onSprintCompletion();
+        }
+    }
+
+    private void notifyStoryStatusChange(UserStory userStory) {
+        for (SimulationListener listener : listeners) {
+            listener.onUserStoryStatusChange(userStory);
+        }
+    }
+
+    private void notifyUserStoryStatusUpdatePanel() {
+        for (SimulationListener listener : listeners) {
+            listener.onSprintCompletion();
+        }
+    }
+
+
     public void startSimulation() {
         if (currentSimulation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
@@ -150,6 +191,8 @@ public class SimulationStateManager {
     }
 
     private void runSimulation() {
+        addUserStory();
+        detectInProgressUserStory();
         while (true) {
             try {
                 for (int i = 0; i < 10; i++) {
@@ -174,17 +217,69 @@ public class SimulationStateManager {
             resolveBlockers();
             detectBlockers();
 
+
             if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
                 stopSimulation();
             } else {
                 day++;
+                setRandomStates();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
+                    resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if they're completed or not.
+                    addUserStory(); // Add the user stories from the new sprint
+                    detectInProgressUserStory(); // Get the stories and detect if they're in progress
                 }
             }
         }
     }
+
+    private void resetPanel() {
+        notifyResetUserStoryPanel();
+    }
+
+    private void addUserStory(){
+        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
+            notifyUserStory(userStory);
+        }
+    }
+
+    public void setRandomStates() {
+
+        // TODO - Figure out a random or linear way of setting the status of the user story.
+
+
+        try {
+            List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
+
+            int randNumb =  rand.nextInt(usList.size());
+
+
+            UserStory selectedStory = usList.get(randNumb);
+
+            if(selectedStory.getUserStoryState() instanceof UserStoryAddedState) {
+                selectedStory.changeState(new UserStorySelectedState(selectedStory));
+                notifyStoryStatusChange(selectedStory);
+            } else if (selectedStory.getUserStoryState() instanceof UserStorySelectedState) {
+                selectedStory.changeState(new UserStoryCompletedState(selectedStory));
+                notifyStoryStatusChange(selectedStory);
+            } else {
+                notifyStoryStatusChange(selectedStory);
+            }
+        } catch (IllegalArgumentException ie) {
+            // The code should detect the lack of assigned user stories from the backlog and send a message, before closing the simulation
+            //ie.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Detect the state of all user stories as the simulation is in progress.
+     */
+    private void detectInProgressUserStory() {
+        notifyInProgressUserStory();
+    }
+
 
     private void detectBlockers() {
         BlockerTypeStore blockerStore = BlockerTypeStore.get();
