@@ -25,9 +25,8 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
     private JTextField simulationNameField;
     private JTextField numberOfSprintsField;
     private JTextField sprintLengthCycleField;
-    private JTextArea simulationIdDisplay;
     private JTextField randomSeedField;
-    private JFrame parent;
+    private final JFrame parent;
     private Simulation simulation;
 
     public ModifySimulationPane(JFrame parent, Simulation simulation) {
@@ -57,7 +56,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        simulationIdDisplay = new JTextArea(2, 20);
+        JTextArea simulationIdDisplay = new JTextArea(2, 20);
         simulationIdDisplay.setEditable(false);
 
         randomSeedField = new JTextField(20);
@@ -97,7 +96,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
         JButton submitButton = new JButton("Update Simulation");
         submitButton.addActionListener(e -> {
             String simName = simulationNameField.getText();
-            Integer sprintLengthCycle;
+            int sprintLengthCycle;
             try {
                 sprintLengthCycle = sprintLengthCycleField.getText().isEmpty() ? 0
                         : Integer.parseInt(sprintLengthCycleField.getText());
@@ -106,7 +105,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 return;
             }
 
-            Integer numberOfSprints;
+            int numberOfSprints;
             try {
                 numberOfSprints = numberOfSprintsField.getText().isEmpty() ? 0
                         : Integer.parseInt(numberOfSprintsField.getText());

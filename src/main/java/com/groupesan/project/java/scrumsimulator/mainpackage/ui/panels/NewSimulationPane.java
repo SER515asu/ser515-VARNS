@@ -26,17 +26,13 @@ class NewSimulationPane extends JFrame implements BaseComponent {
     private final DataModel<List<Player>> users;
     private SpinnerInput sprintInput;
     private SpinnerInput sprintLengthInput;
-    private LongInput seedInput;
     private JToggleButton autoFillToggleButton;
     private JSlider sprintLengthStartSlider;
     private JSlider sprintLengthEndSlider;
     private JSlider sprintNumberStartSlider;
     private JSlider sprintNumberEndSlider;
-    private JButton submitAutoFillButton;
-    private JButton cancelButton;
-    private JButton submitButton;
     private JPanel autoFillPanel;
-    private JFrame parent;
+    private final JFrame parent;
 
     public NewSimulationPane(JFrame parent) {
         this.parent = parent;
@@ -78,7 +74,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
                 new JSpinner(new SpinnerNumberModel(14, 1, 30, 1)),
                 sprintLengthModel);
 
-        seedInput = new LongInput(
+        LongInput seedInput = new LongInput(
                 "Seed: ", new JTextField(seedModel.getData().toString()), seedModel);
 
         gbc.gridx = 0;
@@ -107,16 +103,15 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         gbc.gridy++;
         inputs.add(autoFillPanel, gbc);
 
-        cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> dispose());
 
-        submitButton = new JButton("Submit");
+        JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> {
             Simulation simulation = new Simulation(UUID.randomUUID(), simulationModel.getData(),
                     (int) sprintModel.getData(), (int) sprintLengthModel.getData(), seedModel.getData());
             for (Player player : users.getData()) {
                 player.doRegister();
-                simulation.addPlayer(player);
             }
 
             SimulationStateManager.getInstance().setCurrentSimulation(simulation);
@@ -172,7 +167,7 @@ class NewSimulationPane extends JFrame implements BaseComponent {
         gbc.gridy++;
         autoFillPanel.add(sprintNumberEndSlider, gbc);
 
-        submitAutoFillButton = new JButton("Submit Auto Fill");
+        JButton submitAutoFillButton = new JButton("Submit Auto Fill");
         submitAutoFillButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         submitAutoFillButton.addActionListener(e -> applyAutoFillValues());
 

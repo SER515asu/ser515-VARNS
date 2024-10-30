@@ -10,14 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.swing.JList;
-
 public class Simulation {
 
     private final UUID simulationId;
     private String simulationName;
-    private Teacher teacher;
-    private final List<Player> players = new ArrayList<>();
     private int sprintCount;
     private int sprintDuration;
     private final List<Sprint> sprints;
@@ -50,26 +46,6 @@ public class Simulation {
 
     public UUID getSimulationId() {
         return simulationId;
-    }
-
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
-
-    public boolean removePlayer(Player player) {
-        return players.remove(player);
-    }
-
-    public Teacher getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(Teacher newTeacher) {
-        teacher = newTeacher;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
     }
 
     public String getSimulationName() {
@@ -121,12 +97,6 @@ public class Simulation {
 
     public void setRandomSeed(long seed) {
         randomSeed = seed;
-    }
-
-    public void addUserStories(Sprint sprint, List<UserStory> userStories) {
-        if (!userStories.isEmpty()) {
-            userStories.forEach(sprint::addUserStory);
-        }
     }
 
     public List<UserStory> getUserStories() {
@@ -181,18 +151,13 @@ public class Simulation {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("[Simulation] " + getSimulationName() + "\n");
-        result.append("ID: ").append(simulationId).append("\n");
-        result.append("Seed: ").append(randomSeed).append("\n");
-        result.append("Sprints: ").append(sprintCount).append("\n");
-        result.append("Sprint Length: ").append(sprintDuration).append(" days\n");
-        for (Player player : players) {
-            result.append(player).append("\n");
-        }
-        return result.toString();
+        return "[Simulation] " + getSimulationName() + "\n" + "ID: " + simulationId + "\n" +
+                "Seed: " + randomSeed + "\n" +
+                "Sprints: " + sprintCount + "\n" +
+                "Sprint Length: " + sprintDuration + " days\n";
     }
 
-    public void randomizeSprintBacklog(JList<String> userStories) {
+    public void randomizeSprintBacklog() {
         List<UserStory> userStoriesList = SimulationStateManager.getInstance().getCurrentSimulation().getUserStories();
         for (UserStory userStory : userStoriesList) {
             userStory.updateStatus(UserStory.UserStoryStatus.UNSELECTED);

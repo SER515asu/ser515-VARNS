@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 
 public class UserStoryWidget extends JPanel implements BaseComponent {
 
-    JLabel label;
     JLabel points;
     JLabel name;
     JLabel desc;
@@ -85,7 +84,6 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         if (this.getMouseListeners().length == 0 && reactToMouseHover)
             this.addMouseListener(openEditDialog);
 
-        label = new JLabel(userStory.getLabel());
         points = new JLabel(Double.toString(userStory.getPointValue()));
         name = new JLabel(userStory.getName());
         desc = new JLabel(userStory.getDescription());
@@ -96,24 +94,20 @@ public class UserStoryWidget extends JPanel implements BaseComponent {
         setLayout(myGridBagLayout);
 
         add(
-                label,
+                points,
                 new CustomConstraints(
                         0, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
         add(
-                points,
-                new CustomConstraints(
-                        1, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
-        add(
                 name,
                 new CustomConstraints(
-                        2, 0, GridBagConstraints.WEST, 0.2, 0.0, GridBagConstraints.HORIZONTAL));
+                        1, 0, GridBagConstraints.WEST, 0.2, 0.0, GridBagConstraints.HORIZONTAL));
         add(
                 desc,
                 new CustomConstraints(
-                        3, 0, GridBagConstraints.WEST, 0.7, 0.0, GridBagConstraints.HORIZONTAL));
+                        2, 0, GridBagConstraints.WEST, 0.7, 0.0, GridBagConstraints.HORIZONTAL));
         add(businessValuePoint,
                 new CustomConstraints(
-                        4, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
+                        3, 0, GridBagConstraints.WEST, 0.1, 0.0, GridBagConstraints.HORIZONTAL));
 
         revalidate();
         repaint();

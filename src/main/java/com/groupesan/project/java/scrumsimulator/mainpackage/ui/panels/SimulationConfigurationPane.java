@@ -19,8 +19,7 @@ import java.util.UUID;
 public class SimulationConfigurationPane extends JFrame implements BaseComponent {
     private DefaultTableModel tableModel;
     private JTable simulationsTable;
-    private JPanel glassPane;
-    private JFrame parent;
+    private final JFrame parent;
     private JPanel myJpanel;
 
     public SimulationConfigurationPane(JFrame parent) {
@@ -134,7 +133,7 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
     }
 
     private void setupGlassPane() {
-        glassPane = new JPanel() {
+        JPanel glassPane = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 g.setColor(new Color(0, 0, 0, 100));

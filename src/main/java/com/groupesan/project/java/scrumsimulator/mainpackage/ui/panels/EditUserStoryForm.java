@@ -40,7 +40,7 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
 
     public void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Edit User Story " + userStory.getLabel());
+        setTitle("Edit User Story");
         setSize(400, 300);
 
         nameField = new JTextField(userStory.getName());
