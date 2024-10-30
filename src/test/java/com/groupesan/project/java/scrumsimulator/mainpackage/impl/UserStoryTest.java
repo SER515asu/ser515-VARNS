@@ -15,6 +15,6 @@ public class UserStoryTest {
 
     @Test
     public void testUserStoryInitialized() {
-        Assertions.assertEquals(myUserStory.getUserStoryState(), UserStory.UserStoryState.UNSELECTED);
+        Assertions.assertEquals(myUserStory.getStatus(), UserStory.UserStoryStatus.UNSELECTED);
     }
 }

@@ -88,7 +88,7 @@ public class SimulationSingleton {
             sprintsFromJson.forEach(sprintJson -> {
                 try {
                     sprints.add(mapper.readValue(sprintJson.toString(), Sprint.class));
-                } catch (JsonProcessingException | NullPointerException e) {
+                } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             });

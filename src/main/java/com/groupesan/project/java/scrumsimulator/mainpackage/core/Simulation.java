@@ -150,7 +150,7 @@ public class Simulation {
                 .filter(us -> us.toString().equals(userStory))
                 .toList()
                 .getFirst();
-        userStoryToBeRemoved.changeState(UserStory.UserStoryState.UNSELECTED);
+        userStoryToBeRemoved.updateStatus(UserStory.UserStoryStatus.UNSELECTED);
         sprint.removeUserStory(userStoryToBeRemoved.getId());
     }
 
@@ -165,7 +165,7 @@ public class Simulation {
                 .filter(us -> us.toString().equals(userStory))
                 .toList()
                 .getFirst();
-        userStoryToBeAdded.changeState(UserStory.UserStoryState.ADDED);
+        userStoryToBeAdded.updateStatus(UserStory.UserStoryStatus.ADDED);
         sprint.addUserStory(userStoryToBeAdded);
     }
 
@@ -183,7 +183,7 @@ public class Simulation {
     public void randomizeSprintBacklog(JList<String> userStories) {
         List<UserStory> userStoriesList = SimulationStateManager.getInstance().getCurrentSimulation().getUserStories();
         for (UserStory userStory : userStoriesList) {
-            userStory.changeState(UserStory.UserStoryState.UNSELECTED);
+            userStory.updateStatus(UserStory.UserStoryStatus.UNSELECTED);
         }
         for (Sprint sprint : sprints) {
             sprint.clearUserStories();
@@ -195,7 +195,7 @@ public class Simulation {
             int sprintIndex = RandomUtils.getInstance().getRandomInt(numberOfSprints);
             Sprint sprint = sprints.get(sprintIndex);
             sprint.addUserStory(userStory);
-            userStory.changeState(UserStory.UserStoryState.ADDED);
+            userStory.updateStatus(UserStory.UserStoryStatus.ADDED);
         }
     }
 }

@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class UserStory {
-    public enum UserStoryState {
+    public enum UserStoryStatus {
         UNSELECTED,
         ADDED
     }
@@ -32,6 +34,9 @@ public class UserStory {
     private double pointValue;
 
     @JsonProperty
+    private UserStoryStatus status;
+
+    @JsonIgnore
     private UserStoryState state;
 
     @JsonIgnore
@@ -57,7 +62,8 @@ public class UserStory {
         this.description = "";
         this.pointValue = pointValue;
         this.businessValuePoint = businessValuePoint;
-        this.state = UserStoryState.UNSELECTED;
+        this.status = UserStoryStatus.UNSELECTED;
+        this.state = new UserStoryUnselectedState(this);
     }
 
     /**
@@ -74,9 +80,10 @@ public class UserStory {
         this.name = name;
         this.description = description;
         this.pointValue = pointValue;
-        this.businessValuePoint = businessValuePoint; // added buisness value point
-        this.state = UserStoryState.UNSELECTED;
+        this.businessValuePoint = businessValuePoint;
+        this.status = UserStoryStatus.UNSELECTED;
         this.id = UUID.randomUUID();
+        this.state = new UserStoryUnselectedState(this);
     }
 
     @JsonCreator
@@ -86,14 +93,15 @@ public class UserStory {
                      @JsonProperty("description") String description,
                      @JsonProperty("blockers") List<BlockerObject> blockers,
                      @JsonProperty("id") UUID id,
-                     @JsonProperty("userStoryState") String state) {
+                     @JsonProperty("status") String status) {
         this.businessValuePoint = businessValuePoint;
         this.pointValue = pointValue;
         this.name = name;
         this.description = description;
         this.blockers = blockers;
         this.id = id;
-        this.state = UserStoryState.valueOf(state);
+        this.status = UserStoryStatus.valueOf(status);
+        this.state = new UserStoryUnselectedState(this);
     }
 
     /**
@@ -201,6 +209,14 @@ public class UserStory {
     @JsonIgnore
     public UserStoryState getUserStoryState() {
         return state;
+    }
+
+    public UserStoryStatus getStatus() {
+        return status;
+    }
+
+    public void updateStatus(UserStoryStatus status) {
+        this.status = status;
     }
 
     /**

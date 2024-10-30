@@ -193,7 +193,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
         updateUserStories();
 
         String[] userStoryNames = this.userStories.stream()
-                .filter(userStory -> userStory.getUserStoryState().equals(UserStory.UserStoryState.UNSELECTED))
+                .filter(userStory -> userStory.getStatus().equals(UserStory.UserStoryStatus.UNSELECTED))
                 .map(Objects::toString).toList().toArray(new String[] {});
 
         userStoriesComponent.setVisibleRowCount(20);
@@ -210,7 +210,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                 .getSprintByString((String) selectSprintComboBox.getSelectedItem())
                 .getUserStories()
                 .stream()
-                .filter(userStory -> userStory.getUserStoryState().equals(UserStory.UserStoryState.ADDED))
+                .filter(userStory -> userStory.getStatus().equals(UserStory.UserStoryStatus.ADDED))
                 .map(Objects::toString)
                 .toList()
                 .toArray(new String[] {});
