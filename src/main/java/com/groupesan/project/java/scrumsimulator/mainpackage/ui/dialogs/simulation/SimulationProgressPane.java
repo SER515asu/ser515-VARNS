@@ -7,8 +7,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
+import javax.swing.table.TableCellRenderer;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
@@ -54,12 +53,16 @@ public class SimulationProgressPane {
         model = new DefaultTableModel(userStoryColumnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column >= 2;
             }
         };
         userStoryContainer = new JTable(model);
 
         userStoryScrollPane = new JScrollPane(userStoryContainer);
+        for(int i = 2; i < userStoryColumnNames.length; i++) {
+            userStoryContainer.getColumn(userStoryColumnNames[i]).setCellRenderer(new ButtonRenderer());
+            userStoryContainer.
+        }
         // userStoryScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         simPan.add(jimPan);
@@ -74,7 +77,12 @@ public class SimulationProgressPane {
     public void addUserStory(UserStory USText) {
         String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "Added");
 
-        model.addRow(new Object[] { USText.getName(), status});
+        JButton inProg = new JButton("In Progress");
+        JButton blocked = new JButton("Blocked");
+        JButton spiked = new JButton("Spiked");
+        JButton completed = new JButton("Completed");
+
+        model.addRow(new Object[] { USText.getName(), status, inProg, blocked, spiked, completed});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
@@ -255,3 +263,16 @@ public class SimulationProgressPane {
     }
 }
 
+class ButtonRenderer extends JButton implements TableCellRenderer {
+
+    public ButtonRenderer() {
+        setOpaque(true);
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+                                                   boolean isSelected, boolean hasFocus, int row, int column) {
+        setText((value == null) ? "Actions" : value.toString());
+        return this;
+    }
+}
