@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 
@@ -101,7 +102,11 @@ public class UserStory {
         this.blockers = blockers;
         this.id = id;
         this.status = UserStoryStatus.valueOf(status);
-        this.state = new UserStoryUnselectedState(this);
+        if (this.status.equals(UserStoryStatus.ADDED)) {
+            this.state = new UserStoryAddedState(this);
+        } else {
+            this.state = new UserStoryUnselectedState(this);
+        }
     }
 
     /**
@@ -208,7 +213,7 @@ public class UserStory {
      */
     @JsonIgnore
     public UserStoryState getUserStoryState() {
-        return state;
+        return this.state;
     }
 
     public UserStoryStatus getStatus() {

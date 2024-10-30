@@ -2,6 +2,9 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStorySelectedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 import java.util.ArrayList;
@@ -151,6 +154,7 @@ public class Simulation {
                 .toList()
                 .getFirst();
         userStoryToBeRemoved.updateStatus(UserStory.UserStoryStatus.UNSELECTED);
+        userStoryToBeRemoved.changeState(new UserStoryUnselectedState(userStoryToBeRemoved));
         sprint.removeUserStory(userStoryToBeRemoved.getId());
     }
 
@@ -166,6 +170,7 @@ public class Simulation {
                 .toList()
                 .getFirst();
         userStoryToBeAdded.updateStatus(UserStory.UserStoryStatus.ADDED);
+        userStoryToBeAdded.changeState(new UserStoryAddedState(userStoryToBeAdded));
         sprint.addUserStory(userStoryToBeAdded);
     }
 
