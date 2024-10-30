@@ -31,10 +31,6 @@ public class UserStoryStore {
         userStories.add(userStory);
     }
 
-    public void addAllUserStories(List<UserStory> userStories) {
-       userStories.forEach(this::addUserStory);
-    }
-
     public void removeUserStory(UserStory userStory) {
         userStories.remove(userStory);
     }

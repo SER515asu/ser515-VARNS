@@ -5,7 +5,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermis
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFactory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;

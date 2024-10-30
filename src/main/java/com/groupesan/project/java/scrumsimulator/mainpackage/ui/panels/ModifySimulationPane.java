@@ -7,7 +7,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstra
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
