@@ -74,7 +74,7 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
-                e -> handleButtonAction(new UserStoryListPane(this)));
+                e -> handleButtonAction(new UserStoriesPane(this)));
 
         startSimulationButton = new JButton("Start Simulation");
         startSimulationButton.addActionListener(
@@ -150,18 +150,18 @@ public class DemoPane extends JFrame implements BaseComponent {
                 break;
             case DEVELOPER:
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 // TODO: Spike Button Here
                 break;
             case PRODUCT_OWNER:
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 break;
             case SCRUM_ADMIN:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
                 panel.add(createButton("Potential Blocker Solutions",
                         () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
