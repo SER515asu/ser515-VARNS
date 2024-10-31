@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 
 import java.awt.FlowLayout;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,9 +23,9 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComp
 
 public class SimulationPane extends JFrame implements SimulationListener, BaseComponent {
 
-    private SimulationProgressPane progressPane;
-    private JFrame parent;
-    private SimulationStateManager simulationStateManager;
+    private final SimulationProgressPane progressPane;
+    private final JFrame parent;
+    private final SimulationStateManager simulationStateManager;
 
     public SimulationPane(JFrame parent) {
         this.parent = parent;
