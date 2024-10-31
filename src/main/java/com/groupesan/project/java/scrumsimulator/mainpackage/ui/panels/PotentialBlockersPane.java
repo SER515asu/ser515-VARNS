@@ -18,8 +18,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
-    private JPanel glassPane;
-    private JFrame parent;
+    private final JFrame parent;
 
     public PotentialBlockersPane(JFrame parent) {
         this.parent = parent;
@@ -118,7 +117,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
     }
 
     private void setupGlassPane() {
-        glassPane = new JPanel() {
+        JPanel glassPane = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 g.setColor(new Color(0, 0, 0, 100));
