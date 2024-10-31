@@ -14,8 +14,7 @@ import javax.swing.border.EmptyBorder;
 public class DemoPane extends JFrame implements BaseComponent {
     private final Player player = new Player("bob", new ScrumRole("demo"));
     private JPanel myJpanel;
-    private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton,
-            updateStoryStatusButton, simulationButton, modifySimulationButton,
+    private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton, simulationButton, modifySimulationButton,
             variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
 
     private Map<UserRole, Set<JButton>> roleToButton;
@@ -101,10 +100,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         potentialBlockerSolutionsButton.addActionListener(
                 e -> handleButtonAction(new PotentialBlockerSolutionsPane(this)));
 
-        updateStoryStatusButton = new JButton("Update User Story Status");
-        updateStoryStatusButton.addActionListener(
-                e -> handleButtonAction(new UpdateUserStoryPanel(this)));
-
         simulationButton = new JButton("Add User");
         simulationButton.addActionListener(
                 e -> handleButtonAction(new AddUserPane(this)));
@@ -129,7 +124,6 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(startSimulationButton, 3, 0)
                 .addComponent(potentialBlockersButton, 4, 0)
                 .addComponent(potentialBlockerSolutionsButton, 5, 0)
-                .addComponent(updateStoryStatusButton, 6, 0)
                 .addComponent(simulationButton, 7, 0)
                 .addComponent(modifySimulationButton, 8, 0)
                 .addComponent(variantSimulationUIButton, 10, 0)
@@ -195,7 +189,6 @@ public class DemoPane extends JFrame implements BaseComponent {
     
         // TODO: Potentially remove below buttons
         // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
-        panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
         return panel;
     }
     
@@ -278,7 +271,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
         potentialBlockerSolutionsButton.setEnabled(enabled);
-        updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
         modifySimulationButton.setEnabled(enabled);
         variantSimulationUIButton.setEnabled(enabled);
