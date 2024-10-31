@@ -28,4 +28,11 @@ public class BlockerSolution {
     public void setChance(int chance) {
         this.chance = chance;
     }
+
+    public BlockerSolution deepClone() {
+        return new BlockerSolution(
+                this.name,
+                this.chance
+        );
+    }
 }
