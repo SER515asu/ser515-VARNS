@@ -19,8 +19,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
-    private JPanel glassPane;
-    private JFrame parent;
+    private final JFrame parent;
 
     public PotentialBlockerSolutionsPane(JFrame parent) {
         this.parent = parent;
@@ -106,13 +105,13 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
             i--;
         }
 
-        SimulationStateManager.getInstance().getCurrentSimulation().getBlockerSolutions().forEach(solution -> {
-            tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" });
-        });
+        SimulationStateManager.getInstance().getCurrentSimulation().getBlockerSolutions().forEach(
+                        solution -> tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" })
+        );
     }
 
     private void setupGlassPane() {
-        glassPane = new JPanel() {
+        JPanel glassPane = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 g.setColor(new Color(0, 0, 0, 100));

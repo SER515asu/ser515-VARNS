@@ -1,8 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
@@ -23,15 +21,6 @@ public class BlockerObject {
     public BlockerObject(BlockerType type) {
         this.type = type;
         this.state = BlockerState.UNRESOLVED;
-    }
-
-    @JsonCreator
-    public BlockerObject(@JsonProperty("solution") BlockerSolution solution,
-                         @JsonProperty("type") BlockerType type,
-                         @JsonProperty("state") BlockerState state) {
-        this.solution = solution;
-        this.type = type;
-        this.state = state;
     }
 
     public BlockerType getType() {
