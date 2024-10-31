@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -78,7 +79,7 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         startSimulationButton = new JButton("Start Simulation");
         startSimulationButton.addActionListener(
-                e -> handleButtonAction(new SimulationPane(this)));
+                e -> onStartSimulationClick());
 
         potentialBlockersButton = new JButton("Potential Blockers");
         potentialBlockersButton.addActionListener(
@@ -183,7 +184,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         switch (role) {
             case SCRUM_MASTER:
                 panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
-                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                panel.add(createButton("Start Simulation", this::onStartSimulationClick));
                 break;
             case DEVELOPER:
                 break;
@@ -191,7 +192,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                 break;
             case SCRUM_ADMIN:
                 panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
-                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                panel.add(createButton("Start Simulation", this::onStartSimulationClick));
                 // TODO: Add Show Simulation History Button here
                 break;
         }
@@ -251,5 +252,13 @@ public class DemoPane extends JFrame implements BaseComponent {
         updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
+    }
+
+    private void onStartSimulationClick() {
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            JOptionPane.showMessageDialog(this,"Please Select a Simulation Configuration before starting");
+        } else {
+            handleButtonAction(new SimulationPane(this));
+        }
     }
 }
