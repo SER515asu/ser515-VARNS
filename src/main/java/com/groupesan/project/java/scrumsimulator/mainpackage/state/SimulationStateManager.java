@@ -30,7 +30,7 @@ public class SimulationStateManager {
     private Integer sprint;
     private Integer progressValue;
 
-    private SecureRandom rand = new SecureRandom();
+    private final SecureRandom rand = new SecureRandom();
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -62,11 +62,9 @@ public class SimulationStateManager {
      * Sets the current simulation.
      *
      * @param simulation The simulation to set as the current simulation.
-     * @return the SimulationStateManager
      */
-    public SimulationStateManager setCurrentSimulation(Simulation simulation) {
+    public void setCurrentSimulation(Simulation simulation) {
         this.currentSimulation = simulation;
-        return this;
     }
 
     /**
