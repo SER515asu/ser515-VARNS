@@ -51,8 +51,6 @@ public class SimulationSingleton {
         JSONArray simulationsArray = new JSONArray();
         simulations.forEach(simulation -> simulationsArray.put(simulationToJson(simulation)));
 
-        System.out.println(simulationsArray.toString(4));
-
         updateSimulationData(simulationsArray);
     }
 

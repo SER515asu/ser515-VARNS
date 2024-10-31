@@ -44,12 +44,12 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
         JButton addSimulationButton = initializeAddSimulationButton();
         myJpanel.add(addSimulationButton, BorderLayout.SOUTH);
 
-        String[] columnNames = {"ID", "Name", "Random Seed", "Sprint Count", "Sprint Duration (Days)", "# of User Stories",
+        String[] columnNames = {"ID", "Name", "Random Seed", "Sprint Count", "Sprint Duration (Days)", "# of User Stories", "Active",
                 "Actions"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 6;
+                return column == 7;
             }
         };
 
@@ -68,6 +68,7 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
                         Object id = simulationsTable.getValueAt(row, 0);
                         Simulation simulation = SimulationSingleton.getInstance().getSimulationById((UUID) id);
                         SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+                        refreshTableData();
                         JOptionPane.showMessageDialog(myJpanel, "Simulation: '%s' loaded as current context".formatted(simulationsTable.getValueAt(row, 1)));
                     }
                 }
@@ -126,6 +127,7 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
                     simulation.getSprintCount(),
                     simulation.getSprintDuration(),
                     simulation.getUserStories().size(),
+                    SimulationStateManager.getInstance().getCurrentSimulation().equals(simulation),
                     "Actions"
             };
             tableModel.addRow(rowData);
@@ -208,6 +210,8 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
                 editItem.addActionListener(e -> openEditForm(simulation));
                 deleteItem.addActionListener(e -> {
                     SimulationSingleton.getInstance().removeSimulation(simulation);
+                    SimulationStateManager.getInstance()
+                            .setCurrentSimulation(SimulationSingleton.getInstance().getLatestSimulation());
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {

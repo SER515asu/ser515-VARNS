@@ -61,10 +61,13 @@ public class Simulation {
 
         if (sprintCount > this.sprintCount) {
             for (int i = this.sprintCount; i < sprintCount; i++) {
-                sprints.add(new Sprint("", "", sprintDuration, sprintCount));
+                sprints.add(new Sprint("", "", sprintDuration, i + 1));
             }
         } else {
             for (int i = sprintCount; i < this.sprintCount; i++) {
+                Sprint lastSprint = sprints.getLast();
+                List<UserStory> sprintUserStory = lastSprint.getUserStories();
+                sprintUserStory.forEach(userStory -> removeUserStoryFromSprint(lastSprint, userStory.toString()));
                 sprints.removeLast();
             }
         }
