@@ -7,6 +7,7 @@ public class ScrumSimulator {
     public static void main(String[] args) {
         new App().start();
 
+        // Reference https://www.geeksforgeeks.org/jvm-shutdown-hook-java/
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(() -> SimulationSingleton.getInstance().saveSimulationDetails()));
     }
