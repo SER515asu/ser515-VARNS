@@ -81,4 +81,15 @@ public class Sprint {
     public void clearUserStories() {
         userStories.clear();
     }
+
+    public Sprint deepClone() {
+        List<UserStory> clonedUserStories = new ArrayList<>();
+        userStories.forEach(userStory -> clonedUserStories.add(userStory.deepClone()));
+
+        return new Sprint(
+                this.length,
+                clonedUserStories,
+                this.id
+        );
+    }
 }
