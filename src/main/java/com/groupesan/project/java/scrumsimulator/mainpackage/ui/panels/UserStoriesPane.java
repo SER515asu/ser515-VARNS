@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -23,7 +24,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
@@ -52,9 +57,21 @@ public class UserStoriesPane extends JFrame implements BaseComponent {
 
         myJpanel.add(new JLabel("Double click on any User Story below to edit it"), BorderLayout.NORTH);
 
-        JButton addUserStoryButton = new JButton("Add User Story");
-        addUserStoryButton.addActionListener(e -> openEditForm("", 0, 0, ""));
-        myJpanel.add(addUserStoryButton, BorderLayout.SOUTH);
+        if (UserRolePermissions.actionAllowed(UserRoleSingleton.getInstance().getUserRole(),
+                UserAction.MANAGE_USER_STORES)) {
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new BorderLayout());
+
+            JButton addUserStoryButton = new JButton("Add User Story");
+            addUserStoryButton.addActionListener(handleNewUserStoryAction());
+            buttonPanel.add(addUserStoryButton, BorderLayout.NORTH);
+
+            JButton initializeUserStories = new JButton("Add Default User Stories");
+            initializeUserStories.addActionListener(handleInitializeUserStoriesAction());
+            buttonPanel.add(initializeUserStories, BorderLayout.SOUTH);
+
+            myJpanel.add(buttonPanel, BorderLayout.SOUTH);
+        }
 
         String[] columnNames = { "Name", "Story Points", "BV Points", "Description", "Actions" };
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -67,7 +84,7 @@ public class UserStoriesPane extends JFrame implements BaseComponent {
         userStoriesTable = new JTable(tableModel);
         userStoriesTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
         userStoriesTable.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
-        refreshTableData();
+        reloadUserStories();
 
         userStoriesTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -76,11 +93,9 @@ public class UserStoriesPane extends JFrame implements BaseComponent {
                         && userStoriesTable.getSelectedRow() != -1) {
                     int row = userStoriesTable.getSelectedRow();
                     if (row != -1) {
-                        String name = (String) userStoriesTable.getValueAt(row, 0);
-                        int storyPoints = (int) userStoriesTable.getValueAt(row, 1);
-                        int bvPoints = (int) userStoriesTable.getValueAt(row, 2);
-                        String description = (String) userStoriesTable.getValueAt(row, 3);
-                        openEditForm(name, storyPoints, bvPoints, description);
+                        UserStory userStory = SimulationStateManager.getInstance().getCurrentSimulation()
+                                .getUserStories().get(row);
+                        openEditForm(userStory);
                     }
                 }
             }
@@ -95,24 +110,21 @@ public class UserStoriesPane extends JFrame implements BaseComponent {
         add(myJpanel);
     }
 
-    private void openEditForm(String name, double storyPoints, int bvPoints, String description) {
-        EditUserStoryForm form = new EditUserStoryForm(name, storyPoints, bvPoints, description);
-        this.setAlwaysOnTop(false);
-        form.setAlwaysOnTop(true);
-        setGlassPaneVisible(true);
-        form.setVisible(true);
-        form.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                refreshTableData();
-                setGlassPaneVisible(false);
-                setAlwaysOnTop(true);
-            }
-        });
+    private ActionListener handleInitializeUserStoriesAction() {
+        return e -> {
+            SimulationSingleton.getInstance().initializeDefaultUserStories();
+            reloadUserStories();
+        };
     }
 
-    private void refreshTableData() {
+    private ActionListener handleNewUserStoryAction() {
+        return e -> {
+            openNewForm("", 0, 0, "");
+            reloadUserStories();
+        };
+    }
 
+    private void reloadUserStories() {
         tableModel.setRowCount(0);
 
         SimulationStateManager.getInstance().getCurrentSimulation().getUserStories().forEach(userStory -> {
@@ -124,6 +136,41 @@ public class UserStoriesPane extends JFrame implements BaseComponent {
                     "Actions"
             };
             tableModel.addRow(rowData);
+        });
+
+        userStoriesTable.revalidate();
+        userStoriesTable.repaint();
+    }
+
+    private void openNewForm(String name, double storyPoints, int bvPoints, String description) {
+        EditUserStoryForm form = new EditUserStoryForm(name, storyPoints, bvPoints, description);
+        this.setAlwaysOnTop(false);
+        form.setAlwaysOnTop(true);
+        setGlassPaneVisible(true);
+        form.setVisible(true);
+        form.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                reloadUserStories();
+                setGlassPaneVisible(false);
+                setAlwaysOnTop(true);
+            }
+        });
+    }
+
+    private void openEditForm(UserStory userStory) {
+        EditUserStoryForm form = new EditUserStoryForm(userStory);
+        this.setAlwaysOnTop(false);
+        form.setAlwaysOnTop(true);
+        setGlassPaneVisible(true);
+        form.setVisible(true);
+        form.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                reloadUserStories();
+                setGlassPaneVisible(false);
+                setAlwaysOnTop(true);
+            }
         });
     }
 
@@ -193,19 +240,18 @@ public class UserStoriesPane extends JFrame implements BaseComponent {
                 JMenuItem deleteItem = new JMenuItem("Delete");
                 JMenuItem duplicateItem = new JMenuItem("Duplicate");
 
-                editItem.addActionListener(e -> openEditForm(userStory.getName(), userStory.getPointValue(),
-                        userStory.getBusinessValuePoint(), userStory.getDescription()));
+                editItem.addActionListener(e -> openEditForm(userStory));
 
                 deleteItem.addActionListener(e -> {
                     SimulationStateManager.getInstance().getCurrentSimulation().removeUserStory(userStory);
-                    refreshTableData();
+                    reloadUserStories();
                 });
 
                 duplicateItem.addActionListener(e -> {
                     UserStory duplicate = new UserStory(userStory.getName() + " - Copy", userStory.getDescription(),
                             userStory.getPointValue(), userStory.getBusinessValuePoint());
                     SimulationStateManager.getInstance().getCurrentSimulation().addUserStory(duplicate);
-                    refreshTableData();
+                    reloadUserStories();
                 });
 
                 popupMenu.add(editItem);

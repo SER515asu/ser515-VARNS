@@ -4,6 +4,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
@@ -33,6 +34,7 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
 
     public EditUserStoryForm(String name, double storyPoints, int bvPoints, String description) {
         this.userStory = new UserStory(name, description, storyPoints, bvPoints);
+        SimulationStateManager.getInstance().getCurrentSimulation().addUserStory(userStory);
         this.init();
     }
 
