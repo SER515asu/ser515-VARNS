@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
@@ -133,6 +135,30 @@ public class SimulationSingleton {
             });
         }
 
+        JSONArray blockerTypesFromJson = simulationJson.getJSONArray("BlockerTypes");
+        List<BlockerType> blockerTypes = new ArrayList<>();
+        if (!blockerTypesFromJson.isEmpty()) {
+            blockerTypesFromJson.forEach(blockerType -> {
+                try {
+                    blockerTypes.add(mapper.readValue(blockerType.toString(), BlockerType.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        JSONArray blockerSolutionsFromJson = simulationJson.getJSONArray("BlockerSolutions");
+        List<BlockerSolution> blockerSolutions = new ArrayList<>();
+        if (!blockerTypesFromJson.isEmpty()) {
+            blockerSolutionsFromJson.forEach(blockerSolution -> {
+                try {
+                    blockerSolutions.add(mapper.readValue(blockerSolution.toString(), BlockerSolution.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
         return new Simulation(
                 UUID.fromString(simulationJson.getString("ID")),
                 simulationJson.getString("Name"),
@@ -140,7 +166,9 @@ public class SimulationSingleton {
                 simulationJson.getInt("DurationDays"),
                 sprints,
                 userStories,
-                simulationJson.getLong("Seed")
+                simulationJson.getLong("Seed"),
+                blockerTypes,
+                blockerSolutions
         );
     }
 
@@ -154,6 +182,8 @@ public class SimulationSingleton {
         jsonObject.put("Count", simulation.getSprintCount());
         jsonObject.put("Sprints", simulation.getSprints());
         jsonObject.put("UserStories", simulation.getUserStories());
+        jsonObject.put("BlockerTypes", simulation.getBlockerTypes());
+        jsonObject.put("BlockerSolutions", simulation.getBlockerSolutions());
         return jsonObject;
     }
 }

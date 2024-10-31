@@ -1,9 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
 public class BlockerObject {
@@ -25,15 +23,6 @@ public class BlockerObject {
         this.state = BlockerState.UNRESOLVED;
     }
 
-    @JsonCreator
-    public BlockerObject(@JsonProperty("solution") BlockerSolution solution,
-                         @JsonProperty("type") BlockerType type,
-                         @JsonProperty("state") BlockerState state) {
-        this.solution = solution;
-        this.type = type;
-        this.state = state;
-    }
-
     public BlockerType getType() {
         return type;
     }
@@ -50,12 +39,12 @@ public class BlockerObject {
         }
 
         if (RandomUtils.getInstance().getRandomInt(100) < resolveChance) {
-            this.solution = BlockerSolutionStore.getInstance().getRandomBlockerSolution();
+            this.solution = SimulationStateManager.getInstance().getRandomBlockerSolution();
             return true;
         } else {
 
             if (RandomUtils.getInstance().getRandomInt(100) < type.getSpikeChance()) {
-                System.out.println("Blocker " + this.toString() + " has been spiked.");
+                System.out.println("Blocker " + this + " has been spiked.");
                 state = BlockerState.SPIKED;
             }
 
