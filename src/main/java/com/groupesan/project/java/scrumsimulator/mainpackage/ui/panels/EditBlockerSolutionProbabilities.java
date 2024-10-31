@@ -1,7 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
@@ -89,9 +88,9 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
 
         this.deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> {
-            BlockerSolution solution = BlockerSolutionStore.getInstance().getBlockerSolution(solutionName);
+            BlockerSolution solution = SimulationStateManager.getInstance().getCurrentSimulation().getBlockerSolution(solutionName);
             if (solution != null) {
-                BlockerSolutionStore.getInstance().removeBlockerSolution(solution);
+                SimulationStateManager.getInstance().getCurrentSimulation().removeBlockerSolution(solution);
             }
             dispose();
         });
@@ -169,10 +168,10 @@ public class EditBlockerSolutionProbabilities extends JFrame implements BaseComp
                 finalProbability = Integer.parseInt(probabilityChanceField.getText());
             }
 
-            BlockerSolution solution = BlockerSolutionStore.getInstance().getBlockerSolution(solutionName);
+            BlockerSolution solution = SimulationStateManager.getInstance().getCurrentSimulation().getBlockerSolution(solutionName);
             if (solution == null) {
                 solution = new BlockerSolution(nameField.getText(), finalProbability);
-                BlockerSolutionStore.getInstance().addBlockerSolution(solution);
+                SimulationStateManager.getInstance().getCurrentSimulation().addBlockerSolution(solution);
             } else {
                 solution.setName(nameField.getText());
                 solution.setChance(finalProbability);
