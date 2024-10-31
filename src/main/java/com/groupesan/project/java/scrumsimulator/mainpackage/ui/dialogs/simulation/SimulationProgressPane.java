@@ -76,14 +76,10 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "Added");
+        String status = (((USText.getUserStoryState() instanceof UserStoryNewState)) ? "N/A" : "Added");
 
-        JButton inProg = new JButton("In Progress");
-        JButton blocked = new JButton("Blocked");
-        JButton spiked = new JButton("Spiked");
-        JButton completed = new JButton("Completed");
 
-        model.addRow(new Object[] { USText.getName(), status, inProg, blocked, spiked, completed});
+        model.addRow(new Object[] { USText.getName(), status});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
@@ -266,6 +262,7 @@ public class SimulationProgressPane {
 
 class ButtonRenderer extends JButton implements TableCellRenderer {
 
+
     public ButtonRenderer() {
         setOpaque(true);
     }
@@ -292,37 +289,41 @@ class ButtonEditor extends DefaultCellEditor {
         super(checkBox);
         button = new JButton();
         tabModel = model;
-        button.setVisible(false);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
-                if(column == 2) {
-                    model.setValueAt("In Progress", row, 1);
-                }
-                if(column == 3) {
-                    model.setValueAt("Blocked", row, 1);
-                }
-                if(column == 4) {
-                    model.setValueAt("Spiked", row, 1);
-                }
-                if(column == 5) {
-                    model.setValueAt("Completed", row, 1);
-                }
-            }
-        });
+        button.setOpaque(true);
+        //button.setVisible(false);
     }
 
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if (value instanceof JButton) {
-            button = (JButton) value;
-            this.isPushed = true;
-            this.row = row;
-            this.column = column;
+
+        if(column == 2) {
+            button.setText("In Progress");
+            isPushed = true;
             return button;
         }
+        if(column == 3) {
+            button.setText("Blocked");
+            isPushed = true;
+            return button;
+        }
+        if(column == 4) {
+            button.setText("Spiked");
+            isPushed = true;
+            return button;
+        }
+        if(column == 5) {
+            button.setText("Completed");
+            isPushed = true;
+            return button;
+        }
+//        if (value instanceof JButton) {
+//            button.setText(((JButton) value).getText());
+//            this.isPushed = true;
+//            this.row = row;
+//            this.column = column;
+//            return button;
+//        }
         return null;
     }
 
