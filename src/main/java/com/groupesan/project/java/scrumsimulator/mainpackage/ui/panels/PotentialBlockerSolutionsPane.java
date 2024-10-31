@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -106,7 +106,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
             i--;
         }
 
-        BlockerSolutionStore.getInstance().getBlockerSolutions().forEach(solution -> {
+        SimulationStateManager.getInstance().getCurrentSimulation().getBlockerSolutions().forEach(solution -> {
             tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" });
         });
     }
@@ -169,7 +169,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerSolution blockerSolution = BlockerSolutionStore.getInstance()
+                BlockerSolution blockerSolution = SimulationStateManager.getInstance().getCurrentSimulation()
                         .getBlockerSolution((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
                 JPopupMenu popupMenu = new JPopupMenu();
                 JMenuItem editItem = new JMenuItem("Edit");
@@ -179,13 +179,13 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
                 editItem.addActionListener(e -> openEditForm(blockerSolution.getName(),
                         blockerSolution.getChance()));
                 deleteItem.addActionListener(e -> {
-                    BlockerSolutionStore.getInstance().removeBlockerSolution(blockerSolution);
+                    SimulationStateManager.getInstance().getCurrentSimulation().removeBlockerSolution(blockerSolution);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
                     BlockerSolution duplicate = new BlockerSolution(blockerSolution.getName() + " - Copy",
                             blockerSolution.getChance());
-                    BlockerSolutionStore.getInstance().addBlockerSolution(duplicate);
+                    SimulationStateManager.getInstance().getCurrentSimulation().addBlockerSolution(duplicate);
                     refreshTableData();
                 });
 

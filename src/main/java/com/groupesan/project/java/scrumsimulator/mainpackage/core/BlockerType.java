@@ -56,4 +56,13 @@ public class BlockerType {
     public String toString() {
         return "[Blocker] " + name;
     }
+
+    public BlockerType deepClone() {
+        return new BlockerType(
+                this.name,
+                this.getEncounterChance(),
+                this.getResolveChance(),
+                this.spikeChance
+        );
+    }
 }
