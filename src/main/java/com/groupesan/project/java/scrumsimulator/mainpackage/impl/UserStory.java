@@ -84,6 +84,28 @@ public class UserStory {
         this.state = new UserStoryUnselectedState(this);
     }
 
+    /**
+     * Creates a user story.
+     *
+     * @param name        the name for the user story
+     * @param description the description for the user story for better
+     *                    understanding of the
+     *                    requirements.
+     * @param pointValue  the point value for the story as a way of estimating
+     *                    required effort.
+     * @param id          the UUID for the user story
+     * @param businessValuePoint the business value point for the user story
+     */
+    public UserStory(Object id, String name, String description, double pointValue, int businessValuePoint) {
+        this.name = name;
+        this.description = description;
+        this.pointValue = pointValue;
+        this.businessValuePoint = businessValuePoint;
+        this.status = UserStoryStatus.UNSELECTED;
+        this.id = UUID.fromString(id.toString());
+        this.state = new UserStoryUnselectedState(this);
+    }
+
     @JsonCreator
     public UserStory(@JsonProperty("businessValuePoint") int businessValuePoint,
                      @JsonProperty("pointValue") double pointValue,
