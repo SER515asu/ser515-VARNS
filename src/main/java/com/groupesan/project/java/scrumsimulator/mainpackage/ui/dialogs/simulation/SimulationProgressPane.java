@@ -76,12 +76,9 @@ public class SimulationProgressPane {
         System.out.println("State when added: " + USText.getUserStoryState());
 //        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "New");
         String status = "";
-        if(USText.getUserStoryState() instanceof UserStoryUnselectedState) {
-            status = "New";
-        } 
 
 
-        model.addRow(new Object[] { USText.getName(), status, "In Progress", "Blocked" , "Spiked", "Completed"});
+        model.addRow(new Object[] { USText.getName(), "New", "In Progress", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
