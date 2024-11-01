@@ -46,6 +46,10 @@ public class SimulationStateManager {
         progressValue = 0;
     }
 
+    public int getSprintNum() {
+        return sprint;
+    }
+
     /**
      * Returns the singleton instance of SimulationStateManager.
      *
@@ -178,12 +182,15 @@ public class SimulationStateManager {
 
         notifySimulationStopped();
         SimulationSingleton.getInstance().saveSimulationDetails();
+
     }
+
 
     private void runSimulation() {
         addUserStory();
         detectInProgressUserStory();
         while (true) {
+
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
@@ -198,11 +205,11 @@ public class SimulationStateManager {
             if (state == SprintStateEnum.PAUSED) {
                 continue;
             }
-
+            setRandomStates();
             System.out.println("Day: " + day + " Sprint: " + sprint);
-
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
             notifyProgressUpdate();
+
 
             resolveBlockers();
             detectBlockers();
@@ -212,7 +219,6 @@ public class SimulationStateManager {
                 stopSimulation();
             } else {
                 day++;
-                setRandomStates();
                 if (day > currentSimulation.getSprintDuration()) {
                     day = 1;
                     sprint++;
@@ -246,11 +252,15 @@ public class SimulationStateManager {
 
 
             UserStory selectedStory = usList.get(randNumb);
-
-            if(selectedStory.getUserStoryState() instanceof UserStoryAddedState) {
-                selectedStory.changeState(new UserStorySelectedState(selectedStory));
+            if(selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
+                selectedStory.changeState(new UserStoryNewState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
-            } else if (selectedStory.getUserStoryState() instanceof UserStorySelectedState) {
+            }
+            else if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
+                selectedStory.changeState(new UserStoryInProgressState(selectedStory));
+                notifyStoryStatusChange(selectedStory);
+            }  else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
+                    !(selectedStory.getUserStoryState() instanceof UserStoryBlockedState)) {
                 selectedStory.changeState(new UserStoryCompletedState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
             } else {
@@ -273,10 +283,18 @@ public class SimulationStateManager {
 
     private void detectBlockers() {
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
-            BlockerObject blocker = SimulationStateManager.getInstance().getCurrentSimulation().rollForBlocker();
-            if (blocker != null) {
-                notifyBlockerDetected(blocker);
-                userStory.setBlocker(blocker);
+            System.out.println("Blocker affecting a story: " + userStory.getBlockers());
+            boolean alreadyCompleted = !(userStory.getUserStoryState() instanceof UserStoryCompletedState); // check if the user story is completed. Blockers cannot be reintroduced if it's completed
+            boolean inProgress = (userStory.getUserStoryState() instanceof UserStoryInProgressState); // check if the user story is in progress. A new user story cannot immediately have a blocker
+            if (alreadyCompleted && inProgress) {
+                BlockerObject blocker = SimulationStateManager.getInstance().getCurrentSimulation().rollForBlocker();
+                if (blocker != null) {
+                    notifyBlockerDetected(blocker);
+                    userStory.setBlocker(blocker);
+                    userStory.changeState(new UserStoryBlockedState(userStory));
+                    notifyStoryStatusChange(userStory);
+                }
+
             }
         }
     }
@@ -291,7 +309,13 @@ public class SimulationStateManager {
                 if (blocker.attemptResolve()) {
                     blocker.resolve();
                     System.out.println("Blocker resolved: " + blocker.getType().getName() + " by " + blocker.getSolution().getName());
+                    userStory.changeState(new UserStoryInProgressState(userStory));
+                    notifyStoryStatusChange(userStory);
                     notifyBlockerResolved(blocker);
+                }
+                if(blocker.getState() == BlockerObject.BlockerState.SPIKED) {
+                    userStory.changeState(new UserStorySpikedState(userStory));
+                    notifyStoryStatusChange(userStory);
                 }
             }
         }

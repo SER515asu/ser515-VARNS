@@ -2,8 +2,8 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 
-public class UserStoryAddedState extends UserStoryState {
-    public UserStoryAddedState(UserStory userStory) {
+public class UserStoryNewState extends UserStoryState {
+    public UserStoryNewState(UserStory userStory) {
         super(userStory);
     }
 

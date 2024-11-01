@@ -22,7 +22,7 @@ public class UserStoryStateTest {
 
     @Test
     public void testUserStorySelectedState() {
-        UserStorySelectedState testState = new UserStorySelectedState(testUserStory);
+        UserStoryInProgressState testState = new UserStoryInProgressState(testUserStory);
         assertAll(
                 "Selected State",
                 () -> assertEquals("Unselected", testState.onSelect()),

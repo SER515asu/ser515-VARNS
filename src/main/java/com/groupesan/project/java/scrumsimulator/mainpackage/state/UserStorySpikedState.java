@@ -2,26 +2,25 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 
-public class UserStoryUnselectedState extends UserStoryState {
+public class UserStorySpikedState extends UserStoryState {
 
-    public UserStoryUnselectedState(UserStory userStory) {
+
+    public UserStorySpikedState(UserStory userStory) {
         super(userStory);
     }
 
     @Override
     public String onSelect() {
-        userStory.changeState(new UserStoryInProgressState(userStory));
-        return "Selected";
+        return "Deleted";
     }
 
     @Override
     public String onComplete() {
-        return "Unselected";
+        return "Deleted";
     }
 
     @Override
     public String onDelete() {
-        userStory.changeState(new UserStoryDeletedState(userStory));
         return "Deleted";
     }
 }
