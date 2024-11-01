@@ -3,6 +3,8 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 import java.awt.event.ActionEvent;
 import java.util.*;
 import java.awt.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -73,7 +75,7 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        String status = (((USText.getUserStoryState() instanceof UserStoryNewState)) ? "N/A" : "Added");
+        String status = (((USText.getUserStoryState() instanceof UserStoryNewState)) ? "New" : "N/A");
 
 
         model.addRow(new Object[] { USText.getName(), status, "In Progress", "Blocked" , "Spiked", "Completed"});
@@ -84,11 +86,22 @@ public class SimulationProgressPane {
     public void changeState(UserStory userStory) {
         UserStoryState userStoryState = userStory.getUserStoryState();
 
-        System.out.println(userStory.getName());
-        System.out.println(userStoryState instanceof UserStoryInProgressState);
 
-        if(userStoryState instanceof UserStoryNewState) {
+        if(userStoryState instanceof UserStoryInProgressState) {
                 setStatus(userStory, "In Progress");
+        }
+        else if(userStoryState instanceof UserStoryBlockedState) {
+            int recentBlocker = userStory.getBlockers().size();
+            String blocker = String.valueOf(userStory.getBlockers().get(recentBlocker-1));
+
+            Pattern pattern = Pattern.compile(".*\\[Blocker\\]\\s*\\[Blocker\\]\\s*(.*)");
+            Matcher matcher = pattern.matcher(blocker);
+
+
+            if(matcher.matches()) {
+                setStatus(userStory, "Blocked - " + matcher.group(1).trim());
+
+            }
         }
         else if(userStoryState instanceof UserStoryCompletedState) {
             setStatus(userStory, "Completed");
@@ -107,14 +120,15 @@ public class SimulationProgressPane {
                     public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
                         Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
 
+                        System.out.println("Status type: " + progress.toString());
                         if ("New".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
                         }
                         else if ("Spiked".equals(progress)) {
-                            userStoryCell.setForeground(Color.RED);
+                            userStoryCell.setForeground(Color.MAGENTA);
                         }
-                        else if ("Blocked".equals(progress)) {
-                            userStoryCell.setForeground(Color.PINK);
+                        else if (progress.toString().contains("Blocked")) {
+                            userStoryCell.setForeground(Color.RED);
                         }
                         else if ("In Progress".equals(progress)) {
                             userStoryCell.setForeground(Color.BLUE);
@@ -338,6 +352,8 @@ class ButtonEditor extends DefaultCellEditor {
             super.fireEditingStopped();
             Object c1 = tabModel.getValueAt(row, 0);
             Object c2 = tabModel.getValueAt(row, 1);
+
+            System.out.println("User Story status: " );
             isPushed = false;
 
             System.out.println("C1" + c1);

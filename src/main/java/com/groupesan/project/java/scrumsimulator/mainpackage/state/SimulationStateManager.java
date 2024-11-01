@@ -180,6 +180,7 @@ public class SimulationStateManager {
 
         notifySimulationStopped();
         SimulationSingleton.getInstance().saveSimulationDetails();
+
     }
 
     private void runSimulation() {
@@ -252,7 +253,8 @@ public class SimulationStateManager {
             if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
                 selectedStory.changeState(new UserStoryInProgressState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
-            } else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState) {
+            }  else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
+                    !(selectedStory.getUserStoryState() instanceof UserStoryBlockedState)) {
                 selectedStory.changeState(new UserStoryCompletedState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
             } else {
@@ -276,11 +278,18 @@ public class SimulationStateManager {
     private void detectBlockers() {
         BlockerTypeStore blockerStore = BlockerTypeStore.get();
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
-            BlockerObject blocker = blockerStore.rollForBlocker();
-            if (blocker != null) {
-                notifyBlockerDetected(blocker);
-                userStory.setBlocker(blocker);
+            System.out.println("Blocker affecting a story: " + userStory.getBlockers());
+            if(!(userStory.getUserStoryState() instanceof UserStoryCompletedState)) {
+                BlockerObject blocker = blockerStore.rollForBlocker();
+
+                if (blocker != null) {
+                    notifyBlockerDetected(blocker);
+                    userStory.setBlocker(blocker);
+                    userStory.changeState(new UserStoryBlockedState(userStory));
+                    notifyStoryStatusChange(userStory);
+                }
             }
+
         }
     }
 
@@ -294,6 +303,8 @@ public class SimulationStateManager {
                 if (blocker.attemptResolve()) {
                     blocker.resolve();
                     System.out.println("Blocker resolved: " + blocker.getType().getName() + " by " + blocker.getSolution().getName());
+                    userStory.changeState(new UserStoryInProgressState(userStory));
+                    notifyStoryStatusChange(userStory);
                     notifyBlockerResolved(blocker);
                 }
             }
