@@ -14,13 +14,13 @@ public class BlockerObject {
         RESOLVED
     }
 
-    private static BlockerState state;
+    private volatile BlockerState state;
 
     private BlockerSolution solution;
 
     public BlockerObject(BlockerType type) {
         this.type = type;
-        state = BlockerState.UNRESOLVED;
+        this.state = BlockerState.UNRESOLVED;
     }
 
     public BlockerType getType() {
@@ -65,7 +65,7 @@ public class BlockerObject {
         return solution;
     }
 
-    public static BlockerState getState() {
-        return state;
+    public BlockerState getState() {
+        return this.state;
     }
 }
