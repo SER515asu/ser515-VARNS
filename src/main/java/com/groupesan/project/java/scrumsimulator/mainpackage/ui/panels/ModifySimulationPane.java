@@ -17,6 +17,13 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
     private JSpinner numberOfSprintsField;
     private JSpinner sprintLengthCycleField;
     private JTextField randomSeedField;
+
+    private JToggleButton autoFillToggleButton;
+    private JPanel autoFillPanel;
+    private JSlider sprintLengthStartSlider;
+    private JSlider sprintLengthEndSlider;
+    private JSlider sprintNumberStartSlider;
+    private JSlider sprintNumberEndSlider;
     
     private final ModifyMode mode;
     private final JFrame parent;
@@ -69,6 +76,8 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
         gbc.gridx = 1;
         inputs.add(simulationNameField, gbc);
 
+        if (numberOfSprints < 1) numberOfSprints = 1;
+        if (numberOfSprints > 20) numberOfSprints = 20;
         numberOfSprintsField = new JSpinner(new SpinnerNumberModel(numberOfSprints, 1, 20, 1));
         JLabel sprintLabel = new JLabel("Number of Sprints:");
         gbc.gridx = 0;
@@ -77,6 +86,8 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
         gbc.gridx = 1;
         inputs.add(numberOfSprintsField, gbc);
 
+        if (sprintDuration < 1) sprintDuration = 1;
+        if (sprintDuration > 30) sprintDuration = 30;
         sprintLengthCycleField = new JSpinner(new SpinnerNumberModel(sprintDuration, 1, 30, 1));
         JLabel sprintDurationLabel = new JLabel("Sprint Duration (days):");
         gbc.gridx = 0;
@@ -103,6 +114,18 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
         gbc.gridx = 1;
         inputs.add(randomSeedField, gbc);
 
+        autoFillToggleButton = new JToggleButton("Auto Fill OFF");
+        autoFillToggleButton.addActionListener(e -> toggleAutoFillPanel());
+        gbc.gridx = 0;
+        gbc.gridy++;
+        inputs.add(autoFillToggleButton, gbc);
+
+        createAutoFillPanel();
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        inputs.add(autoFillPanel, gbc);
+
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> dispose());
 
@@ -117,6 +140,109 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
         container.add(inputs, BorderLayout.CENTER);
         container.add(buttonPanel, BorderLayout.SOUTH);
         getContentPane().add(container);
+    }
+
+    private void createAutoFillPanel() {
+        autoFillPanel = new JPanel(new GridBagLayout());
+        autoFillPanel.setBorder(BorderFactory.createTitledBorder("Auto Fill Settings"));
+        autoFillPanel.setVisible(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+
+        JLabel sprintLengthRangeLabel = new JLabel("Sprint Length Range (Days):");
+        sprintLengthStartSlider = new JSlider(JSlider.HORIZONTAL, 1, 30, 1);
+        sprintLengthEndSlider = new JSlider(JSlider.HORIZONTAL, 1, 30, 30);
+        setupSlider(sprintLengthStartSlider, "Start", 5);
+        setupSlider(sprintLengthEndSlider, "End", 5);
+
+        sprintLengthStartSlider.addChangeListener(e -> {
+            if (sprintLengthStartSlider.getValue() >= sprintLengthEndSlider.getValue()) {
+            sprintLengthStartSlider.setValue(sprintLengthEndSlider.getValue() - 1);
+            }
+        });
+
+        sprintLengthEndSlider.addChangeListener(e -> {
+            if (sprintLengthEndSlider.getValue() <= sprintLengthStartSlider.getValue()) {
+            sprintLengthEndSlider.setValue(sprintLengthStartSlider.getValue() + 1);
+            }
+        });
+
+        gbc.gridy = 0;
+        autoFillPanel.add(sprintLengthRangeLabel, gbc);
+        gbc.gridy++;
+        autoFillPanel.add(sprintLengthStartSlider, gbc);
+        gbc.gridy++;
+        autoFillPanel.add(sprintLengthEndSlider, gbc);
+
+        JLabel sprintNumberRangeLabel = new JLabel("Sprint Number Range:");
+        sprintNumberStartSlider = new JSlider(JSlider.HORIZONTAL, 1, 20, 1);
+        sprintNumberEndSlider = new JSlider(JSlider.HORIZONTAL, 1, 20, 20);
+        setupSlider(sprintNumberStartSlider, "Start", 4);
+        setupSlider(sprintNumberEndSlider, "End", 4);
+
+        sprintNumberStartSlider.addChangeListener(e -> {
+            if (sprintNumberStartSlider.getValue() >= sprintNumberEndSlider.getValue()) {
+            sprintNumberStartSlider.setValue(sprintNumberEndSlider.getValue() - 1);
+            }
+        });
+
+        sprintNumberEndSlider.addChangeListener(e -> {
+            if (sprintNumberEndSlider.getValue() <= sprintNumberStartSlider.getValue()) {
+            sprintNumberEndSlider.setValue(sprintNumberStartSlider.getValue() + 1);
+            }
+        });
+
+        gbc.gridy++;
+        autoFillPanel.add(sprintNumberRangeLabel, gbc);
+        gbc.gridy++;
+        autoFillPanel.add(sprintNumberStartSlider, gbc);
+        gbc.gridy++;
+        autoFillPanel.add(sprintNumberEndSlider, gbc);
+
+        JButton submitAutoFillButton = new JButton("Submit Auto Fill");
+        submitAutoFillButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        submitAutoFillButton.addActionListener(e -> applyAutoFillValues());
+
+        gbc.gridy++;
+        autoFillPanel.add(submitAutoFillButton, gbc);
+    }
+
+    private void setupSlider(JSlider slider, String labelText, int tickSpacing) {
+        slider.setMajorTickSpacing(tickSpacing);
+        slider.setMinorTickSpacing(5);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.setBorder(BorderFactory.createTitledBorder(labelText));
+    }
+
+    private void toggleAutoFillPanel() {
+        if (autoFillToggleButton.isSelected()) {
+            autoFillToggleButton.setText("Auto Fill ON");
+            autoFillPanel.setVisible(true);
+        } else {
+            autoFillToggleButton.setText("Auto Fill OFF");
+            autoFillPanel.setVisible(false);
+        }
+        pack();
+    }
+
+    private void applyAutoFillValues() {
+        int randomSprintLength = RandomUtils.getInstance().getRandomInt(sprintLengthStartSlider.getValue(),
+                sprintLengthEndSlider.getValue());
+        int randomSprintNumber = RandomUtils.getInstance().getRandomInt(sprintNumberStartSlider.getValue(),
+                sprintNumberEndSlider.getValue());
+
+        sprintLengthCycleField.setValue(randomSprintLength);
+        numberOfSprintsField.setValue(randomSprintNumber);
+
+        JOptionPane.showMessageDialog(this,
+                "Randomly selected values:\n" +
+                        "Sprint Length: " + randomSprintLength + " Days\n" +
+                        "Sprint Number: " + randomSprintNumber);
     }
 
     private void handleSubmission() {
