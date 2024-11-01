@@ -220,6 +220,7 @@ public class SimulationStateManager {
             } else {
                 day++;
                 if (day > currentSimulation.getSprintDuration()) {
+                    // 
                     day = 1;
                     sprint++;
                     resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if they're completed or not.
