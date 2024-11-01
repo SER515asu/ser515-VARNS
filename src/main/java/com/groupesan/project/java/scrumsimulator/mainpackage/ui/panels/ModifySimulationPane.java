@@ -18,22 +18,22 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
     private JSpinner sprintLengthCycleField;
     private JTextField randomSeedField;
     
-    private final Mode mode;
+    private final ModifyMode mode;
     private final JFrame parent;
     private Simulation simulation;
 
-    private enum Mode {
-        NEW, EDIT
+    private enum ModifyMode {
+        CREATE_NEW, MODIFY_EXISTING
     }
 
     public ModifySimulationPane(JFrame parent) {
-        this.mode = Mode.NEW;
+        this.mode = ModifyMode.CREATE_NEW;
         this.parent = parent;
         init();
     }
 
     public ModifySimulationPane(JFrame parent, Simulation simulation) {
-        this.mode = Mode.EDIT;
+        this.mode = ModifyMode.MODIFY_EXISTING;
         this.parent = parent;
         this.simulation = simulation;
         init();
@@ -41,7 +41,7 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
 
     @Override
     public void init() {
-        setTitle(mode == Mode.NEW ? "New Simulation" : "Edit Simulation");
+        setTitle(mode == ModifyMode.CREATE_NEW ? "New Simulation" : "Edit Simulation");
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -57,10 +57,10 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
         gbc.gridx = 0;
 
         // Initialize fields with either default values (for NEW) or existing values (for EDIT)
-        String name = mode == Mode.NEW ? "New Simulation" : simulation.getName();
-        int numberOfSprints = mode == Mode.NEW ? 1 : simulation.getSprintCount();
-        int sprintDuration = mode == Mode.NEW ? 14 : simulation.getSprintDuration();
-        long seed = mode == Mode.NEW ? RandomUtils.getInstance().getRandomLong() : simulation.getRandomSeed();
+        String name = mode == ModifyMode.CREATE_NEW ? "New Simulation" : simulation.getName();
+        int numberOfSprints = mode == ModifyMode.CREATE_NEW ? 1 : simulation.getSprintCount();
+        int sprintDuration = mode == ModifyMode.CREATE_NEW ? 14 : simulation.getSprintDuration();
+        long seed = mode == ModifyMode.CREATE_NEW ? RandomUtils.getInstance().getRandomLong() : simulation.getRandomSeed();
 
         simulationNameField = new JTextField(name, 20);
         JLabel nameLabel = new JLabel("Simulation Name:");
@@ -106,7 +106,7 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> dispose());
 
-        JButton submitButton = new JButton(mode == Mode.NEW ? "Create Simulation" : "Update Simulation");
+        JButton submitButton = new JButton(mode == ModifyMode.CREATE_NEW ? "Create Simulation" : "Update Simulation");
         submitButton.addActionListener(e -> handleSubmission());
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -132,7 +132,7 @@ class ModifySimulationPane extends JFrame implements BaseComponent {
             return;
         }
 
-        if (mode == Mode.NEW) {
+        if (mode == ModifyMode.CREATE_NEW) {
             Simulation newSimulation = new Simulation(UUID.randomUUID(), simName, numberOfSprints, sprintLengthCycle, seed);
             SimulationSingleton.getInstance().addSimulation(newSimulation);
         } else {
