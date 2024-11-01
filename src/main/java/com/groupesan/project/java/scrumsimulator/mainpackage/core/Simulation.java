@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Simulation {
 
     private final UUID simulationId;
-    private String simulationName;
+    private String name;
     private int sprintCount;
     private int sprintDuration;
     private final List<Sprint> sprints;
@@ -22,9 +22,9 @@ public class Simulation {
     private final List<BlockerType> blockerTypes;
     private final List<BlockerSolution> blockerSolutions;
 
-    public Simulation(UUID simulationId, String simulationName, int sprintCount, int sprintDurationDays, long randomSeed) {
+    public Simulation(UUID simulationId, String name, int sprintCount, int sprintDurationDays, long randomSeed) {
         this.simulationId = simulationId;
-        this.simulationName = simulationName;
+        this.name = name;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.randomSeed = randomSeed;
@@ -50,7 +50,7 @@ public class Simulation {
                       List<Sprint> sprints, List<UserStory> userStories, long randomSeed,
                       List<BlockerType> blockerTypes, List<BlockerSolution> blockerSolutions) {
         this.simulationId = id;
-        this.simulationName = name;
+        this.name = name;
         this.sprintCount = sprintCount;
         this.sprintDuration = sprintDurationDays;
         this.sprints = sprints;
@@ -64,12 +64,12 @@ public class Simulation {
         return simulationId;
     }
 
-    public String getSimulationName() {
-        return simulationName;
+    public String getName() {
+        return name;
     }
 
-    public void setSimulationName(String simulationName) {
-        this.simulationName = simulationName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setSprintCount(int sprintCount) {
@@ -228,7 +228,7 @@ public class Simulation {
 
     @Override
     public String toString() {
-        return "[Simulation] " + getSimulationName() + "\n" + "ID: " + simulationId + "\n" +
+        return "[Simulation] " + getName() + "\n" + "ID: " + simulationId + "\n" +
                 "Seed: " + randomSeed + "\n" +
                 "Sprints: " + sprintCount + "\n" +
                 "Sprint Length: " + sprintDuration + " days\n";
@@ -277,7 +277,7 @@ public class Simulation {
 
         return new Simulation(
                 UUID.randomUUID(),
-                this.simulationName + " - copy",
+                this.name + " - copy",
                 this.sprintCount,
                 this.sprintDuration,
                 deepClonedSprints,
