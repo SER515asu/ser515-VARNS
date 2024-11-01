@@ -22,9 +22,6 @@ public class UserStory {
     @JsonProperty
     private UUID id;
 
-    @JsonIgnore
-    private String label;
-
     @JsonProperty
     private String name;
 
@@ -89,7 +86,7 @@ public class UserStory {
 
     @JsonCreator
     public UserStory(@JsonProperty("businessValuePoint") int businessValuePoint,
-                     @JsonProperty("pointValue") int pointValue,
+                     @JsonProperty("pointValue") double pointValue,
                      @JsonProperty("name") String name,
                      @JsonProperty("description") String description,
                      @JsonProperty("blockers") List<BlockerObject> blockers,
@@ -109,6 +106,18 @@ public class UserStory {
         }
     }
 
+    public UserStory deepClone() {
+        return new UserStory(
+                this.businessValuePoint,
+                this.pointValue,
+                this.name,
+                this.description,
+                this.blockers,
+                UUID.randomUUID(),
+                this.status.toString()
+        );
+    }
+
     /**
      * Gets the identifier for this UserStory.
      *
@@ -116,16 +125,6 @@ public class UserStory {
      */
     public UUID getId() {
         return id;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-
-    @JsonIgnore
-    public String getLabel() {
-        return label;
     }
 
     /**
@@ -222,26 +221,6 @@ public class UserStory {
 
     public void updateStatus(UserStoryStatus status) {
         this.status = status;
-    }
-
-    /**
-     * Sets the owner of this UserStory to the specified player. This should be
-     * called whenever a
-     * Player picks up this task and assigns themselves to it.
-     *
-     * @param player the Player object who is assigned to this UserStory
-     */
-    public void setOwner(Player player) {
-        this.owner = player;
-    }
-
-    /**
-     * Get the owner of this UserStory
-     *
-     * @return a Player object representing the owner of this UserStory
-     */
-    public Player getOwner() {
-        return this.owner;
     }
 
     // added buisness value point getter and setter

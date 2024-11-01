@@ -18,7 +18,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
 
     List<UserStory> userStories;
 
-    private JFrame parent;
+    private final JFrame parent;
 
     public SprintBacklogPane(JFrame parent) {
         this.parent = parent;
@@ -182,7 +182,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                     SimulationStateManager
                             .getInstance()
                             .getCurrentSimulation()
-                            .randomizeSprintBacklog(userStories);
+                            .randomizeSprintBacklog();
                     redrawUserStoriesList(userStories);
                     redrawSprintUserStoriesList(selectSprintComboBox, sprintUserStories);
                 });

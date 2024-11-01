@@ -31,6 +31,10 @@ public class SimulationSingleton {
         return instance;
     }
 
+    public List<Simulation> getAllSimulations() {
+        return simulations;
+    }
+
     public void addSimulation(Simulation simulation) {
         simulations.add(simulation);
 
@@ -47,14 +51,23 @@ public class SimulationSingleton {
         JSONArray simulationsArray = new JSONArray();
         simulations.forEach(simulation -> simulationsArray.put(simulationToJson(simulation)));
 
-        System.out.println(simulationsArray.toString(4));
-
         updateSimulationData(simulationsArray);
     }
 
     public Simulation getLatestSimulation() {
         if (simulations.isEmpty()) return null;
         return simulations.getLast();
+    }
+
+    public Simulation getSimulationById(UUID id) {
+        return simulations.stream()
+                .filter(simulation -> simulation.getSimulationId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void removeSimulation(Simulation simulation) {
+        simulations.remove(simulation);
     }
 
     public void initializeDefaultSimulation() {

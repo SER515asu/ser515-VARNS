@@ -1,7 +1,6 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
@@ -26,16 +25,13 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
     private JTextField simulationNameField;
     private JTextField numberOfSprintsField;
     private JTextField sprintLengthCycleField;
-    private JTextArea simulationIdDisplay;
     private JTextField randomSeedField;
-    private JFrame parent;
+    private final JFrame parent;
+    private Simulation simulation;
 
-    public ModifySimulationPane(JFrame parent) {
+    public ModifySimulationPane(JFrame parent, Simulation simulation) {
         this.parent = parent;
-
-        Simulation currentSimulation = SimulationStateManager.getInstance().getCurrentSimulation();
-
-        if (currentSimulation == null) {
+        if (simulation == null) {
             JOptionPane.showMessageDialog(
                     this,
                     "No current simulation available to modify.",
@@ -45,6 +41,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
             return;
         }
 
+        this.simulation = simulation;
         init();
     }
 
@@ -56,12 +53,10 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
 
         setTitle("Modify Simulation");
 
-        Simulation currentSimulation = SimulationStateManager.getInstance().getCurrentSimulation();
-
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        simulationIdDisplay = new JTextArea(2, 20);
+        JTextArea simulationIdDisplay = new JTextArea(2, 20);
         simulationIdDisplay.setEditable(false);
 
         randomSeedField = new JTextField(20);
@@ -75,10 +70,10 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
         JLabel sprintLengthLabel = new JLabel("Length of Sprint:");
         JLabel randomSeedLabel = new JLabel("Random Seed:");
 
-        simulationNameField.setText(currentSimulation.getSimulationName());
-        numberOfSprintsField.setText(String.valueOf(currentSimulation.getSprintCount()));
-        sprintLengthCycleField.setText(String.valueOf(currentSimulation.getSprintDuration()));
-        randomSeedField.setText(String.valueOf(currentSimulation.getRandomSeed()));
+        simulationNameField.setText(simulation.getSimulationName());
+        numberOfSprintsField.setText(String.valueOf(simulation.getSprintCount()));
+        sprintLengthCycleField.setText(String.valueOf(simulation.getSprintDuration()));
+        randomSeedField.setText(String.valueOf(simulation.getRandomSeed()));
 
         int gridy = 0;
 
@@ -101,7 +96,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
         JButton submitButton = new JButton("Update Simulation");
         submitButton.addActionListener(e -> {
             String simName = simulationNameField.getText();
-            Integer sprintLengthCycle;
+            int sprintLengthCycle;
             try {
                 sprintLengthCycle = sprintLengthCycleField.getText().isEmpty() ? 0
                         : Integer.parseInt(sprintLengthCycleField.getText());
@@ -110,7 +105,7 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 return;
             }
 
-            Integer numberOfSprints;
+            int numberOfSprints;
             try {
                 numberOfSprints = numberOfSprintsField.getText().isEmpty() ? 0
                         : Integer.parseInt(numberOfSprintsField.getText());
@@ -127,13 +122,13 @@ public class ModifySimulationPane extends JFrame implements BaseComponent {
                 return;
             }
 
-            currentSimulation.setSimulationName(simName);
-            currentSimulation.setSprintDuration(sprintLengthCycle);
-            currentSimulation.setSprintCount(numberOfSprints);
+            simulation.setSimulationName(simName);
+            simulation.setSprintDuration(sprintLengthCycle);
+            simulation.setSprintCount(numberOfSprints);
 
-            if (currentSimulation.getRandomSeed() != seed) {
-                System.out.println("Random seed changed from " + currentSimulation.getRandomSeed() + " to " + seed);
-                currentSimulation.setRandomSeed(seed);
+            if (simulation.getRandomSeed() != seed) {
+                System.out.println("Random seed changed from " + simulation.getRandomSeed() + " to " + seed);
+                simulation.setRandomSeed(seed);
             }
 
             JOptionPane.showMessageDialog(this, "Simulation updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);

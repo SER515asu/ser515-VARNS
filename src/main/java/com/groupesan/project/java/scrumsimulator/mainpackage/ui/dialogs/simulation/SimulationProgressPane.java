@@ -79,7 +79,7 @@ public class SimulationProgressPane {
         String status = (((USText.getUserStoryState() instanceof UserStoryNewState)) ? "N/A" : "Added");
 
 
-        model.addRow(new Object[] { USText.getName(), status});
+        model.addRow(new Object[] { USText.getName(), status, "In Progress", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
@@ -271,6 +271,7 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value,
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
         setText((value == null) ? "Actions" : value.toString());
+        System.out.println("VALUE: " + value);
         return this;
     }
 }
@@ -290,6 +291,7 @@ class ButtonEditor extends DefaultCellEditor {
         button = new JButton();
         tabModel = model;
         button.setOpaque(true);
+        button.addActionListener(e -> fireEditingStopped());
         //button.setVisible(false);
     }
 
@@ -297,40 +299,50 @@ class ButtonEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
-        if(column == 2) {
-            button.setText("In Progress");
-            isPushed = true;
-            return button;
-        }
-        if(column == 3) {
-            button.setText("Blocked");
-            isPushed = true;
-            return button;
-        }
-        if(column == 4) {
-            button.setText("Spiked");
-            isPushed = true;
-            return button;
-        }
-        if(column == 5) {
-            button.setText("Completed");
-            isPushed = true;
-            return button;
-        }
-//        if (value instanceof JButton) {
-//            button.setText(((JButton) value).getText());
-//            this.isPushed = true;
+        label = (value == null) ? "Actions" : value.toString();
+        return button;
+//        if(column == 2) {
+//            label = (value == null) ? "Actions" : value.toString();
+//            return button;
+//        }
+//        if(column == 3) {
+//            label = "Blocked";
+//            button.setText(label);
+//            isPushed = true;
 //            this.row = row;
 //            this.column = column;
 //            return button;
 //        }
-        return null;
+//        if(column == 4) {
+//            label = "Spiked";
+//            button.setText(label);
+//            this.row = row;
+//            this.column = column;
+//            isPushed = true;
+//            return button;
+//        }
+//        if(column == 5) {
+//            label = "Completed";
+//            button.setText(label);
+//            this.row = row;
+//            this.column = column;
+//            isPushed = true;
+//            return button;
+//        }
+////        if (value instanceof JButton) {
+////            button.setText(((JButton) value).getText());
+////            this.isPushed = true;
+////            this.row = row;
+////            this.column = column;
+////            return button;
+////        }
+//        return null;
     }
 
     @Override
     public Object getCellEditorValue() {
         isPushed = false;
-        return button;
+        return label;
     }
 
     @Override
