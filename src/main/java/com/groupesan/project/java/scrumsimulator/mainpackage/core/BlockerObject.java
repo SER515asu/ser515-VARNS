@@ -20,7 +20,7 @@ public class BlockerObject {
 
     public BlockerObject(BlockerType type) {
         this.type = type;
-        this.state = BlockerState.UNRESOLVED;
+        state = BlockerState.UNRESOLVED;
     }
 
     public BlockerType getType() {

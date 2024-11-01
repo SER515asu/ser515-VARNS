@@ -31,11 +31,6 @@ public class SimulationProgressPane {
     private JTable userStoryContainer;
 
 
-
-
-
-    private Map<BlockerObject, JCheckBox> blockerCheckBoxMap = new HashMap<>();
-
     public SimulationProgressPane() {
         simPan = new JPanel();
         simPan.setLayout(new BoxLayout(simPan, BoxLayout.Y_AXIS));
@@ -240,8 +235,8 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
         setText((value == null) ? "Actions" : value.toString());
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
-        Simulation currentSimulation = stateManager.getCurrentSimulation();
-        int currentSprint = stateManager.getSprintNum();
+//        Simulation currentSimulation = stateManager.getCurrentSimulation();
+//        int currentSprint = stateManager.getSprintNum(); - Keeping this for task 69 for now
 
         setEnabled(state != SprintStateEnum.RUNNING);
         setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : UIManager.getColor("Button.background"));
@@ -351,6 +346,8 @@ class ButtonEditor extends DefaultCellEditor {
                         case "Spiked":
                             userStory.changeState(new UserStorySpikedState(userStory));
                             tabModel.setValueAt("SPIKED", row, 1);
+                            break;
+                        default:
                             break;
                     }
                 }
