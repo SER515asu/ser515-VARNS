@@ -1,16 +1,13 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
@@ -88,7 +85,7 @@ public class SimulationProgressPane {
         UserStoryState userStoryState = userStory.getUserStoryState();
 
         System.out.println(userStory.getName());
-        System.out.println(userStoryState instanceof UserStorySelectedState);
+        System.out.println(userStoryState instanceof UserStoryInProgressState);
 
         if(userStoryState instanceof UserStoryNewState) {
                 setStatus(userStory, "In Progress");
@@ -171,16 +168,6 @@ public class SimulationProgressPane {
     }
 
 
-    public boolean checkResolved() {
-        for (JCheckBox checkBox : blockerCheckBoxMap.values()) {
-            if (!checkBox.isSelected()) {
-                SimulationStateManager.getInstance().setState(SprintStateEnum.RUNNING);
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void handlePauseSimulation(ActionEvent e) {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
@@ -190,9 +177,11 @@ public class SimulationProgressPane {
         if (state == SprintStateEnum.RUNNING) {
             stateManager.setState(SprintStateEnum.PAUSED);
             pauseSimulationButton.setText("Start Simulation");
+
         } else if (state == SprintStateEnum.PAUSED) {
             stateManager.setState(SprintStateEnum.RUNNING);
             pauseSimulationButton.setText("Pause Simulation");
+
         }
     }
 
@@ -271,7 +260,10 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value,
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
         setText((value == null) ? "Actions" : value.toString());
-        System.out.println("VALUE: " + value);
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+        SprintStateEnum state = stateManager.getState();
+        setEnabled(state != SprintStateEnum.RUNNING);
+        setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : null);
         return this;
     }
 }
@@ -283,6 +275,7 @@ class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
     private String label;
     private boolean isPushed;
+    private JTable table;
     private DefaultTableModel tabModel;
     private int column;
     private int row;
@@ -298,45 +291,19 @@ class ButtonEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+        SprintStateEnum state = stateManager.getState();
         label = (value == null) ? "Actions" : value.toString();
+
+        this.table = table;
+        this.row = row;
+        this.column = column;
+
+
+        button.setEnabled(state != SprintStateEnum.RUNNING);
+        button.setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : null);
+        isPushed = true;
         return button;
-//        if(column == 2) {
-//            label = (value == null) ? "Actions" : value.toString();
-//            return button;
-//        }
-//        if(column == 3) {
-//            label = "Blocked";
-//            button.setText(label);
-//            isPushed = true;
-//            this.row = row;
-//            this.column = column;
-//            return button;
-//        }
-//        if(column == 4) {
-//            label = "Spiked";
-//            button.setText(label);
-//            this.row = row;
-//            this.column = column;
-//            isPushed = true;
-//            return button;
-//        }
-//        if(column == 5) {
-//            label = "Completed";
-//            button.setText(label);
-//            this.row = row;
-//            this.column = column;
-//            isPushed = true;
-//            return button;
-//        }
-////        if (value instanceof JButton) {
-////            button.setText(((JButton) value).getText());
-////            this.isPushed = true;
-////            this.row = row;
-////            this.column = column;
-////            return button;
-////        }
-//        return null;
     }
 
     @Override
@@ -353,6 +320,15 @@ class ButtonEditor extends DefaultCellEditor {
 
     @Override
     protected void fireEditingStopped() {
-        super.fireEditingStopped();
+        if(isPushed) {
+            super.fireEditingStopped();
+            Object c1 = tabModel.getValueAt(row, 0);
+            Object c2 = tabModel.getValueAt(row, 1);
+            isPushed = false;
+
+            System.out.println("C1" + c1);
+            System.out.println("C2" + c2);
+
+        }
     }
 }

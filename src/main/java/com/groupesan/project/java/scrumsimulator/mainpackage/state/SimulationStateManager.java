@@ -250,9 +250,9 @@ public class SimulationStateManager {
             UserStory selectedStory = usList.get(randNumb);
 
             if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
-                selectedStory.changeState(new UserStorySelectedState(selectedStory));
+                selectedStory.changeState(new UserStoryInProgressState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
-            } else if (selectedStory.getUserStoryState() instanceof UserStorySelectedState) {
+            } else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState) {
                 selectedStory.changeState(new UserStoryCompletedState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
             } else {

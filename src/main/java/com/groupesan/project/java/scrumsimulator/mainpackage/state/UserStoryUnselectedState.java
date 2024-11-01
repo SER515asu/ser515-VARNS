@@ -10,7 +10,7 @@ public class UserStoryUnselectedState extends UserStoryState {
 
     @Override
     public String onSelect() {
-        userStory.changeState(new UserStorySelectedState(userStory));
+        userStory.changeState(new UserStoryInProgressState(userStory));
         return "Selected";
     }
 
