@@ -141,7 +141,7 @@ public class SimulationProgressPane {
         for(int i = 0; i < model.getRowCount(); i++) {
             model.removeRow(i);
         }
-        //userStoryContainer.revalidate();
+        userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
@@ -183,6 +183,10 @@ public class SimulationProgressPane {
             pauseSimulationButton.setText("Pause Simulation");
 
         }
+
+        userStoryContainer.revalidate();
+        userStoryContainer.repaint();
+
     }
 
     // TODO - I want to keep this because it can refactored later to be reused to display blockers within the story
@@ -263,7 +267,8 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
         setEnabled(state != SprintStateEnum.RUNNING);
-        setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : null);
+        setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : UIManager.getColor("Button.background"));
+
         return this;
     }
 }
@@ -284,7 +289,11 @@ class ButtonEditor extends DefaultCellEditor {
         button = new JButton();
         tabModel = model;
         button.setOpaque(true);
-        button.addActionListener(e -> fireEditingStopped());
+        button.addActionListener(e -> {
+            if (button.isEnabled()) {
+                fireEditingStopped();
+            }
+        });
         //button.setVisible(false);
     }
 
@@ -298,10 +307,15 @@ class ButtonEditor extends DefaultCellEditor {
         this.table = table;
         this.row = row;
         this.column = column;
-
-
+        boolean x = state != SprintStateEnum.RUNNING;
+        System.out.println("Set enabled: " + x);
         button.setEnabled(state != SprintStateEnum.RUNNING);
-        button.setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : null);
+
+        if(state == SprintStateEnum.RUNNING) {
+            button.setBackground(Color.LIGHT_GRAY);
+            return null;
+        }
+
         isPushed = true;
         return button;
     }
