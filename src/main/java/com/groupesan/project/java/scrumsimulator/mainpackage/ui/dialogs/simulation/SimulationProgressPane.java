@@ -3,6 +3,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 import java.awt.event.ActionEvent;
 import java.util.*;
 import java.awt.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
@@ -10,6 +11,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
@@ -75,6 +78,7 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
+        System.out.println("State when added: " + USText.getUserStoryState());
         String status = (((USText.getUserStoryState() instanceof UserStoryNewState)) ? "New" : "N/A");
 
 
@@ -103,6 +107,9 @@ public class SimulationProgressPane {
 
             }
         }
+        else if(userStoryState instanceof UserStorySpikedState) {
+            setStatus(userStory, "SPIKED");
+        }
         else if(userStoryState instanceof UserStoryCompletedState) {
             setStatus(userStory, "Completed");
         }
@@ -124,14 +131,14 @@ public class SimulationProgressPane {
                         if ("New".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
                         }
-                        else if ("Spiked".equals(progress)) {
-                            userStoryCell.setForeground(Color.MAGENTA);
+                        else if ("In Progress".equals(progress)) {
+                            userStoryCell.setForeground(Color.BLUE);
                         }
                         else if (progress.toString().contains("Blocked")) {
                             userStoryCell.setForeground(Color.RED);
                         }
-                        else if ("In Progress".equals(progress)) {
-                            userStoryCell.setForeground(Color.BLUE);
+                        else if ("SPIKED".equals(progress)) {
+                            userStoryCell.setForeground(Color.MAGENTA);
                         }
                         else if ("Completed".equals(progress)) {
                             userStoryCell.setForeground(Color.GREEN);
@@ -155,7 +162,7 @@ public class SimulationProgressPane {
         for(int i = 0; i < model.getRowCount(); i++) {
             model.removeRow(i);
         }
-        userStoryContainer.revalidate();
+        //userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
@@ -166,15 +173,10 @@ public class SimulationProgressPane {
         int statusColumn = 1;
         String selectedUS = US.getName();
 
-        System.out.println("Story selected: " + selectedUS);
-
         for(int i = 0; i < rowCount; i++){
             String currentUS = (String) model.getValueAt(i, userStoryRow);
-            System.out.println("Story selected: " + selectedUS);
-            System.out.println("Current user story: " + currentUS);
             if(currentUS.equals(selectedUS)) {
                 model.setValueAt(status, i, statusColumn);
-                System.out.println("Story found");
                 break;
             }
         }
@@ -186,8 +188,6 @@ public class SimulationProgressPane {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
 
-        System.out.println("Pause button pressed");
-        System.out.println(state);
         if (state == SprintStateEnum.RUNNING) {
             stateManager.setState(SprintStateEnum.PAUSED);
             pauseSimulationButton.setText("Start Simulation");
@@ -202,50 +202,6 @@ public class SimulationProgressPane {
         userStoryContainer.repaint();
 
     }
-
-    // TODO - I want to keep this because it can refactored later to be reused to display blockers within the story
-//    public void addBlocker(BlockerObject blocker) {
-//        JPanel blockerTextPanel = new JPanel(new BorderLayout());
-//        JLabel blockerText = new JLabel(blocker.getType().getName());
-//        JCheckBox checkBoxButton = new JCheckBox();
-//
-//        blockerCheckBoxMap.put(blocker, checkBoxButton);
-//
-//        blockerTextPanel.add(blockerText, BorderLayout.WEST);
-//        blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
-//
-//        SwingUtilities.invokeLater(() -> {
-//            blockerContainer.add(blockerTextPanel);
-//            blockerContainer.revalidate();
-//            blockerContainer.repaint();
-//        });
-//    }
-
-    //    public void addBlockers(List<BlockerObject> blockers) {
-//        for (BlockerObject blocker : blockers) {
-//            addBlocker(blocker);
-//        }
-//    }
-//
-//    public void removeBlocker(BlockerObject blocker) {
-//        JCheckBox checkBox = blockerCheckBoxMap.get(blocker);
-//        if (checkBox != null) {
-//            JPanel parentPanel = (JPanel) checkBox.getParent();
-//            blockerCheckBoxMap.remove(blocker);
-//
-//            SwingUtilities.invokeLater(() -> {
-//                blockerContainer.remove(parentPanel);
-//                blockerContainer.revalidate();
-//                blockerContainer.repaint();
-//            });
-//        }
-//    }
-//
-//    public void removeBlockers(List<BlockerObject> blockers) {
-//        for (BlockerObject blocker : blockers) {
-//            removeBlocker(blocker);
-//        }
-//    }
 
     public JPanel getSimPan() {
         return simPan;
@@ -280,6 +236,9 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
         setText((value == null) ? "Actions" : value.toString());
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
+        Simulation currentSimulation = stateManager.getCurrentSimulation();
+        int currentSprint = stateManager.getSprintNum();
+
         setEnabled(state != SprintStateEnum.RUNNING);
         setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : UIManager.getColor("Button.background"));
 
@@ -322,7 +281,6 @@ class ButtonEditor extends DefaultCellEditor {
         this.row = row;
         this.column = column;
         boolean x = state != SprintStateEnum.RUNNING;
-        System.out.println("Set enabled: " + x);
         button.setEnabled(state != SprintStateEnum.RUNNING);
 
         if(state == SprintStateEnum.RUNNING) {
@@ -353,11 +311,50 @@ class ButtonEditor extends DefaultCellEditor {
             Object c1 = tabModel.getValueAt(row, 0);
             Object c2 = tabModel.getValueAt(row, 1);
 
-            System.out.println("User Story status: " );
+            Object c3 = tabModel.getValueAt(row, column);
+
+
+
             isPushed = false;
 
-            System.out.println("C1" + c1);
-            System.out.println("C2" + c2);
+            SimulationStateManager stateManager = SimulationStateManager.getInstance();
+            Simulation currentSimulation = stateManager.getCurrentSimulation();
+            int currentSprint = stateManager.getSprintNum();
+            for (UserStory userStory : currentSimulation.getSprints().get(currentSprint-1).getUserStories()) {
+                if(userStory.getName().equals(c1)) {
+                    switch (c3.toString()) {
+                        case "In Progress":
+                            if(userStory.isBlocked()) {
+                                userStory.resolveBlockers();
+                            }
+                            userStory.changeState(new UserStoryInProgressState(userStory));
+                            tabModel.setValueAt("In Progress", row, 1);
+                            break;
+                        case "Completed":
+                            if(userStory.isBlocked()) {
+                                userStory.resolveBlockers();
+                            }
+                            userStory.changeState(new UserStoryCompletedState(userStory));
+                            tabModel.setValueAt("Completed", row, 1);
+                            break;
+                        case "Blocked":
+                            userStory.changeState(new UserStoryBlockedState(userStory));
+                            BlockerType blockerTypeManual = new BlockerType("Manual", 0, 90, 10);
+                            BlockerObject blockerManual = new BlockerObject(blockerTypeManual);
+                            userStory.setBlocker(blockerManual);
+                            tabModel.setValueAt("Blocked - Manually", row, 1);
+                            break;
+                        case "Spiked":
+                            userStory.changeState(new UserStorySpikedState(userStory));
+                            tabModel.setValueAt("SPIKED", row, 1);
+                            break;
+                    }
+                }
+            }
+
+            System.out.println("C1 " + c1);
+            System.out.println("C2 " + c2);
+            System.out.println("C3 " + c3.toString());
 
         }
     }
