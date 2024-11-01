@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -18,8 +18,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
-    private JPanel glassPane;
-    private JFrame parent;
+    private final JFrame parent;
 
     public PotentialBlockersPane(JFrame parent) {
         this.parent = parent;
@@ -105,7 +104,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
         tableModel.setRowCount(0);
 
-        BlockerTypeStore.get().getBlockerTypes().forEach(blockerType -> {
+        SimulationStateManager.getInstance().getCurrentSimulation().getBlockerTypes().forEach(blockerType -> {
             Object[] rowData = {
                     blockerType.getName(),
                     blockerType.getEncounterChance(),
@@ -118,7 +117,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
     }
 
     private void setupGlassPane() {
-        glassPane = new JPanel() {
+        JPanel glassPane = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 g.setColor(new Color(0, 0, 0, 100));
@@ -176,7 +175,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerType blockerType = BlockerTypeStore.get()
+                BlockerType blockerType = SimulationStateManager.getInstance().getCurrentSimulation()
                         .getBlockerType((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
                 JPopupMenu popupMenu = new JPopupMenu();
                 JMenuItem editItem = new JMenuItem("Edit");
@@ -187,14 +186,14 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
                         blockerType.getEncounterChance(), blockerType.getResolveChance(),
                         blockerType.getSpikeChance()));
                 deleteItem.addActionListener(e -> {
-                    BlockerTypeStore.get().removeBlocker(blockerType);
+                    SimulationStateManager.getInstance().getCurrentSimulation().removeBlocker(blockerType);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
                     BlockerType duplicate = new BlockerType(blockerType.getName() + " - Copy",
                             blockerType.getEncounterChance(), blockerType.getResolveChance(),
                             blockerType.getSpikeChance());
-                    BlockerTypeStore.get().addBlockerType(duplicate);
+                    SimulationStateManager.getInstance().getCurrentSimulation().addBlockerType(duplicate);
                     refreshTableData();
                 });
 

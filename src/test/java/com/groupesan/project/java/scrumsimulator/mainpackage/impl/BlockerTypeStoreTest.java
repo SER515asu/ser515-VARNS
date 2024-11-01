@@ -1,6 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels.EditBlockerProbabilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,8 @@ public class BlockerTypeStoreTest {
 
     @BeforeEach
     public void setup() {
-        blockers = BlockerTypeStore.get().getBlockerTypes();
+        SimulationSingleton.getInstance().initializeDefaultSimulation();
+        blockers = SimulationStateManager.getInstance().getCurrentSimulation().getBlockerTypes();
         BlockerType blocker = blockers.getFirst();
         blocker.setName("TestBlocker");
         blocker.setEncounterChance(25);

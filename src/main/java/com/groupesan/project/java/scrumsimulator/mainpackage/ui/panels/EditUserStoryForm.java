@@ -31,6 +31,12 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
         this.init();
     }
 
+    public EditUserStoryForm(String name, double storyPoints, int bvPoints, String description) {
+        this.userStory = new UserStory(name, description, storyPoints, bvPoints);
+        SimulationStateManager.getInstance().getCurrentSimulation().addUserStory(userStory);
+        this.init();
+    }
+
     private final UserStory userStory;
 
     private JTextField nameField = new JTextField();

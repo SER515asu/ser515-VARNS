@@ -19,6 +19,8 @@ public class Simulation {
     private final List<Sprint> sprints;
     private long randomSeed;
     private final List<UserStory> userStories;
+    private final List<BlockerType> blockerTypes;
+    private final List<BlockerSolution> blockerSolutions;
 
     public Simulation(UUID simulationId, String simulationName, int sprintCount, int sprintDurationDays, long randomSeed) {
         this.simulationId = simulationId;
@@ -31,10 +33,22 @@ public class Simulation {
             sprints.add(new Sprint("", "", sprintDurationDays, i + 1));
         }
         this.userStories = new ArrayList<>();
+        this.blockerTypes =  new ArrayList<>(
+                List.of(
+                        new BlockerType("Dependency", 10, 50, 20),
+                        new BlockerType("Bug", 20, 80, 10),
+                        new BlockerType("Unknown", 10, 90, 5)));
+        this.blockerSolutions = new ArrayList<>(List.of(
+                new BlockerSolution("Solution 1", 100),
+                new BlockerSolution("Solution 2", 100),
+                new BlockerSolution("Solution 3", 100),
+                new BlockerSolution("Solution 4", 100),
+                new BlockerSolution("Solution 5", 100)));
     }
 
     public Simulation(UUID id, String name, int sprintCount, int sprintDurationDays,
-                      List<Sprint> sprints, List<UserStory> userStories, long randomSeed) {
+                      List<Sprint> sprints, List<UserStory> userStories, long randomSeed,
+                      List<BlockerType> blockerTypes, List<BlockerSolution> blockerSolutions) {
         this.simulationId = id;
         this.simulationName = name;
         this.sprintCount = sprintCount;
@@ -42,6 +56,8 @@ public class Simulation {
         this.sprints = sprints;
         this.userStories = userStories;
         this.randomSeed = randomSeed;
+        this.blockerTypes = blockerTypes;
+        this.blockerSolutions = blockerSolutions;
     }
 
     public UUID getSimulationId() {
@@ -152,6 +168,64 @@ public class Simulation {
         sprint.addUserStory(userStoryToBeAdded);
     }
 
+    public List<BlockerType> getBlockerTypes() {
+        return blockerTypes;
+    }
+
+    public BlockerType getBlockerType(String name) {
+        for (BlockerType blocker : blockerTypes) {
+            if (blocker.getName().equals(name)) {
+                return blocker;
+            }
+        }
+        return null;
+    }
+
+    public void addBlockerType(BlockerType blocker) {
+        blockerTypes.add(blocker);
+    }
+
+    public void removeBlocker(BlockerType blocker) {
+        blockerTypes.remove(blocker);
+    }
+
+    /*
+     * Rolls for a blocker to be added to the sprint. The chance of each blocker is
+     * determined by the percentChance field of the BlockerType.
+     */
+    public BlockerObject rollForBlocker() {
+
+        for (BlockerType blocker : blockerTypes) {
+            int roll = RandomUtils.getInstance().getRandomInt(100);
+
+            if (roll < blocker.getEncounterChance()) {
+                return new BlockerObject(blocker);
+            }
+        }
+
+        return null;
+    }
+
+
+    public List<BlockerSolution> getBlockerSolutions() {
+        return blockerSolutions;
+    }
+
+    public BlockerSolution getBlockerSolution(String name) {
+        return blockerSolutions.stream()
+                .filter(blockerSolution -> blockerSolution.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void addBlockerSolution(BlockerSolution solution) {
+        blockerSolutions.add(solution);
+    }
+
+    public void removeBlockerSolution(BlockerSolution solution) {
+        blockerSolutions.remove(solution);
+    }
+
     @Override
     public String toString() {
         return "[Simulation] " + getSimulationName() + "\n" + "ID: " + simulationId + "\n" +
@@ -196,14 +270,22 @@ public class Simulation {
                 .toList();
         unselectedUserStories.forEach(userStory -> deepClonedUserStories.add(userStory.deepClone()));
 
+        List<BlockerType> deepClonedBlockerTypes = new ArrayList<>();
+        blockerTypes.forEach(blockerType -> deepClonedBlockerTypes.add(blockerType.deepClone()));
+
+        List<BlockerSolution> deepClonedBlockerSolutions = new ArrayList<>();
+        blockerSolutions.forEach(blockerSolution -> deepClonedBlockerSolutions.add(blockerSolution.deepClone()));
+
         return new Simulation(
                 UUID.randomUUID(),
-                this.simulationName,
+                this.simulationName + " - copy",
                 this.sprintCount,
                 this.sprintDuration,
                 deepClonedSprints,
                 deepClonedUserStories,
-                this.randomSeed
+                this.randomSeed,
+                deepClonedBlockerTypes,
+                deepClonedBlockerSolutions
         );
     }
 }

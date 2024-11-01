@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerSolutionStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -19,8 +19,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
 
     private DefaultTableModel tableModel;
     private JTable blockersTable;
-    private JPanel glassPane;
-    private JFrame parent;
+    private final JFrame parent;
 
     public PotentialBlockerSolutionsPane(JFrame parent) {
         this.parent = parent;
@@ -106,13 +105,13 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
             i--;
         }
 
-        BlockerSolutionStore.getInstance().getBlockerSolutions().forEach(solution -> {
-            tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" });
-        });
+        SimulationStateManager.getInstance().getCurrentSimulation().getBlockerSolutions().forEach(
+                        solution -> tableModel.addRow(new Object[] { solution.getName(), solution.getChance(), "Actions" })
+        );
     }
 
     private void setupGlassPane() {
-        glassPane = new JPanel() {
+        JPanel glassPane = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 g.setColor(new Color(0, 0, 0, 100));
@@ -169,7 +168,7 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerSolution blockerSolution = BlockerSolutionStore.getInstance()
+                BlockerSolution blockerSolution = SimulationStateManager.getInstance().getCurrentSimulation()
                         .getBlockerSolution((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
                 JPopupMenu popupMenu = new JPopupMenu();
                 JMenuItem editItem = new JMenuItem("Edit");
@@ -179,13 +178,13 @@ public class PotentialBlockerSolutionsPane extends JFrame implements BaseCompone
                 editItem.addActionListener(e -> openEditForm(blockerSolution.getName(),
                         blockerSolution.getChance()));
                 deleteItem.addActionListener(e -> {
-                    BlockerSolutionStore.getInstance().removeBlockerSolution(blockerSolution);
+                    SimulationStateManager.getInstance().getCurrentSimulation().removeBlockerSolution(blockerSolution);
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
                     BlockerSolution duplicate = new BlockerSolution(blockerSolution.getName() + " - Copy",
                             blockerSolution.getChance());
-                    BlockerSolutionStore.getInstance().addBlockerSolution(duplicate);
+                    SimulationStateManager.getInstance().getCurrentSimulation().addBlockerSolution(duplicate);
                     refreshTableData();
                 });
 

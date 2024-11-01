@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
@@ -74,11 +75,11 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
-                e -> handleButtonAction(new UserStoryListPane(this)));
+                e -> handleButtonAction(new UserStoriesPane(this)));
 
         startSimulationButton = new JButton("Start Simulation");
         startSimulationButton.addActionListener(
-                e -> handleButtonAction(new SimulationPane(this)));
+                e -> onStartSimulationClick());
 
         potentialBlockersButton = new JButton("Potential Blockers");
         potentialBlockersButton.addActionListener(
@@ -150,18 +151,18 @@ public class DemoPane extends JFrame implements BaseComponent {
                 break;
             case DEVELOPER:
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 // TODO: Spike Button Here
                 break;
             case PRODUCT_OWNER:
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 break;
             case SCRUM_ADMIN:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
                 panel.add(createButton("Potential Blocker Solutions",
                         () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
@@ -183,7 +184,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         switch (role) {
             case SCRUM_MASTER:
                 panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
-                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                panel.add(createButton("Start Simulation", this::onStartSimulationClick));
                 break;
             case DEVELOPER:
                 break;
@@ -191,7 +192,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                 break;
             case SCRUM_ADMIN:
                 panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
-                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                panel.add(createButton("Start Simulation", this::onStartSimulationClick));
                 // TODO: Add Show Simulation History Button here
                 break;
         }
@@ -251,5 +252,13 @@ public class DemoPane extends JFrame implements BaseComponent {
         updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
+    }
+
+    private void onStartSimulationClick() {
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            JOptionPane.showMessageDialog(this,"Please Select a Simulation Configuration before starting");
+        } else {
+            handleButtonAction(new SimulationPane(this));
+        }
     }
 }

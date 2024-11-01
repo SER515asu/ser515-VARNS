@@ -79,7 +79,11 @@ public class SimulationProgressPane {
 
     public void addUserStory(UserStory USText) {
         System.out.println("State when added: " + USText.getUserStoryState());
-        String status = (((USText.getUserStoryState() instanceof UserStoryNewState)) ? "New" : "N/A");
+//        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "New");
+        String status = "";
+        if(USText.getUserStoryState() instanceof UserStoryUnselectedState) {
+            status = "New";
+        } 
 
 
         model.addRow(new Object[] { USText.getName(), status, "In Progress", "Blocked" , "Spiked", "Completed"});

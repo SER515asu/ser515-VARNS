@@ -6,8 +6,8 @@ import java.util.List;
 import javax.swing.*;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
@@ -30,7 +30,7 @@ public class SimulationStateManager {
     private Integer sprint;
     private Integer progressValue;
 
-    private SecureRandom rand = new SecureRandom();
+    private final SecureRandom rand = new SecureRandom();
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -66,11 +66,9 @@ public class SimulationStateManager {
      * Sets the current simulation.
      *
      * @param simulation The simulation to set as the current simulation.
-     * @return the SimulationStateManager
      */
-    public SimulationStateManager setCurrentSimulation(Simulation simulation) {
+    public void setCurrentSimulation(Simulation simulation) {
         this.currentSimulation = simulation;
-        return this;
     }
 
     /**
@@ -284,24 +282,20 @@ public class SimulationStateManager {
 
 
     private void detectBlockers() {
-
-
-        BlockerTypeStore blockerStore = BlockerTypeStore.get();
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
             System.out.println("Blocker affecting a story: " + userStory.getBlockers());
             boolean alreadyCompleted = !(userStory.getUserStoryState() instanceof UserStoryCompletedState); // check if the user story is completed. Blockers cannot be reintroduced if it's completed
             boolean inProgress = (userStory.getUserStoryState() instanceof UserStoryInProgressState); // check if the user story is in progress. A new user story cannot immediately have a blocker
-            if(alreadyCompleted && inProgress) {
-                BlockerObject blocker = blockerStore.rollForBlocker();
-
+            if (alreadyCompleted && inProgress) {
+                BlockerObject blocker = SimulationStateManager.getInstance().getCurrentSimulation().rollForBlocker();
                 if (blocker != null) {
                     notifyBlockerDetected(blocker);
                     userStory.setBlocker(blocker);
                     userStory.changeState(new UserStoryBlockedState(userStory));
                     notifyStoryStatusChange(userStory);
                 }
-            }
 
+            }
         }
     }
 
@@ -333,5 +327,19 @@ public class SimulationStateManager {
 
     public void setState(SprintStateEnum state) {
         this.state = state;
+    }
+
+    public BlockerSolution getRandomBlockerSolution() {
+        int totalWeight =  currentSimulation.getBlockerSolutions().stream().mapToInt(BlockerSolution::getChance).sum();
+        int randomValue = RandomUtils.getInstance().getRandomInt(totalWeight);
+
+        int cumulativeWeight = 0;
+        for (BlockerSolution solution : currentSimulation.getBlockerSolutions()) {
+            cumulativeWeight += solution.getChance();
+            if (randomValue < cumulativeWeight) {
+                return solution;
+            }
+        }
+        return null;
     }
 }
