@@ -74,9 +74,6 @@ public class SimulationProgressPane {
 
     public void addUserStory(UserStory USText) {
         System.out.println("State when added: " + USText.getUserStoryState());
-//        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "New");
-        String status = "";
-
 
         model.addRow(new Object[] { USText.getName(), "New", "In Progress", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
@@ -154,11 +151,10 @@ public class SimulationProgressPane {
 
     public void resetPanel() {
         // Had to remove SwingUtilities to be able to refresh the panel.
-
-        for(int i = 0; i < model.getRowCount(); i++) {
+        for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
-        //userStoryContainer.revalidate();
+        userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
