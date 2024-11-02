@@ -39,7 +39,7 @@ public class SimulationSingleton {
 
     public void addSimulation(Simulation simulation) {
         simulations.add(simulation);
-
+        SimulationStateManager.getInstance().setCurrentSimulation(simulation);
         saveSimulationDetails();
     }
 

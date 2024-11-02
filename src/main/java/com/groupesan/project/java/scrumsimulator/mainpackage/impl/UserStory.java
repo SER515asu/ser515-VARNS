@@ -212,7 +212,7 @@ public class UserStory {
      */
     @Override
     public String toString() {
-        return "US - " + name;
+        return "US - %s (%s)".formatted(name, id);
     }
 
     // State Management, need Player class to implement final selection logic
