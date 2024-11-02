@@ -29,7 +29,7 @@ public class SimulationProgressPane {
     private JLabel messageLabel;
     private BurndownChart burndownChart;
     private Double totalPoints;
-    public int currentDay;
+    private int currentDay;
 
 
     public SimulationProgressPane() {
