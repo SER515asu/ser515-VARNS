@@ -20,8 +20,6 @@ public class DemoPane extends JFrame implements BaseComponent {
 
     public DemoPane() {
         this.init();
-        Player player = new Player("bob", new ScrumRole("demo"));
-        player.doRegister();
     }
 
     public void init() {
