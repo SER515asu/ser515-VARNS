@@ -2,7 +2,9 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import javax.swing.*;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
@@ -173,15 +175,16 @@ public class SimulationStateManager {
     }
 
     public void stopSimulation() {
+
         if (currentSimulation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
             return;
         }
 
         init();
-
         notifySimulationStopped();
         SimulationSingleton.getInstance().saveSimulationDetails();
+
 
     }
 
@@ -216,6 +219,7 @@ public class SimulationStateManager {
 
 
             if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
+
                 stopSimulation();
             } else {
                 day++;
@@ -235,8 +239,10 @@ public class SimulationStateManager {
         notifyResetUserStoryPanel();
     }
 
+
     private void addUserStory(){
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
+            userStory.changeState(new UserStoryNewState(userStory));
             notifyUserStory(userStory);
         }
     }
@@ -247,17 +253,15 @@ public class SimulationStateManager {
 
 
         try {
-            List<UserStory> usList =  currentSimulation.getSprints().get(sprint - 1).getUserStories();
 
-            int randNumb =  rand.nextInt(usList.size());
+            int x = currentSimulation.getSprints().get(sprint - 1).getUserStories().size();
+            int randNumb =  rand.nextInt(x);
+            UserStory selectedStory = currentSimulation.getSprints().get(sprint - 1).getUserStories().get(randNumb);
 
-
-            UserStory selectedStory = usList.get(randNumb);
-            if(selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
+            if (selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
                 selectedStory.changeState(new UserStoryNewState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
-            }
-            else if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
+            } else if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
                 selectedStory.changeState(new UserStoryInProgressState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
             }  else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
@@ -284,7 +288,6 @@ public class SimulationStateManager {
 
     private void detectBlockers() {
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
-            System.out.println("Blocker affecting a story: " + userStory.getBlockers());
             boolean alreadyCompleted = !(userStory.getUserStoryState() instanceof UserStoryCompletedState); // check if the user story is completed. Blockers cannot be reintroduced if it's completed
             boolean inProgress = (userStory.getUserStoryState() instanceof UserStoryInProgressState); // check if the user story is in progress. A new user story cannot immediately have a blocker
             if (alreadyCompleted && inProgress) {

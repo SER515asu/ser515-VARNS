@@ -47,17 +47,17 @@ public class SimulationProgressPane {
 
 
 
-        String[] userStoryColumnNames = { "User Story Name", "Status", "Set In Progress", "Set Blocked" , "Set Spiked", "Set Completed"};
+        String[] userStoryColumnNames = { "User Story Name", "Status", "UUID", "Set In Progress", "Set Blocked" , "Set Spiked", "Set Completed"};
         model = new DefaultTableModel(userStoryColumnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column >= 2;
+                return column >= 3;
             }
         };
         userStoryContainer = new JTable(model);
 
         userStoryScrollPane = new JScrollPane(userStoryContainer);
-        for(int i = 2; i < userStoryColumnNames.length; i++) {
+        for(int i = 3; i < userStoryColumnNames.length; i++) {
             userStoryContainer.getColumn(userStoryColumnNames[i]).setCellRenderer(new ButtonRenderer());
             userStoryContainer.getColumn(userStoryColumnNames[i]).setCellEditor(new ButtonEditor(new JCheckBox(), model));
         }
@@ -75,29 +75,23 @@ public class SimulationProgressPane {
     public void addUserStory(UserStory USText) {
         System.out.println("State when added: " + USText.getUserStoryState());
 
-        model.addRow(new Object[] { USText.getName(), "New", "In Progress", "Blocked" , "Spiked", "Completed"});
+        model.addRow(new Object[] { USText.getName(), "New", USText.getId(), "In Progress", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
     public void changeState(UserStory userStory) {
         UserStoryState userStoryState = userStory.getUserStoryState();
-
-
         if(userStoryState instanceof UserStoryInProgressState) {
                 setStatus(userStory, "In Progress");
         }
         else if(userStoryState instanceof UserStoryBlockedState) {
             int recentBlocker = userStory.getBlockers().size();
             String blocker = String.valueOf(userStory.getBlockers().get(recentBlocker-1));
-
             Pattern pattern = Pattern.compile(".*\\[Blocker\\]\\s*\\[Blocker\\]\\s*(.*)");
             Matcher matcher = pattern.matcher(blocker);
-
-
             if(matcher.matches()) {
                 setStatus(userStory, "Blocked - " + matcher.group(1).trim());
-
             }
         }
         else if(userStoryState instanceof UserStorySpikedState) {
@@ -120,7 +114,6 @@ public class SimulationProgressPane {
                     public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
                         Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
 
-                        System.out.println("Status type: " + progress.toString());
                         if ("New".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
                         }
@@ -161,12 +154,13 @@ public class SimulationProgressPane {
     private void setStatus(UserStory US, String status) {
 
         int rowCount = model.getRowCount();
-        int userStoryRow = 0;
+        int userStoryRow = 2;
         int statusColumn = 1;
-        String selectedUS = US.getName();
+        UUID selectedUS = US.getId();
+
 
         for(int i = 0; i < rowCount; i++){
-            String currentUS = (String) model.getValueAt(i, userStoryRow);
+            UUID currentUS = (UUID) model.getValueAt(i, userStoryRow);
             if(currentUS.equals(selectedUS)) {
                 model.setValueAt(status, i, statusColumn);
                 break;
@@ -174,7 +168,6 @@ public class SimulationProgressPane {
         }
 
     }
-
 
     private void handlePauseSimulation(ActionEvent e) {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
@@ -345,10 +338,6 @@ class ButtonEditor extends DefaultCellEditor {
                     }
                 }
             }
-
-            System.out.println("C1 " + c1);
-            System.out.println("C2 " + c2);
-            System.out.println("C3 " + c3.toString());
 
         }
     }
