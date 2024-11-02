@@ -18,6 +18,7 @@ import java.awt.*;
  * Tutorials used to learn how to utilize it effectively
  * https://www.tutorialspoint.com/jfreechart/jfreechart_line_chart.htm
  * https://stackoverflow.com/questions/7328326/dynamically-change-y-axis-range-in-jfreechart
+ * https://github.com/jfree/jfreechart
  */
 public class BurndownChart extends JPanel {
 
