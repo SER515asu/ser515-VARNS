@@ -239,6 +239,7 @@ public class SimulationStateManager {
                     resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if they're completed or not.
                     addUserStory(); // Add the user stories from the new sprint
                     detectInProgressUserStory(); // Get the stories and detect if they're in progress
+                    getTotalPointValue(); // Get total point value
                 }
             }
         }
@@ -311,7 +312,7 @@ public class SimulationStateManager {
             boolean inProgress = (userStory.getUserStoryState() instanceof UserStoryInProgressState); // check if the user story is in progress. A new user story cannot immediately have a blocker
             if (alreadyCompleted && inProgress) {
                 BlockerObject blocker = SimulationStateManager.getInstance().getCurrentSimulation().rollForBlocker();
-                if (blocker != null) {
+                if (blocker != null && !(userStory.getUserStoryState() instanceof UserStorySpikedState)) {
                     notifyBlockerDetected(blocker);
                     userStory.setBlocker(blocker);
                     userStory.changeState(new UserStoryBlockedState(userStory));
@@ -332,7 +333,7 @@ public class SimulationStateManager {
                 if (blocker.attemptResolve()) {
                     blocker.resolve();
                     System.out.println("Blocker resolved: " + blocker.getType().getName() + " by " + blocker.getSolution().getName());
-                    userStory.changeState(new UserStoryInProgressState(userStory));
+                    userStory.changeState(new UserStoryTestState(userStory));
                     notifyStoryStatusChange(userStory);
                     notifyBlockerResolved(blocker);
                 }

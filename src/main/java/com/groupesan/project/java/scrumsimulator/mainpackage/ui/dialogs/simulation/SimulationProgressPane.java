@@ -192,7 +192,8 @@ public class SimulationProgressPane {
         // Had to remove SwingUtilities to be able to refresh the panel.
         totalPoints = 0.0;
 
-
+        burndownChart.getDefaultDataset().clear();
+        calculateTotal();
         for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
