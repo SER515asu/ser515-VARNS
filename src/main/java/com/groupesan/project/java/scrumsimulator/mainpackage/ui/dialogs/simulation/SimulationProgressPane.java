@@ -47,8 +47,10 @@ public class SimulationProgressPane {
         burndownChart = new BurndownChart();
         pauseSimulationButton = new JButton("Pause Simulation");
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
-        totalPoints = 0.0;
-        calculateTotal();
+        totalPoints = calculateTotal();
+        burndownChart.setBurndown(0, totalPoints);
+        setLinearVelocity();
+        burndownChart.updateChart();
 
 
 
@@ -84,14 +86,27 @@ public class SimulationProgressPane {
 
     }
 
-    private void calculateTotal() {
+    private double calculateTotal() {
+        double num = 0.0;
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         Simulation currentSimulation = stateManager.getCurrentSimulation();
         int currentSprint = stateManager.getSprintNum();
         for(UserStory userStory : currentSimulation.getSprints().get(currentSprint-1).getUserStories()){
-            totalPoints += userStory.getPointValue();
+            num += userStory.getPointValue();
         }
-        burndownChart.setBurndown(0, totalPoints);
+        return num;
+    }
+
+    private void setLinearVelocity() {
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+        Simulation currentSimulation = stateManager.getCurrentSimulation();
+        int currentSprint = stateManager.getSprintNum();
+        int totalDays = currentSimulation.getSprints().get(currentSprint-1).getLength();
+
+        for(int i = 0; i <= totalDays; i++) {
+            double points = calculateTotal() * (1 - (double)i / totalDays);
+            burndownChart.setLinearLine(i, points);
+        }
     }
 
     public void setMessage(String text) {
@@ -108,8 +123,11 @@ public class SimulationProgressPane {
 
     public void setChart(Integer day, Double points) {
         System.out.println("Total points: " + totalPoints);
+        System.out.println("Day: " + day);
+
         totalPoints-= points;
         burndownChart.setBurndown(day, totalPoints);
+        setLinearVelocity();
         burndownChart.updateChart();
 
         userStoryContainer.revalidate();
@@ -190,10 +208,14 @@ public class SimulationProgressPane {
 
     public void resetPanel() {
         // Had to remove SwingUtilities to be able to refresh the panel.
-        totalPoints = 0.0;
 
-        burndownChart.getDefaultDataset().clear();
-        calculateTotal();
+        burndownChart.getBurndown().clear();
+        burndownChart.getLinear().clear();
+
+        totalPoints = calculateTotal();
+        setLinearVelocity();
+        burndownChart.setBurndown(0, totalPoints);
+        burndownChart.updateChart();
         for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
