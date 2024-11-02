@@ -14,7 +14,7 @@ import javax.swing.border.EmptyBorder;
 public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton userStoriesButton, startSimulationButton, potentialBlockersButton,
-            updateStoryStatusButton, simulationButton, sprintBacklogsButton, simulationConfigButton,
+            simulationButton, sprintBacklogsButton, simulationConfigButton,
             potentialBlockerSolutionsButton;
 
     private JPanel bottomPanel;
@@ -89,10 +89,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         potentialBlockerSolutionsButton.addActionListener(
                 e -> handleButtonAction(new PotentialBlockerSolutionsPane(this)));
 
-        updateStoryStatusButton = new JButton("Update User Story Status");
-        updateStoryStatusButton.addActionListener(
-                e -> handleButtonAction(new UpdateUserStoryPanel(this)));
-
         simulationButton = new JButton("Add User");
         simulationButton.addActionListener(
                 e -> handleButtonAction(new AddUserPane(this)));
@@ -107,7 +103,6 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(startSimulationButton, 2, 0)
                 .addComponent(potentialBlockersButton, 3, 0)
                 .addComponent(potentialBlockerSolutionsButton, 4, 0)
-                .addComponent(updateStoryStatusButton, 5, 0)
                 .addComponent(simulationButton, 6, 0)
                 .addComponent(sprintBacklogsButton, 7, 0)
                 .buildPanel();
@@ -163,7 +158,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         }
 
         // TODO: Potentially remove below buttons
-        panel.add(createButton("Update User Story Status", () -> handleButtonAction(new UpdateUserStoryPanel(this))));
+        // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         return panel;
     }
 
@@ -242,7 +237,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
         potentialBlockerSolutionsButton.setEnabled(enabled);
-        updateStoryStatusButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
     }
