@@ -146,26 +146,19 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         switch (role) {
             case SCRUM_MASTER:
-                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
-                // TODO: Spike Button Here
+                panel.add(createButton("Assign Sprint Backlogs", this::onAssignSprintBacklogClick));
                 break;
             case DEVELOPER:
-                panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoriesPane(this))));
-                // TODO: Spike Button Here
+                panel.add(createButton("Product Backlog (User Stories)", this::onUserStoriesClick));
                 break;
             case PRODUCT_OWNER:
-                panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoriesPane(this))));
+                panel.add(createButton("Product Backlog (User Stories)", this::onUserStoriesClick));
                 break;
             case SCRUM_ADMIN:
-                panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
-                // TODO: Spike Button Here
-                panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoriesPane(this))));
-                panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
-                panel.add(createButton("Potential Blocker Solutions",
-                        () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
+                panel.add(createButton("Assign Sprint Backlogs", this::onAssignSprintBacklogClick));
+                panel.add(createButton("Product Backlog (User Stories)", this::onUserStoriesClick));
+                panel.add(createButton("Potential Blockers", this::onPotentialBlockersClick));
+                panel.add(createButton("Potential Blocker Solutions", this::onPotentialSolutionsClick));
                 break;
         }
 
@@ -254,10 +247,40 @@ public class DemoPane extends JFrame implements BaseComponent {
         sprintBacklogsButton.setEnabled(enabled);
     }
 
-    private void onStartSimulationClick() {
+    private boolean contextHasActiveSimulation() {
         if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
-            JOptionPane.showMessageDialog(this,"Please Select a Simulation Configuration before starting");
-        } else {
+            JOptionPane.showMessageDialog(this, "Please Select a Simulation Configuration before continuing");
+            return false;
+        }
+        return true;
+    }
+
+    private void onAssignSprintBacklogClick() {
+        if (contextHasActiveSimulation()) {
+            handleButtonAction(new SprintBacklogPane(this));
+        }
+    }
+
+    private void onPotentialBlockersClick() {
+        if (contextHasActiveSimulation()) {
+            handleButtonAction(new PotentialBlockersPane(this));
+        }
+    }
+
+    private void onPotentialSolutionsClick() {
+        if (contextHasActiveSimulation()) {
+            handleButtonAction(new PotentialBlockerSolutionsPane(this));
+        }
+    }
+
+    private void onUserStoriesClick() {
+        if (contextHasActiveSimulation()) {
+            handleButtonAction(new UserStoriesPane(this));
+        }
+    }
+
+    private void onStartSimulationClick() {
+        if(contextHasActiveSimulation()) {
             handleButtonAction(new SimulationPane(this));
         }
     }
