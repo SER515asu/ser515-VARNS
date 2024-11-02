@@ -5,18 +5,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class UserStory {
+    public enum UserStoryStatus {
+        UNSELECTED,
+        ADDED
+    }
+
     @JsonProperty
     private UUID id;
-
-    @JsonIgnore
-    private String label;
 
     @JsonProperty
     private String name;
@@ -26,6 +30,9 @@ public class UserStory {
 
     @JsonProperty
     private double pointValue;
+
+    @JsonProperty
+    private UserStoryStatus status;
 
     @JsonIgnore
     private UserStoryState state;
@@ -52,9 +59,9 @@ public class UserStory {
         this.name = name;
         this.description = "";
         this.pointValue = pointValue;
-        this.businessValuePoint = businessValuePoint; // added buisness value point
+        this.businessValuePoint = businessValuePoint;
+        this.status = UserStoryStatus.UNSELECTED;
         this.state = new UserStoryUnselectedState(this);
-        // added buisness value point to the constructor
     }
 
     /**
@@ -71,24 +78,66 @@ public class UserStory {
         this.name = name;
         this.description = description;
         this.pointValue = pointValue;
-        this.businessValuePoint = businessValuePoint; // added buisness value point
-        this.state = new UserStoryUnselectedState(this);
+        this.businessValuePoint = businessValuePoint;
+        this.status = UserStoryStatus.UNSELECTED;
         this.id = UUID.randomUUID();
+        this.state = new UserStoryUnselectedState(this);
+    }
+
+    /**
+     * Creates a user story.
+     *
+     * @param name        the name for the user story
+     * @param description the description for the user story for better
+     *                    understanding of the
+     *                    requirements.
+     * @param pointValue  the point value for the story as a way of estimating
+     *                    required effort.
+     * @param id          the UUID for the user story
+     * @param businessValuePoint the business value point for the user story
+     */
+    public UserStory(Object id, String name, String description, double pointValue, int businessValuePoint) {
+        this.name = name;
+        this.description = description;
+        this.pointValue = pointValue;
+        this.businessValuePoint = businessValuePoint;
+        this.status = UserStoryStatus.UNSELECTED;
+        this.id = UUID.fromString(id.toString());
+        this.state = new UserStoryUnselectedState(this);
     }
 
     @JsonCreator
     public UserStory(@JsonProperty("businessValuePoint") int businessValuePoint,
-                     @JsonProperty("pointValue") int pointValue,
+                     @JsonProperty("pointValue") double pointValue,
                      @JsonProperty("name") String name,
                      @JsonProperty("description") String description,
                      @JsonProperty("blockers") List<BlockerObject> blockers,
-                     @JsonProperty("id") UUID id) {
+                     @JsonProperty("id") UUID id,
+                     @JsonProperty("status") String status) {
         this.businessValuePoint = businessValuePoint;
         this.pointValue = pointValue;
         this.name = name;
         this.description = description;
         this.blockers = blockers;
         this.id = id;
+        this.status = UserStoryStatus.valueOf(status);
+        if (this.status.equals(UserStoryStatus.ADDED)) {
+            this.state = new UserStoryAddedState(this);
+        } else {
+            this.state = new UserStoryUnselectedState(this);
+        }
+    }
+
+    public UserStory deepClone() {
+        return new UserStory(
+                this.businessValuePoint,
+                this.pointValue,
+                this.name,
+                this.description,
+                this.blockers,
+                UUID.randomUUID(),
+                this.status.toString()
+        );
     }
 
     /**
@@ -98,16 +147,6 @@ public class UserStory {
      */
     public UUID getId() {
         return id;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-
-    @JsonIgnore
-    public String getLabel() {
-        return label;
     }
 
     /**
@@ -195,27 +234,15 @@ public class UserStory {
      */
     @JsonIgnore
     public UserStoryState getUserStoryState() {
-        return state;
+        return this.state;
     }
 
-    /**
-     * Sets the owner of this UserStory to the specified player. This should be
-     * called whenever a
-     * Player picks up this task and assigns themselves to it.
-     *
-     * @param player the Player object who is assigned to this UserStory
-     */
-    public void setOwner(Player player) {
-        this.owner = player;
+    public UserStoryStatus getStatus() {
+        return status;
     }
 
-    /**
-     * Get the owner of this UserStory
-     *
-     * @return a Player object representing the owner of this UserStory
-     */
-    public Player getOwner() {
-        return this.owner;
+    public void updateStatus(UserStoryStatus status) {
+        this.status = status;
     }
 
     // added buisness value point getter and setter

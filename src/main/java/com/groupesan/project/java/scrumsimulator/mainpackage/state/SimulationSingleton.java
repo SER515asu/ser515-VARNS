@@ -4,9 +4,12 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerSolution;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,6 +33,10 @@ public class SimulationSingleton {
         return instance;
     }
 
+    public List<Simulation> getAllSimulations() {
+        return simulations;
+    }
+
     public void addSimulation(Simulation simulation) {
         simulations.add(simulation);
 
@@ -46,25 +53,60 @@ public class SimulationSingleton {
         JSONArray simulationsArray = new JSONArray();
         simulations.forEach(simulation -> simulationsArray.put(simulationToJson(simulation)));
 
-        System.out.println(simulationsArray.toString(4));
-
         updateSimulationData(simulationsArray);
+    }
+
+    public Simulation getLatestSimulation() {
+        if (simulations.isEmpty()) return null;
+        return simulations.getLast();
+    }
+
+    public Simulation getSimulationById(UUID id) {
+        return simulations.stream()
+                .filter(simulation -> simulation.getSimulationId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void removeSimulation(Simulation simulation) {
+        simulations.remove(simulation);
+    }
+
+    public void initializeDefaultSimulation() {
+        Simulation simulation = new Simulation(
+                UUID.randomUUID(),
+                "Default",
+                1,
+                14,
+                0
+        );
+        simulations.add(simulation);
+        SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+    }
+
+    public void initializeDefaultUserStories() {
+        UserStory a = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS1", "description1", 1.0, 1);
+
+        UserStory b = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS2", "description2", 2.0, 8);
+
+        UserStory c = UserStoryFactory.getInstance()
+                .createNewUserStory("predefinedUS3", "description3", 3.0, 13);
+
+        SimulationStateManager.getInstance().getCurrentSimulation().addUserStories(new ArrayList<>(List.of(a, b, c)));
     }
 
     private static void loadSimulations() {
         JSONArray simulationsFromFile = getSimulationData();
 
         if (!simulationsFromFile.isEmpty()) {
-            simulationsFromFile.forEach(simulation -> simulations.add(jsonToSimulation((JSONObject) simulation)));
+            try {
+                simulationsFromFile.forEach(simulation -> simulations.add(jsonToSimulation((JSONObject) simulation)));
+            } catch (Exception e) {
+                updateSimulationData(new JSONArray());
+            }
         }
-        loadUserStoriesIntoStore();
-    }
-
-    private static void loadUserStoriesIntoStore() {
-        simulations.forEach(
-                simulation -> simulation.getSprints().forEach(
-                        sprint -> UserStoryStore.getInstance().addAllUserStories(sprint.getUserStories()))
-        );
     }
 
     private static Simulation jsonToSimulation(JSONObject simulationJson) {
@@ -81,12 +123,52 @@ public class SimulationSingleton {
             });
         }
 
+        JSONArray userStoriesFromJson = simulationJson.getJSONArray("UserStories");
+        List<UserStory> userStories = new ArrayList<>();
+        if (!userStoriesFromJson.isEmpty()) {
+            userStoriesFromJson.forEach(userStoryJson -> {
+                try {
+                    userStories.add(mapper.readValue(userStoryJson.toString(), UserStory.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        JSONArray blockerTypesFromJson = simulationJson.getJSONArray("BlockerTypes");
+        List<BlockerType> blockerTypes = new ArrayList<>();
+        if (!blockerTypesFromJson.isEmpty()) {
+            blockerTypesFromJson.forEach(blockerType -> {
+                try {
+                    blockerTypes.add(mapper.readValue(blockerType.toString(), BlockerType.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        JSONArray blockerSolutionsFromJson = simulationJson.getJSONArray("BlockerSolutions");
+        List<BlockerSolution> blockerSolutions = new ArrayList<>();
+        if (!blockerTypesFromJson.isEmpty()) {
+            blockerSolutionsFromJson.forEach(blockerSolution -> {
+                try {
+                    blockerSolutions.add(mapper.readValue(blockerSolution.toString(), BlockerSolution.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
         return new Simulation(
                 UUID.fromString(simulationJson.getString("ID")),
                 simulationJson.getString("Name"),
-                simulationJson.getInt("SprintDuration"),
-                simulationJson.getInt("NumberOfSprints"),
-                sprints
+                simulationJson.getInt("Count"),
+                simulationJson.getInt("DurationDays"),
+                sprints,
+                userStories,
+                simulationJson.getLong("Seed"),
+                blockerTypes,
+                blockerSolutions
         );
     }
 
@@ -94,10 +176,14 @@ public class SimulationSingleton {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ID", simulation.getSimulationId());
         jsonObject.put("Name", simulation.getSimulationName());
+        jsonObject.put("Seed", simulation.getRandomSeed());
         jsonObject.put("Status", "New");
-        jsonObject.put("SprintDuration", simulation.getSprintDuration());
-        jsonObject.put("NumberOfSprints", simulation.getSprintCount());
+        jsonObject.put("DurationDays", simulation.getSprintDuration());
+        jsonObject.put("Count", simulation.getSprintCount());
         jsonObject.put("Sprints", simulation.getSprints());
+        jsonObject.put("UserStories", simulation.getUserStories());
+        jsonObject.put("BlockerTypes", simulation.getBlockerTypes());
+        jsonObject.put("BlockerSolutions", simulation.getBlockerSolutions());
         return jsonObject;
     }
 }

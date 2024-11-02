@@ -1,7 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BlockerTypeStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
@@ -155,9 +155,9 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
 
         this.deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> {
-            BlockerType blocker = BlockerTypeStore.get().getBlockerType(blockerName);
+            BlockerType blocker = SimulationStateManager.getInstance().getCurrentSimulation().getBlockerType(blockerName);
             if (blocker != null) {
-                BlockerTypeStore.get().removeBlocker(blocker);
+                SimulationStateManager.getInstance().getCurrentSimulation().removeBlocker(blocker);
             }
             dispose();
         });
@@ -293,10 +293,10 @@ public class EditBlockerProbabilities extends JFrame implements BaseComponent {
                 spikeChance = result.newSpikeChance();
             }
 
-            BlockerType blocker = BlockerTypeStore.get().getBlockerType(blockerName);
+            BlockerType blocker = SimulationStateManager.getInstance().getCurrentSimulation().getBlockerType(blockerName);
             if (blocker == null) {
                 blocker = new BlockerType(nameField.getText(), encounterChance, resolveChance, spikeChance);
-                BlockerTypeStore.get().addBlockerType(blocker);
+                SimulationStateManager.getInstance().getCurrentSimulation().addBlockerType(blocker);
             } else {
                 blocker.setName(nameField.getText());
                 blocker.setEncounterChance(encounterChance);

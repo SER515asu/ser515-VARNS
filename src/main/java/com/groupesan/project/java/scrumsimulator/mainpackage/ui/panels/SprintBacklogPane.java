@@ -1,11 +1,8 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.Sprint;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.SprintStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.utils.GridBagConstraintsBuilder;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
@@ -21,7 +18,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
 
     List<UserStory> userStories;
 
-    private JFrame parent;
+    private final JFrame parent;
 
     public SprintBacklogPane(JFrame parent) {
         this.parent = parent;
@@ -30,7 +27,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
     }
 
     private void updateUserStories() {
-        this.userStories = UserStoryStore.getInstance().getUserStories();
+        this.userStories = SimulationStateManager.getInstance().getCurrentSimulation().getUserStories();
     }
 
     @Override
@@ -74,6 +71,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                         .setFill(GridBagConstraints.HORIZONTAL));
 
         if (SimulationStateManager.getInstance().getCurrentSimulation() != null) {
+            selectSprintComboBox.removeAllItems();
             for (Sprint sprint : SimulationStateManager.getInstance().getCurrentSimulation().getSprints()) {
                 selectSprintComboBox.addItem(sprint.toString());
             }
@@ -144,7 +142,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                     SimulationStateManager
                             .getInstance()
                             .getCurrentSimulation()
-                            .removeUserStory(SprintStore.getInstance().getSprintByString(
+                            .removeUserStoryFromSprint(SimulationStateManager.getInstance().getCurrentSimulation().getSprintByString(
                                     (String) selectSprintComboBox.getSelectedItem()), selectedSprintUserStory);
                     redrawUserStoriesList(userStories);
                     redrawSprintUserStoriesList(selectSprintComboBox, sprintUserStories);
@@ -160,7 +158,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                     SimulationStateManager
                             .getInstance()
                             .getCurrentSimulation()
-                            .addUserStory(SprintStore.getInstance().getSprintByString(
+                            .addUserStoryToSprint(SimulationStateManager.getInstance().getCurrentSimulation().getSprintByString(
                                     (String) selectSprintComboBox.getSelectedItem()), selectedUserStory);
                     redrawUserStoriesList(userStories);
                     redrawSprintUserStoriesList(selectSprintComboBox, sprintUserStories);
@@ -184,7 +182,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                     SimulationStateManager
                             .getInstance()
                             .getCurrentSimulation()
-                            .randomizeSprintBacklog(userStories);
+                            .randomizeSprintBacklog();
                     redrawUserStoriesList(userStories);
                     redrawSprintUserStoriesList(selectSprintComboBox, sprintUserStories);
                 });
@@ -196,7 +194,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
         updateUserStories();
 
         String[] userStoryNames = this.userStories.stream()
-                .filter(userStory -> userStory.getUserStoryState() instanceof UserStoryUnselectedState)
+                .filter(userStory -> userStory.getStatus().equals(UserStory.UserStoryStatus.UNSELECTED))
                 .map(Objects::toString).toList().toArray(new String[] {});
 
         userStoriesComponent.setVisibleRowCount(20);
@@ -209,10 +207,11 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
 
     private void redrawSprintUserStoriesList(JComboBox<String> selectSprintComboBox,
             JList<String> userStoriesComponent) {
-        String[] userStories = SprintStore.getInstance()
+        String[] userStories = SimulationStateManager.getInstance().getCurrentSimulation()
                 .getSprintByString((String) selectSprintComboBox.getSelectedItem())
                 .getUserStories()
                 .stream()
+                .filter(userStory -> userStory.getStatus().equals(UserStory.UserStoryStatus.ADDED))
                 .map(Objects::toString)
                 .toList()
                 .toArray(new String[] {});

@@ -1,43 +1,28 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.*;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.border.EmptyBorder;
 
 public class DemoPane extends JFrame implements BaseComponent {
-    private final Player player = new Player("bob", new ScrumRole("demo"));
     private JPanel myJpanel;
-    private JButton sprintsButton, userStoriesButton, startSimulationButton, potentialBlockersButton, simulationButton, modifySimulationButton,
-            variantSimulationUIButton, sprintBacklogsButton, newSimulationButton, potentialBlockerSolutionsButton;
+    private JButton userStoriesButton, startSimulationButton, potentialBlockersButton, 
+            simulationButton, sprintBacklogsButton, simulationConfigButton,
+            potentialBlockerSolutionsButton;
 
-    private Map<UserRole, Set<JButton>> roleToButton;
     private JPanel bottomPanel;
 
     public DemoPane() {
         this.init();
+        Player player = new Player("bob", new ScrumRole("demo"));
         player.doRegister();
-        roleToButton = new HashMap<>(Map.of(
-                UserRole.SCRUM_MASTER, new HashSet<>(Set.of(
-                        newSimulationButton,
-                        sprintBacklogsButton
-                // spike activities button
-                )),
-                UserRole.DEVELOPER, new HashSet<>(Set.of(
-                        userStoriesButton
-                // spike activities button
-                )),
-                UserRole.PRODUCT_OWNER, new HashSet<>(Set.of(
-                        userStoriesButton)),
-                UserRole.SCRUM_ADMIN, new HashSet<>(Set.of(
-                        potentialBlockersButton,
-                        startSimulationButton))));
     }
 
     public void init() {
@@ -56,6 +41,14 @@ public class DemoPane extends JFrame implements BaseComponent {
 
         bottomPanel = new JPanel(new BorderLayout(10, 10));
         redrawUIBasedOnRole();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                SimulationSingleton.getInstance().saveSimulationDetails();
+            }
+        });
     }
 
     public void redrawUIBasedOnRole() {
@@ -76,21 +69,17 @@ public class DemoPane extends JFrame implements BaseComponent {
     }
 
     private void setupButtons() {
-        newSimulationButton = new JButton("New Simulation");
-        newSimulationButton.addActionListener(
-                e -> handleButtonAction(new NewSimulationPane(this)));
-
-        sprintsButton = new JButton("Sprints");
-        sprintsButton.addActionListener(
-                e -> handleButtonAction(new SprintListPane(this)));
+        simulationConfigButton = new JButton("Simulation Configuration");
+        simulationConfigButton.addActionListener(
+                e -> handleButtonAction(new SimulationConfigurationPane(this)));
 
         userStoriesButton = new JButton("Product Backlog (User Stories)");
         userStoriesButton.addActionListener(
-                e -> handleButtonAction(new UserStoryListPane(this)));
+                e -> handleButtonAction(new UserStoriesPane(this)));
 
         startSimulationButton = new JButton("Start Simulation");
         startSimulationButton.addActionListener(
-                e -> handleButtonAction(new SimulationPane(this)));
+                e -> onStartSimulationClick());
 
         potentialBlockersButton = new JButton("Potential Blockers");
         potentialBlockersButton.addActionListener(
@@ -104,30 +93,18 @@ public class DemoPane extends JFrame implements BaseComponent {
         simulationButton.addActionListener(
                 e -> handleButtonAction(new AddUserPane(this)));
 
-        modifySimulationButton = new JButton("Modify Simulation");
-        modifySimulationButton.addActionListener(
-                e -> handleButtonAction(new ModifySimulationPane(this)));
-
-
-        variantSimulationUIButton = new JButton("Variant Simulation UI");
-        variantSimulationUIButton.addActionListener(
-                e -> handleButtonAction(new VariantSimulationUI(this)));
-
         sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
         sprintBacklogsButton.addActionListener(
                 e -> handleButtonAction(new SprintBacklogPane(this)));
 
         new DemoPaneBuilder(myJpanel)
-                .addComponent(newSimulationButton, 0, 0)
-                .addComponent(sprintsButton, 1, 0)
-                .addComponent(userStoriesButton, 2, 0)
-                .addComponent(startSimulationButton, 3, 0)
-                .addComponent(potentialBlockersButton, 4, 0)
-                .addComponent(potentialBlockerSolutionsButton, 5, 0)
-                .addComponent(simulationButton, 7, 0)
-                .addComponent(modifySimulationButton, 8, 0)
-                .addComponent(variantSimulationUIButton, 10, 0)
-                .addComponent(sprintBacklogsButton, 11, 0)
+                .addComponent(simulationConfigButton, 0, 0)
+                .addComponent(userStoriesButton, 1, 0)
+                .addComponent(startSimulationButton, 2, 0)
+                .addComponent(potentialBlockersButton, 3, 0)
+                .addComponent(potentialBlockerSolutionsButton, 4, 0)
+                .addComponent(simulationButton, 6, 0)
+                .addComponent(sprintBacklogsButton, 7, 0)
                 .buildPanel();
 
         add(myJpanel);
@@ -138,7 +115,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel roleLabel = new JLabel("Current Role:");
-        roleComboBox = new JComboBox<>(new String[] { "Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
+        roleComboBox = new JComboBox<>(new String[]{"Scrum Administrator", "Scrum Master", "Developer", "Product Owner"});
         roleComboBox.setPreferredSize(new Dimension(150, 25));
         UserRoleSingleton.getInstance().setUserRole(UserRole.SCRUM_ADMIN);
         roleComboBox.addActionListener(e -> {
@@ -161,7 +138,7 @@ public class DemoPane extends JFrame implements BaseComponent {
     private JPanel createCenterPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Main Actions"));
-    
+
         switch (role) {
             case SCRUM_MASTER:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
@@ -169,29 +146,29 @@ public class DemoPane extends JFrame implements BaseComponent {
                 break;
             case DEVELOPER:
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 // TODO: Spike Button Here
                 break;
             case PRODUCT_OWNER:
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 break;
             case SCRUM_ADMIN:
                 panel.add(createButton("Assign Sprint Backlogs", () -> handleButtonAction(new SprintBacklogPane(this))));
                 // TODO: Spike Button Here
                 panel.add(createButton("Product Backlog (User Stories)",
-                        () -> handleButtonAction(new UserStoryListPane(this))));
+                        () -> handleButtonAction(new UserStoriesPane(this))));
                 panel.add(createButton("Potential Blockers", () -> handleButtonAction(new PotentialBlockersPane(this))));
                 panel.add(createButton("Potential Blocker Solutions",
                         () -> handleButtonAction(new PotentialBlockerSolutionsPane(this))));
                 break;
         }
-    
+
         // TODO: Potentially remove below buttons
         // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         return panel;
     }
-    
+
 
     private JPanel createRightPanel(UserRole role) {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -201,23 +178,20 @@ public class DemoPane extends JFrame implements BaseComponent {
         // plugin at this time
         switch (role) {
             case SCRUM_MASTER:
-                panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
-                panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
-                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
+                panel.add(createButton("Start Simulation", this::onStartSimulationClick));
                 break;
             case DEVELOPER:
                 break;
             case PRODUCT_OWNER:
                 break;
             case SCRUM_ADMIN:
-                panel.add(createButton("New Simulation", () -> handleButtonAction(new NewSimulationPane(this))));
-                panel.add(createButton("Modify Simulation", () -> handleButtonAction(new ModifySimulationPane(this))));
-                panel.add(createButton("Start Simulation", () -> handleButtonAction(new SimulationPane(this))));
+                panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
+                panel.add(createButton("Start Simulation", this::onStartSimulationClick));
                 // TODO: Add Show Simulation History Button here
                 break;
         }
         panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
-        panel.add(createButton("Variant Simulation UI", () -> handleButtonAction(new VariantSimulationUI(this))));
 
         return panel;
     }
@@ -233,7 +207,7 @@ public class DemoPane extends JFrame implements BaseComponent {
         setGlassPaneVisible(true);
         pane.setVisible(true);
         pane.setAlwaysOnTop(true);
-        
+
         pane.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                 setMenuButtonsEnabled(true);
@@ -265,15 +239,20 @@ public class DemoPane extends JFrame implements BaseComponent {
     }
 
     private void setMenuButtonsEnabled(boolean enabled) {
-        newSimulationButton.setEnabled(enabled);
-        sprintsButton.setEnabled(enabled);
+        simulationConfigButton.setEnabled(enabled);
         userStoriesButton.setEnabled(enabled);
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
         potentialBlockerSolutionsButton.setEnabled(enabled);
         simulationButton.setEnabled(enabled);
-        modifySimulationButton.setEnabled(enabled);
-        variantSimulationUIButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
+    }
+
+    private void onStartSimulationClick() {
+        if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
+            JOptionPane.showMessageDialog(this,"Please Select a Simulation Configuration before starting");
+        } else {
+            handleButtonAction(new SimulationPane(this));
+        }
     }
 }

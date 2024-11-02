@@ -4,7 +4,7 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserAction;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRolePermissions;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.UserRoleSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
-import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStoryStore;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.CustomConstraints;
 
@@ -31,7 +31,13 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
         this.init();
     }
 
-    private UserStory userStory;
+    public EditUserStoryForm(String name, double storyPoints, int bvPoints, String description) {
+        this.userStory = new UserStory(name, description, storyPoints, bvPoints);
+        SimulationStateManager.getInstance().getCurrentSimulation().addUserStory(userStory);
+        this.init();
+    }
+
+    private final UserStory userStory;
 
     private JTextField nameField = new JTextField();
     private JTextArea descArea = new JTextArea();
@@ -40,7 +46,7 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
 
     public void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Edit User Story " + userStory.getLabel());
+        setTitle("Edit User Story");
         setSize(400, 300);
 
         nameField = new JTextField(userStory.getName());
@@ -111,7 +117,7 @@ public class EditUserStoryForm extends JFrame implements BaseComponent {
 
             deleteButton.addActionListener(
                     e -> {
-                        UserStoryStore.getInstance().removeUserStory(userStory);
+                        SimulationStateManager.getInstance().getCurrentSimulation().removeUserStory(userStory);
                         dispose();
                     });
             myJpanel.add(

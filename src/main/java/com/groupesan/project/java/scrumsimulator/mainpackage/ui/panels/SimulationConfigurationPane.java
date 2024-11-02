@@ -1,6 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.ui.panels;
 
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationSingleton;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
 import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 
@@ -13,14 +14,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.UUID;
 
-public class PotentialBlockersPane extends JFrame implements BaseComponent {
-
+public class SimulationConfigurationPane extends JFrame implements BaseComponent {
     private DefaultTableModel tableModel;
-    private JTable blockersTable;
+    private JTable simulationsTable;
     private final JFrame parent;
+    private JPanel myJpanel;
 
-    public PotentialBlockersPane(JFrame parent) {
+    public SimulationConfigurationPane(JFrame parent) {
         this.parent = parent;
         this.init();
         setupGlassPane();
@@ -31,61 +33,76 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         setSize(800, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Potential Blocker List");
+        setTitle("All Simulations List");
 
-        JPanel myJpanel = new JPanel();
+        myJpanel = new JPanel();
         myJpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         myJpanel.setLayout(new BorderLayout());
 
-        myJpanel.add(new JLabel("Double click on any blocker below to edit its probabilities"), BorderLayout.NORTH);
+        myJpanel.add(new JLabel("Double click on any simulation below to set as the current simulation context"), BorderLayout.NORTH);
 
-        JButton addBlockerButton = new JButton("Add Blocker");
-        addBlockerButton.addActionListener(e -> openEditForm("", 0, 0, 0));
-        myJpanel.add(addBlockerButton, BorderLayout.SOUTH);
+        JButton addSimulationButton = initializeAddSimulationButton();
+        myJpanel.add(addSimulationButton, BorderLayout.SOUTH);
 
-        String[] columnNames = { "Blocker Name", "Encounter Chance (%)", "Resolve Chance (%)", "Spike Chance (%)",
-                "Actions" };
+        String[] columnNames = {"ID", "Name", "Random Seed", "Sprint Count", "Sprint Duration (Days)", "# of User Stories", "Active",
+                "Actions"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 4;
+                return column == 7;
             }
         };
 
-        blockersTable = new JTable(tableModel);
-        blockersTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
-        blockersTable.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
+        simulationsTable = new JTable(tableModel);
+        simulationsTable.getColumn("Actions").setCellRenderer(new SimulationConfigurationPane.ButtonRenderer());
+        simulationsTable.getColumn("Actions").setCellEditor(new SimulationConfigurationPane.ButtonEditor(new JCheckBox()));
         refreshTableData();
 
-        blockersTable.addMouseListener(new MouseAdapter() {
+        simulationsTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1
-                        && blockersTable.getSelectedRow() != -1) {
-                    int row = blockersTable.getSelectedRow();
+                        && simulationsTable.getSelectedRow() != -1) {
+                    int row = simulationsTable.getSelectedRow();
                     if (row != -1) {
-                        Object id = blockersTable.getValueAt(row, 0);
-                        int encounterChance = (int) blockersTable.getValueAt(row, 1);
-                        int resolveChance = (int) blockersTable.getValueAt(row, 2);
-                        int spikeChance = (int) blockersTable.getValueAt(row, 3);
-                        openEditForm(id, encounterChance, resolveChance, spikeChance);
+                        Object id = simulationsTable.getValueAt(row, 0);
+                        Simulation simulation = SimulationSingleton.getInstance().getSimulationById((UUID) id);
+                        SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+                        refreshTableData();
+                        JOptionPane.showMessageDialog(myJpanel, "Simulation: '%s' loaded as current context".formatted(simulationsTable.getValueAt(row, 1)));
                     }
                 }
             }
         });
 
-        blockersTable.setFillsViewportHeight(true);
-        blockersTable.setAutoCreateRowSorter(true);
-        blockersTable.getTableHeader().setReorderingAllowed(false);
-        JScrollPane scrollPane = new JScrollPane(blockersTable);
+        simulationsTable.setFillsViewportHeight(true);
+        simulationsTable.setAutoCreateRowSorter(true);
+        simulationsTable.getTableHeader().setReorderingAllowed(false);
+        JScrollPane scrollPane = new JScrollPane(simulationsTable);
 
         myJpanel.add(scrollPane, BorderLayout.CENTER);
         add(myJpanel);
     }
 
-    private void openEditForm(Object id, int encounterChance, int resolveChance, int spikeChance) {
-        EditBlockerProbabilities form = new EditBlockerProbabilities((String) id, encounterChance, resolveChance,
-                spikeChance);
+    private JButton initializeAddSimulationButton() {
+        JButton addSimulationButton = new JButton("Add Simulation");
+        addSimulationButton.addActionListener(e -> {
+            NewSimulationPane newSimulationPane = new NewSimulationPane(this);
+            newSimulationPane.setVisible(true);
+            newSimulationPane.setAlwaysOnTop(true);
+            newSimulationPane.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    super.windowClosed(e);
+                    refreshTableData();
+                }
+            });
+        });
+        return addSimulationButton;
+    }
+
+    private void openEditForm(Simulation simulation) {
+        ModifySimulationPane form = new ModifySimulationPane(this, simulation);
         this.setAlwaysOnTop(false);
         form.setAlwaysOnTop(true);
         setGlassPaneVisible(true);
@@ -101,15 +118,16 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
     }
 
     private void refreshTableData() {
-
         tableModel.setRowCount(0);
-
-        SimulationStateManager.getInstance().getCurrentSimulation().getBlockerTypes().forEach(blockerType -> {
+        SimulationSingleton.getInstance().getAllSimulations().forEach(simulation -> {
             Object[] rowData = {
-                    blockerType.getName(),
-                    blockerType.getEncounterChance(),
-                    blockerType.getResolveChance(),
-                    blockerType.getSpikeChance(),
+                    simulation.getSimulationId(),
+                    simulation.getSimulationName(),
+                    simulation.getRandomSeed(),
+                    simulation.getSprintCount(),
+                    simulation.getSprintDuration(),
+                    simulation.getUserStories().size(),
+                    SimulationStateManager.getInstance().getCurrentSimulation().equals(simulation),
                     "Actions"
             };
             tableModel.addRow(rowData);
@@ -145,7 +163,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
             setText((value == null) ? "Actions" : value.toString());
             return this;
         }
@@ -165,7 +183,7 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value,
-                boolean isSelected, int row, int column) {
+                                                     boolean isSelected, int row, int column) {
             label = (value == null) ? "Actions" : value.toString();
             button.setText(label);
             isPushed = true;
@@ -175,28 +193,33 @@ public class PotentialBlockersPane extends JFrame implements BaseComponent {
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                BlockerType blockerType = SimulationStateManager.getInstance().getCurrentSimulation()
-                        .getBlockerType((String) tableModel.getValueAt(blockersTable.getSelectedRow(), 0));
+                Simulation simulation = SimulationSingleton.getInstance().getSimulationById(
+                        (UUID) tableModel.getValueAt(simulationsTable.getSelectedRow(), 0)
+                );
                 JPopupMenu popupMenu = new JPopupMenu();
+                JMenuItem setContextItem = new JMenuItem("Set As Current Context");
                 JMenuItem editItem = new JMenuItem("Edit");
                 JMenuItem deleteItem = new JMenuItem("Delete");
                 JMenuItem duplicateItem = new JMenuItem("Duplicate");
 
-                editItem.addActionListener(e -> openEditForm(blockerType.getName(),
-                        blockerType.getEncounterChance(), blockerType.getResolveChance(),
-                        blockerType.getSpikeChance()));
+                setContextItem.addActionListener(e -> {
+                    SimulationStateManager.getInstance().setCurrentSimulation(simulation);
+                    JOptionPane.showMessageDialog(myJpanel, "Simulation: '%s' loaded as current context"
+                            .formatted(simulationsTable.getValueAt(simulationsTable.getSelectedRow(), 1)));
+                });
+                editItem.addActionListener(e -> openEditForm(simulation));
                 deleteItem.addActionListener(e -> {
-                    SimulationStateManager.getInstance().getCurrentSimulation().removeBlocker(blockerType);
+                    SimulationSingleton.getInstance().removeSimulation(simulation);
+                    SimulationStateManager.getInstance()
+                            .setCurrentSimulation(SimulationSingleton.getInstance().getLatestSimulation());
                     refreshTableData();
                 });
                 duplicateItem.addActionListener(e -> {
-                    BlockerType duplicate = new BlockerType(blockerType.getName() + " - Copy",
-                            blockerType.getEncounterChance(), blockerType.getResolveChance(),
-                            blockerType.getSpikeChance());
-                    SimulationStateManager.getInstance().getCurrentSimulation().addBlockerType(duplicate);
+                    SimulationSingleton.getInstance().addSimulation(simulation.deepClone());
                     refreshTableData();
                 });
 
+                popupMenu.add(setContextItem);
                 popupMenu.add(editItem);
                 popupMenu.add(deleteItem);
                 popupMenu.add(duplicateItem);
