@@ -14,7 +14,7 @@ public class BlockerObject {
         RESOLVED
     }
 
-    private BlockerState state;
+    private volatile BlockerState state;
 
     private BlockerSolution solution;
 
@@ -66,6 +66,6 @@ public class BlockerObject {
     }
 
     public BlockerState getState() {
-        return state;
+        return this.state;
     }
 }

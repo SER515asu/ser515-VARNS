@@ -2,14 +2,17 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 
 import java.awt.event.ActionEvent;
 import java.util.*;
-import java.util.List;
 import java.awt.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableCellRenderer;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
+import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
@@ -28,11 +31,6 @@ public class SimulationProgressPane {
     private JTable userStoryContainer;
 
 
-
-
-
-    private Map<BlockerObject, JCheckBox> blockerCheckBoxMap = new HashMap<>();
-
     public SimulationProgressPane() {
         simPan = new JPanel();
         simPan.setLayout(new BoxLayout(simPan, BoxLayout.Y_AXIS));
@@ -48,16 +46,21 @@ public class SimulationProgressPane {
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
 
 
-        String[] userStoryColumnNames = { "User Story Name", "Status" };
+
+        String[] userStoryColumnNames = { "User Story Name", "Status", "UUID", "Set In Progress", "Set Blocked" , "Set Spiked", "Set Completed"};
         model = new DefaultTableModel(userStoryColumnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column >= 3;
             }
         };
         userStoryContainer = new JTable(model);
 
         userStoryScrollPane = new JScrollPane(userStoryContainer);
+        for(int i = 3; i < userStoryColumnNames.length; i++) {
+            userStoryContainer.getColumn(userStoryColumnNames[i]).setCellRenderer(new ButtonRenderer());
+            userStoryContainer.getColumn(userStoryColumnNames[i]).setCellEditor(new ButtonEditor(new JCheckBox(), model));
+        }
         // userStoryScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         simPan.add(jimPan);
@@ -70,21 +73,29 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        String status = (((USText.getUserStoryState() instanceof UserStoryUnselectedState)) ? "N/A" : "Added");
+        System.out.println("State when added: " + USText.getUserStoryState());
 
-        model.addRow(new Object[] { USText.getName(), status});
+        model.addRow(new Object[] { USText.getName(), "New", USText.getId(), "In Progress", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
     public void changeState(UserStory userStory) {
         UserStoryState userStoryState = userStory.getUserStoryState();
-
-        System.out.println(userStory.getName());
-        System.out.println(userStoryState instanceof UserStorySelectedState);
-
-        if(userStoryState instanceof UserStorySelectedState) {
-                setStatus(userStory, "Selected");
+        if(userStoryState instanceof UserStoryInProgressState) {
+                setStatus(userStory, "In Progress");
+        }
+        else if(userStoryState instanceof UserStoryBlockedState) {
+            int recentBlocker = userStory.getBlockers().size();
+            String blocker = String.valueOf(userStory.getBlockers().get(recentBlocker-1));
+            Pattern pattern = Pattern.compile(".*\\[Blocker\\]\\s*\\[Blocker\\]\\s*(.*)");
+            Matcher matcher = pattern.matcher(blocker);
+            if(matcher.matches()) {
+                setStatus(userStory, "Blocked - " + matcher.group(1).trim());
+            }
+        }
+        else if(userStoryState instanceof UserStorySpikedState) {
+            setStatus(userStory, "SPIKED");
         }
         else if(userStoryState instanceof UserStoryCompletedState) {
             setStatus(userStory, "Completed");
@@ -103,11 +114,17 @@ public class SimulationProgressPane {
                     public Component getTableCellRendererComponent(JTable table, Object progress, boolean isSelected, boolean hasFocus, int row, int column) {
                         Component userStoryCell = super.getTableCellRendererComponent(table, progress, isSelected, hasFocus, row, column);
 
-                        if ("Added".equals(progress)) {
+                        if ("New".equals(progress)) {
                             userStoryCell.setForeground(Color.ORANGE);
                         }
-                        else if ("Selected".equals(progress)) {
+                        else if ("In Progress".equals(progress)) {
                             userStoryCell.setForeground(Color.BLUE);
+                        }
+                        else if (progress.toString().contains("Blocked")) {
+                            userStoryCell.setForeground(Color.RED);
+                        }
+                        else if ("SPIKED".equals(progress)) {
+                            userStoryCell.setForeground(Color.MAGENTA);
                         }
                         else if ("Completed".equals(progress)) {
                             userStoryCell.setForeground(Color.GREEN);
@@ -127,105 +144,49 @@ public class SimulationProgressPane {
 
     public void resetPanel() {
         // Had to remove SwingUtilities to be able to refresh the panel.
-
-        for(int i = 0; i < model.getRowCount(); i++) {
+        for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
-        //userStoryContainer.revalidate();
+        userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
 
     private void setStatus(UserStory US, String status) {
 
         int rowCount = model.getRowCount();
-        int userStoryRow = 0;
+        int userStoryRow = 2;
         int statusColumn = 1;
-        String selectedUS = US.getName();
+        UUID selectedUS = US.getId();
 
-        System.out.println("Story selected: " + selectedUS);
 
         for(int i = 0; i < rowCount; i++){
-            String currentUS = (String) model.getValueAt(i, userStoryRow);
-            System.out.println("Story selected: " + selectedUS);
-            System.out.println("Current user story: " + currentUS);
+            UUID currentUS = (UUID) model.getValueAt(i, userStoryRow);
             if(currentUS.equals(selectedUS)) {
                 model.setValueAt(status, i, statusColumn);
-                System.out.println("Story found");
                 break;
             }
         }
 
     }
 
-
-    public boolean checkResolved() {
-        for (JCheckBox checkBox : blockerCheckBoxMap.values()) {
-            if (!checkBox.isSelected()) {
-                SimulationStateManager.getInstance().setState(SprintStateEnum.RUNNING);
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void handlePauseSimulation(ActionEvent e) {
         SimulationStateManager stateManager = SimulationStateManager.getInstance();
         SprintStateEnum state = stateManager.getState();
 
-        System.out.println("Pause button pressed");
-        System.out.println(state);
         if (state == SprintStateEnum.RUNNING) {
             stateManager.setState(SprintStateEnum.PAUSED);
             pauseSimulationButton.setText("Start Simulation");
+
         } else if (state == SprintStateEnum.PAUSED) {
             stateManager.setState(SprintStateEnum.RUNNING);
             pauseSimulationButton.setText("Pause Simulation");
+
         }
+
+        userStoryContainer.revalidate();
+        userStoryContainer.repaint();
+
     }
-
-    // TODO - I want to keep this because it can refactored later to be reused to display blockers within the story
-//    public void addBlocker(BlockerObject blocker) {
-//        JPanel blockerTextPanel = new JPanel(new BorderLayout());
-//        JLabel blockerText = new JLabel(blocker.getType().getName());
-//        JCheckBox checkBoxButton = new JCheckBox();
-//
-//        blockerCheckBoxMap.put(blocker, checkBoxButton);
-//
-//        blockerTextPanel.add(blockerText, BorderLayout.WEST);
-//        blockerTextPanel.add(checkBoxButton, BorderLayout.EAST);
-//
-//        SwingUtilities.invokeLater(() -> {
-//            blockerContainer.add(blockerTextPanel);
-//            blockerContainer.revalidate();
-//            blockerContainer.repaint();
-//        });
-//    }
-
-    //    public void addBlockers(List<BlockerObject> blockers) {
-//        for (BlockerObject blocker : blockers) {
-//            addBlocker(blocker);
-//        }
-//    }
-//
-//    public void removeBlocker(BlockerObject blocker) {
-//        JCheckBox checkBox = blockerCheckBoxMap.get(blocker);
-//        if (checkBox != null) {
-//            JPanel parentPanel = (JPanel) checkBox.getParent();
-//            blockerCheckBoxMap.remove(blocker);
-//
-//            SwingUtilities.invokeLater(() -> {
-//                blockerContainer.remove(parentPanel);
-//                blockerContainer.revalidate();
-//                blockerContainer.repaint();
-//            });
-//        }
-//    }
-//
-//    public void removeBlockers(List<BlockerObject> blockers) {
-//        for (BlockerObject blocker : blockers) {
-//            removeBlocker(blocker);
-//        }
-//    }
 
     public JPanel getSimPan() {
         return simPan;
@@ -247,3 +208,135 @@ public class SimulationProgressPane {
     }
 }
 
+class ButtonRenderer extends JButton implements TableCellRenderer {
+
+
+    public ButtonRenderer() {
+        setOpaque(true);
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+                                                   boolean isSelected, boolean hasFocus, int row, int column) {
+        setText((value == null) ? "Actions" : value.toString());
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+        SprintStateEnum state = stateManager.getState();
+//        Simulation currentSimulation = stateManager.getCurrentSimulation();
+//        int currentSprint = stateManager.getSprintNum(); - Keeping this for task 69 for now
+
+        setEnabled(state != SprintStateEnum.RUNNING);
+        setBackground(state == SprintStateEnum.RUNNING ? Color.LIGHT_GRAY : UIManager.getColor("Button.background"));
+
+        return this;
+    }
+}
+
+/**
+ * Borrowing elements of PotentialBlockerSolutionsPane
+ */
+class ButtonEditor extends DefaultCellEditor {
+    protected JButton button;
+    private String label;
+    private boolean isPushed;
+    private JTable table;
+    private DefaultTableModel tabModel;
+    private int column;
+    private int row;
+    public ButtonEditor(JCheckBox checkBox, DefaultTableModel model) {
+        super(checkBox);
+        button = new JButton();
+        tabModel = model;
+        button.setOpaque(true);
+        button.addActionListener(e -> {
+            if (button.isEnabled()) {
+                fireEditingStopped();
+            }
+        });
+        //button.setVisible(false);
+    }
+
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+        SprintStateEnum state = stateManager.getState();
+        label = (value == null) ? "Actions" : value.toString();
+
+        this.table = table;
+        this.row = row;
+        this.column = column;
+        boolean x = state != SprintStateEnum.RUNNING;
+        button.setEnabled(state != SprintStateEnum.RUNNING);
+
+        if(state == SprintStateEnum.RUNNING) {
+            button.setBackground(Color.LIGHT_GRAY);
+            return null;
+        }
+
+        isPushed = true;
+        return button;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        isPushed = false;
+        return label;
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        isPushed = false;
+        return super.stopCellEditing();
+    }
+
+    @Override
+    protected void fireEditingStopped() {
+        if(isPushed) {
+            super.fireEditingStopped();
+            Object c1 = tabModel.getValueAt(row, 0);
+            Object c3 = tabModel.getValueAt(row, column);
+
+
+
+            isPushed = false;
+
+            SimulationStateManager stateManager = SimulationStateManager.getInstance();
+            Simulation currentSimulation = stateManager.getCurrentSimulation();
+            int currentSprint = stateManager.getSprintNum();
+            for (UserStory userStory : currentSimulation.getSprints().get(currentSprint-1).getUserStories()) {
+                if(userStory.getName().equals(c1)) {
+                    switch (c3.toString()) {
+                        case "In Progress":
+                            if(userStory.isBlocked()) {
+                                userStory.resolveBlockers();
+                            }
+                            userStory.changeState(new UserStoryInProgressState(userStory));
+                            tabModel.setValueAt("In Progress", row, 1);
+                            break;
+                        case "Completed":
+                            if(userStory.isBlocked()) {
+                                userStory.resolveBlockers();
+                            }
+                            userStory.changeState(new UserStoryCompletedState(userStory));
+                            tabModel.setValueAt("Completed", row, 1);
+                            break;
+                        case "Blocked":
+                            userStory.changeState(new UserStoryBlockedState(userStory));
+                            BlockerType blockerTypeManual = new BlockerType("Manual", 0, 90, 10);
+                            BlockerObject blockerManual = new BlockerObject(blockerTypeManual);
+                            userStory.setBlocker(blockerManual);
+                            tabModel.setValueAt("Blocked - Manually", row, 1);
+                            break;
+                        case "Spiked":
+                            userStory.changeState(new UserStorySpikedState(userStory));
+                            tabModel.setValueAt("SPIKED", row, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+        }
+    }
+}
