@@ -135,6 +135,7 @@ public class SimulationProgressPane {
             setStatus(userStory, "SPIKED");
         }
         else if(userStoryState instanceof UserStoryCompletedState) {
+
             setStatus(userStory, "Completed");
         }
         userStoryContainer.revalidate();
@@ -345,12 +346,17 @@ public class SimulationProgressPane {
 
             switch (buttonValue) {
                 case "In Progress":
-                    if(userStoryState instanceof UserStoryCompletedState || (userStoryState instanceof UserStorySpikedState)) {
+                    if(userStoryState instanceof UserStoryCompletedState
+                            || (userStoryState instanceof UserStorySpikedState)
+                            || (userStoryState instanceof UserStoryTestState)) {
                         return false;
                     }
                     break;
                 case "Blocked":
-                    if((userStoryState instanceof UserStorySpikedState) || (userStoryState instanceof UserStoryNewState) || (userStoryState instanceof UserStoryCompletedState) || (userStoryState instanceof UserStoryBlockedState)) {
+                    if((userStoryState instanceof UserStorySpikedState)
+                            || (userStoryState instanceof UserStoryNewState)
+                            || (userStoryState instanceof UserStoryCompletedState)
+                            || (userStoryState instanceof UserStoryBlockedState)) {
                         return false;
                     }
                     break;
@@ -397,7 +403,7 @@ public class SimulationProgressPane {
                             case "In Progress":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
 
-                                    SimulationProgressPane.this.setMessage("In Progress stories can only be changed to Blocked or Completed and never from Completed to In Progress");
+                                    SimulationProgressPane.this.setMessage("User Story can be changed to In Progress if it is Blocked or Spiked");
                                     break;
 
                                 } else {
@@ -412,7 +418,7 @@ public class SimulationProgressPane {
                             case "Ready for test":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
 
-                                    SimulationProgressPane.this.setMessage("In Progress stories can only be changed to Blocked or Completed and never from Completed to In Progress");
+                                    SimulationProgressPane.this.setMessage("Stories cannot regress to in progress");
                                     break;
 
                                 } else {
@@ -421,6 +427,7 @@ public class SimulationProgressPane {
                                     }
                                     userStory.changeState(new UserStoryTestState(userStory));
                                     tabModel.setValueAt("Ready for test", row, 1);
+
                                     SimulationProgressPane.this.setMessage("");
                                 }
                                 break;
@@ -435,9 +442,8 @@ public class SimulationProgressPane {
                                     userStory.resolveBlockers();
                                 }
                                 userStory.changeState(new UserStoryCompletedState(userStory));
+                                //System.out.println(Si);
                                 tabModel.setValueAt("Completed", row, 1);
-                                int day = SimulationProgressPane.this.currentDay;
-                                SimulationProgressPane.this.burndownChart.setBurndown(day, userStory.getPointValue());
                                 SimulationProgressPane.this.setMessage("");
                                 break;
                             case "Blocked":
