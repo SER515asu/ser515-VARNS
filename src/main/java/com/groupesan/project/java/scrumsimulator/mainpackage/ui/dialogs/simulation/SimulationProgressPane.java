@@ -2,14 +2,12 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 
 import java.awt.event.ActionEvent;
 import java.util.*;
-import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.User;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
