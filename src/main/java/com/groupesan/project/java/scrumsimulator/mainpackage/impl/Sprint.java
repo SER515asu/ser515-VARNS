@@ -3,14 +3,13 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class Sprint {
     @JsonProperty
     private final ArrayList<UserStory> userStories = new ArrayList<>();
+
+    private final HashMap<UUID, UserStory> userStoryHashMap = new HashMap<>();
 
     private final String name;
 
@@ -41,7 +40,9 @@ public class Sprint {
     }
 
     public void addUserStory(UserStory us) {
+
         userStories.add(us);
+        userStoryHashMap.put(us.getId(), us);
     }
 
     public void removeUserStory(UUID id) {
@@ -52,6 +53,10 @@ public class Sprint {
                 .findFirst();
         if (storyToRemove.isEmpty()) return;
         userStories.remove(storyToRemove.get());
+    }
+
+    public HashMap<UUID, UserStory> getUserStoryHashMap() {
+        return new HashMap<>(userStoryHashMap);
     }
 
     public List<UserStory> getUserStories() {
