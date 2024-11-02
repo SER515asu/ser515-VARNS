@@ -345,25 +345,28 @@ public class SimulationProgressPane {
 
             switch (buttonValue) {
                 case "In Progress":
-                    if(userStoryState instanceof UserStoryCompletedState) {
+                    if(userStoryState instanceof UserStoryCompletedState || (userStoryState instanceof UserStorySpikedState)) {
                         return false;
                     }
                     break;
                 case "Blocked":
-                    if((userStoryState instanceof UserStoryCompletedState) || (userStoryState instanceof UserStoryBlockedState)) {
+                    if((userStoryState instanceof UserStorySpikedState) || (userStoryState instanceof UserStoryNewState) || (userStoryState instanceof UserStoryCompletedState) || (userStoryState instanceof UserStoryBlockedState)) {
                         return false;
                     }
                     break;
                 case "Spiked":
-                    if((userStoryState instanceof UserStoryCompletedState)
-                            || userStoryState instanceof UserStorySpikedState
-                            || (userStoryState instanceof UserStoryInProgressState)) {
+                    if(!(userStoryState instanceof UserStoryBlockedState)) {
                         return false;
                     }
                     break;
                 case "Ready for test":
-                    if((userStoryState instanceof UserStoryCompletedState)
+                    if((userStoryState instanceof UserStoryNewState) || (userStoryState instanceof UserStoryCompletedState)
                     || (userStoryState instanceof UserStoryTestState)) {
+                        return false;
+                    }
+                    break;
+                case "Completed":
+                    if(!(userStoryState instanceof UserStoryTestState)) {
                         return false;
                     }
                     break;
@@ -403,6 +406,7 @@ public class SimulationProgressPane {
                                     }
                                     userStory.changeState(new UserStoryInProgressState(userStory));
                                     tabModel.setValueAt("In Progress", row, 1);
+                                    SimulationProgressPane.this.setMessage("");
                                 }
                                 break;
                             case "Ready for test":
@@ -417,22 +421,29 @@ public class SimulationProgressPane {
                                     }
                                     userStory.changeState(new UserStoryTestState(userStory));
                                     tabModel.setValueAt("Ready for test", row, 1);
+                                    SimulationProgressPane.this.setMessage("");
                                 }
                                 break;
                             case "Completed":
+                                if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
+
+                                    SimulationProgressPane.this.setMessage("User story must be ready for test before it can be completed");
+                                    break;
+
+                                }
                                 if(userStory.isBlocked()) {
                                     userStory.resolveBlockers();
                                 }
                                 userStory.changeState(new UserStoryCompletedState(userStory));
                                 tabModel.setValueAt("Completed", row, 1);
                                 int day = SimulationProgressPane.this.currentDay;
-                                SimulationProgressPane.this.burndownChart.setBurndown(currentDay, userStory.getPointValue());
-
+                                SimulationProgressPane.this.burndownChart.setBurndown(day, userStory.getPointValue());
+                                SimulationProgressPane.this.setMessage("");
                                 break;
                             case "Blocked":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
 
-                                    SimulationProgressPane.this.setMessage("Blocked stories can only be changed to Spiked or In Progress and never go from Completed to Blocked");
+                                    SimulationProgressPane.this.setMessage("User Story can only be blocked if it is In Progress or Ready for Test");
                                     break;
 
                                 }
@@ -441,17 +452,18 @@ public class SimulationProgressPane {
                                 BlockerObject blockerManual = new BlockerObject(blockerTypeManual);
                                 userStory.setBlocker(blockerManual);
                                 tabModel.setValueAt("Blocked - Manually", row, 1);
-
+                                SimulationProgressPane.this.setMessage("");
                                 break;
                             case "Spiked":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
 
-                                    SimulationProgressPane.this.setMessage("Spiked stories can only be changed to Complete and never from Completed to Blocked");
+                                    SimulationProgressPane.this.setMessage("User Story can only be spiked if it is blocked");
                                     break;
 
                                 }
                                 userStory.changeState(new UserStorySpikedState(userStory));
                                 tabModel.setValueAt("SPIKED", row, 1);
+                                SimulationProgressPane.this.setMessage("");
                                 break;
                             default:
                                 break;
