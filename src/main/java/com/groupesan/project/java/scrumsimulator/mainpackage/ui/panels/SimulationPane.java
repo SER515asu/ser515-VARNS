@@ -7,6 +7,8 @@ import javax.swing.JOptionPane;
 
 import java.awt.FlowLayout;
 import java.awt.BorderLayout;
+import java.util.HashMap;
+import java.util.UUID;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -117,9 +119,6 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
         //progressPane.removeBlocker(blocker);
     }
 
-    public void onChangeStoryStatus(UserStory userStory) {
-        progressPane.changeState(userStory);
-    }
 
     @Override
     public void onUserStory(UserStory userStory){
