@@ -18,5 +18,7 @@ public interface SimulationListener {
     void onSimulationStarted();
     void onSprintCompletion();
     void onInProgressUserStory();
+
+    void onChartChange(Integer day, Double point);
     void onUserStoryStatusChange(UserStory userStory);
 }

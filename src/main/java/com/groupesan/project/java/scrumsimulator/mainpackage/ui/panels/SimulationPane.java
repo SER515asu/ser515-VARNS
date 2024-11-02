@@ -105,6 +105,11 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
         progressPane.changeState(userStory);
     }
 
+    @Override
+    public void onChartChange(Integer day, Double points) {
+        progressPane.setChart(day, points);
+    }
+
 
     @Override
     public void onBlockerDetected(BlockerObject blocker) {

@@ -9,8 +9,6 @@ public class Sprint {
     @JsonProperty
     private final ArrayList<UserStory> userStories = new ArrayList<>();
 
-    private final HashMap<UUID, UserStory> userStoryHashMap = new HashMap<>();
-
     private final String name;
 
     @JsonProperty
@@ -40,9 +38,7 @@ public class Sprint {
     }
 
     public void addUserStory(UserStory us) {
-
         userStories.add(us);
-        userStoryHashMap.put(us.getId(), us);
     }
 
     public void removeUserStory(UUID id) {
@@ -55,9 +51,6 @@ public class Sprint {
         userStories.remove(storyToRemove.get());
     }
 
-    public HashMap<UUID, UserStory> getUserStoryHashMap() {
-        return new HashMap<>(userStoryHashMap);
-    }
 
     public List<UserStory> getUserStories() {
         return new ArrayList<>(userStories);

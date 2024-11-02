@@ -31,6 +31,7 @@ public class SimulationStateManager {
     private Integer day;
     private Integer sprint;
     private Integer progressValue;
+    private double totalPointValue;
 
     private final SecureRandom rand = new SecureRandom();
 
@@ -144,11 +145,18 @@ public class SimulationStateManager {
         }
     }
 
-    private void notifyUserStoryStatusUpdatePanel() {
+    /**
+     * Burn down chart implementation. Delete if necessary!
+     * @param selectedStory
+     */
+    private void notifyChartChange(UserStory selectedStory) {
+
+
         for (SimulationListener listener : listeners) {
-            listener.onSprintCompletion();
+            listener.onChartChange(day, selectedStory.getPointValue());
         }
     }
+
 
 
     public void startSimulation() {
@@ -192,6 +200,7 @@ public class SimulationStateManager {
     private void runSimulation() {
         addUserStory();
         detectInProgressUserStory();
+        getTotalPointValue();
         while (true) {
 
             try {
@@ -240,6 +249,13 @@ public class SimulationStateManager {
     }
 
 
+    public Double getTotalPointValue() {
+        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
+            totalPointValue += userStory.getPointValue();
+        }
+        return totalPointValue;
+    }
+
     private void addUserStory(){
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
             userStory.changeState(new UserStoryNewState(userStory));
@@ -264,11 +280,13 @@ public class SimulationStateManager {
             } else if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
                 selectedStory.changeState(new UserStoryInProgressState(selectedStory));
                 notifyStoryStatusChange(selectedStory);
-            }  else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
+            }  else if(selectedStory.getUserStoryState() instanceof UserStoryInProgressState) {
+                selectedStory.changeState(new UserStoryTestState(selectedStory));
+                notifyStoryStatusChange(selectedStory);
+            } else if (selectedStory.getUserStoryState() instanceof UserStoryTestState &&
                     !(selectedStory.getUserStoryState() instanceof UserStoryBlockedState)) {
                 selectedStory.changeState(new UserStoryCompletedState(selectedStory));
-                notifyStoryStatusChange(selectedStory);
-            } else {
+                notifyChartChange(selectedStory);
                 notifyStoryStatusChange(selectedStory);
             }
         } catch (IllegalArgumentException ie) {
@@ -277,6 +295,7 @@ public class SimulationStateManager {
         }
 
     }
+
 
     /**
      * Detect the state of all user stories as the simulation is in progress.

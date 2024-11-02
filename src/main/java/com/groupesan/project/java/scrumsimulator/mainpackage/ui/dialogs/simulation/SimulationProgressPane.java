@@ -10,9 +10,11 @@ import javax.swing.table.TableCellRenderer;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerType;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.Simulation;
+import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BurndownChart;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
+import org.jfree.chart.ChartPanel;
 
 
 public class SimulationProgressPane {
@@ -25,6 +27,9 @@ public class SimulationProgressPane {
     private  DefaultTableModel model = null;
     private JTable userStoryContainer;
     private JLabel messageLabel;
+    private BurndownChart burndownChart;
+    private Double totalPoints;
+    private int currentDay;
 
 
     public SimulationProgressPane() {
@@ -36,15 +41,20 @@ public class SimulationProgressPane {
         currentProgressValue = new JLabel();
         messageLabel = new JLabel();
         jimProg = new JProgressBar(0, 100);
+        currentDay = 0;
 
 
-
+        burndownChart = new BurndownChart();
         pauseSimulationButton = new JButton("Pause Simulation");
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
+        totalPoints = 0.0;
+        calculateTotal();
 
 
 
-        String[] userStoryColumnNames = { "User Story Name", "Status", "UUID", "Set In Progress", "Set Blocked" , "Set Spiked", "Set Completed"};
+
+
+        String[] userStoryColumnNames = { "User Story Name", "Status", "UUID", "Set In Progress", "Set Ready For Test", "Set Blocked" , "Set Spiked", "Set Completed"};
         model = new DefaultTableModel(userStoryColumnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -53,6 +63,7 @@ public class SimulationProgressPane {
         };
         userStoryContainer = new JTable(model);
 
+
         userStoryScrollPane = new JScrollPane(userStoryContainer);
         for(int i = 3; i < userStoryColumnNames.length; i++) {
             userStoryContainer.getColumn(userStoryColumnNames[i]).setCellRenderer(new ButtonRenderer());
@@ -60,14 +71,28 @@ public class SimulationProgressPane {
         }
         // userStoryScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+
+
         simPan.add(jimPan);
         simPan.add(currentProgressValue);
         simPan.add(jimProg);
         simPan.add(messageLabel);
         simPan.add(pauseSimulationButton);
         simPan.add(userStoryScrollPane);
+        burndownChart.setVisible(true);
+        simPan.add(burndownChart);
+
     }
 
+    private void calculateTotal() {
+        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+        Simulation currentSimulation = stateManager.getCurrentSimulation();
+        int currentSprint = stateManager.getSprintNum();
+        for(UserStory userStory : currentSimulation.getSprints().get(currentSprint-1).getUserStories()){
+            totalPoints += userStory.getPointValue();
+        }
+        burndownChart.setBurndown(0, totalPoints);
+    }
 
     public void setMessage(String text) {
         messageLabel.setText(text);
@@ -75,8 +100,19 @@ public class SimulationProgressPane {
 
     public void addUserStory(UserStory USText) {
         System.out.println("State when added: " + USText.getUserStoryState());
+        model.addRow(new Object[] { USText.getName(), "Added", USText.getId(), "In Progress", "Ready for test", "Blocked" , "Spiked", "Completed"});
+        userStoryContainer.revalidate();
+        userStoryContainer.repaint();
+    }
 
-        model.addRow(new Object[] { USText.getName(), "Added", USText.getId(), "In Progress", "Blocked" , "Spiked", "Completed"});
+
+    public void setChart(Integer day, Double points) {
+        currentDay = day;
+        System.out.println("Total points: " + totalPoints);
+        totalPoints-= points;
+        burndownChart.setBurndown(day, totalPoints);
+        burndownChart.updateChart();
+
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
     }
@@ -91,6 +127,9 @@ public class SimulationProgressPane {
             String blocker = String.valueOf(userStory.getBlockers().get(recentBlocker-1));
             System.out.println(blocker.substring(20));
             setStatus(userStory, "Blocked - " + blocker.substring(20));
+        }
+        else if(userStoryState instanceof UserStoryTestState) {
+            setStatus(userStory, "Ready for test");
         }
         else if(userStoryState instanceof UserStorySpikedState) {
             setStatus(userStory, "SPIKED");
@@ -120,6 +159,9 @@ public class SimulationProgressPane {
                         else if ("In Progress".equals(progress)) {
                             userStoryCell.setForeground(Color.BLUE);
                         }
+                        else if("Ready for test".equals(progress)) {
+                            userStoryCell.setForeground(Color.CYAN);
+                        }
                         else if (progress.toString().contains("Blocked")) {
                             userStoryCell.setForeground(Color.RED);
                         }
@@ -144,6 +186,9 @@ public class SimulationProgressPane {
 
     public void resetPanel() {
         // Had to remove SwingUtilities to be able to refresh the panel.
+        totalPoints = 0.0;
+
+
         for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
@@ -224,7 +269,7 @@ public class SimulationProgressPane {
             boolean bool = state != SprintStateEnum.RUNNING;
             setEnabled(bool);
 
-            if(state == SprintStateEnum.RUNNING) {
+            if(state == SprintStateEnum.RUNNING || state == SprintStateEnum.STOPPED) {
                 setBackground(Color.LIGHT_GRAY);
             } else {
                 setBackground(null);
@@ -271,7 +316,7 @@ public class SimulationProgressPane {
             this.column = column;
             button.setEnabled(state != SprintStateEnum.RUNNING);
 
-            if(state == SprintStateEnum.RUNNING) {
+            if(state == SprintStateEnum.RUNNING || state == SprintStateEnum.STOPPED) {
                 button.setBackground(Color.LIGHT_GRAY);
                 return null;
             }
@@ -316,6 +361,12 @@ public class SimulationProgressPane {
                         return false;
                     }
                     break;
+                case "Ready for test":
+                    if((userStoryState instanceof UserStoryCompletedState)
+                    || (userStoryState instanceof UserStoryTestState)) {
+                        return false;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -338,7 +389,7 @@ public class SimulationProgressPane {
                 Simulation currentSimulation = stateManager.getCurrentSimulation();
                 int currentSprint = stateManager.getSprintNum();
                 for (UserStory userStory : currentSimulation.getSprints().get(currentSprint-1).getUserStories()) {
-                    if(userStory.getName().equals(c1) && userStory.getUserStoryState() instanceof UserStoryInProgressState) {
+                    if(userStory.getName().equals(c1)) {
                         switch (c3.toString()) {
                             case "In Progress":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
@@ -354,12 +405,28 @@ public class SimulationProgressPane {
                                     tabModel.setValueAt("In Progress", row, 1);
                                 }
                                 break;
+                            case "Ready for test":
+                                if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
+
+                                    SimulationProgressPane.this.setMessage("In Progress stories can only be changed to Blocked or Completed and never from Completed to In Progress");
+                                    break;
+
+                                } else {
+                                    if(userStory.isBlocked()) {
+                                        userStory.resolveBlockers();
+                                    }
+                                    userStory.changeState(new UserStoryTestState(userStory));
+                                    tabModel.setValueAt("Ready for test", row, 1);
+                                }
+                                break;
                             case "Completed":
                                 if(userStory.isBlocked()) {
                                     userStory.resolveBlockers();
                                 }
                                 userStory.changeState(new UserStoryCompletedState(userStory));
                                 tabModel.setValueAt("Completed", row, 1);
+                                int day = SimulationProgressPane.this.currentDay;
+                                SimulationProgressPane.this.burndownChart.setBurndown(currentDay, userStory.getPointValue());
 
                                 break;
                             case "Blocked":
