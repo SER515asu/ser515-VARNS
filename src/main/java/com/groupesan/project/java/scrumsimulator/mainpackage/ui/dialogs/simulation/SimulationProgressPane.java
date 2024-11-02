@@ -294,8 +294,6 @@ class ButtonEditor extends DefaultCellEditor {
         if(isPushed) {
             super.fireEditingStopped();
             Object c1 = tabModel.getValueAt(row, 0);
-            Object c2 = tabModel.getValueAt(row, 1);
-
             Object c3 = tabModel.getValueAt(row, column);
 
 
