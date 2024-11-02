@@ -50,14 +50,6 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
             this.dispose();
             return;
         }
-        JLabel availableStoriesHeader = createHeaderLabel("Available User Stories");
-        JLabel sprintBacklogHeader = createHeaderLabel("Sprint Backlog");
-        container.add(availableStoriesHeader,
-                new GridBagConstraintsBuilder()
-                        .setGridX(0)
-                        .setGridY(0)
-                        .setWeightX(1)
-                        .setFill(GridBagConstraints.HORIZONTAL));
         
         JList<String> userStories = new JList<>();
         redrawUserStoriesList(userStories);
@@ -69,18 +61,11 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                         .setGridY(1)
                         .setWeightX(1)
                         .setFill(GridBagConstraints.HORIZONTAL));
-        container.add(sprintBacklogHeader,
-                new GridBagConstraintsBuilder()
-                        .setGridX(2)
-                        .setGridY(0)
-                        .setWeightX(1)
-                        .setFill(GridBagConstraints.HORIZONTAL));
         JComboBox<String> selectSprintComboBox = new JComboBox<>();
         container.add(selectSprintComboBox,
                 new GridBagConstraintsBuilder()
                         .setGridX(3)
-                        .setGridY(5)
-                        .setGridHeight(2)
+                        .setGridY(0)
                         .setWeightX(2)
                         .setFill(GridBagConstraints.HORIZONTAL));
 
@@ -97,7 +82,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
         container.add(
                 sprintUserStoriesList,
                 new GridBagConstraintsBuilder()
-                        .setGridX(2)
+                        .setGridX(3)
                         .setGridY(1)
                         .setWeightX(1)
                         .setGridWidth(2)
@@ -139,22 +124,23 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                         .setFill(GridBagConstraints.HORIZONTAL));
 
         JButton randomizeButton = getRandomizeButton(selectSprintComboBox, userStories, sprintUserStories);
+        styleButton(randomizeButton);
         JPanel filler = new JPanel();
         container.add(filler, new GridBagConstraintsBuilder()
                         .setGridX(0)
-                        .setGridY(2)
+                        .setGridY(3)
                         .setWeightY(1.0)  // This pushes everything up
                         .setGridWidth(3) 
                         .setFill(GridBagConstraints.BOTH));
         container.add(
                 randomizeButton,
                 new GridBagConstraintsBuilder()
-                        .setGridX(0)
-                        .setGridY(6)
+                        .setGridX(3)
+                        .setGridY(2)
                         .setWeightX(1)
-                        .setGridWidth(3)
                         .setFill(GridBagConstraints.HORIZONTAL));
         JButton cancelButton = CancelButton();
+        styleButton(cancelButton);
         container.add(
                 cancelButton,
                 new GridBagConstraintsBuilder()
@@ -164,17 +150,11 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
                         .setGridWidth(4)
                         .setFill(GridBagConstraints.HORIZONTAL));
     }
-    private JLabel createHeaderLabel(String text) {
-        JLabel header = new JLabel(text);
-        header.setFont(new Font(header.getFont().getName(), Font.BOLD, 14));
-        header.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
-        header.setHorizontalAlignment(SwingConstants.CENTER);
-        return header;
-    }
 
     private JButton getMoveLeft(JComboBox<String> selectSprintComboBox, JList<String> userStories,
             JList<String> sprintUserStories) {
         JButton moveLeft = new JButton("<");
+        styleButton(moveLeft);
         moveLeft.addActionListener(
                 e -> {
                     SimulationStateManager
@@ -191,6 +171,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
     private JButton getMoveRight(JComboBox<String> selectSprintComboBox, JList<String> userStories,
             JList<String> sprintUserStories) {
         JButton moveRight = new JButton(">");
+        styleButton(moveRight);
         moveRight.addActionListener(
                 e -> {
                     SimulationStateManager
@@ -268,7 +249,11 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
         private void closeWindow() {
                 dispose();
         }
-
+        private void styleButton(JButton button) {
+                button.setBackground(new Color(70, 130, 180));
+                button.setForeground(Color.WHITE);
+                button.setFont(new Font("Arial", Font.BOLD, 20));
+}
     @Override
     public void setVisible(boolean b) {
         if (SimulationStateManager.getInstance().getCurrentSimulation() == null) {
