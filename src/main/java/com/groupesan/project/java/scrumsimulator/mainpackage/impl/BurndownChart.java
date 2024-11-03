@@ -24,10 +24,11 @@ import java.awt.*;
  */
 public class BurndownChart extends JPanel {
 
-    private XYSeries burndown;
+
     private XYSeries linear;
     private XYSeriesCollection defaultDataset;
     private JFreeChart lineChart;
+    private XYSeries burndown;
 
     public BurndownChart() {
         burndown = new XYSeries("Burndown Chart");
