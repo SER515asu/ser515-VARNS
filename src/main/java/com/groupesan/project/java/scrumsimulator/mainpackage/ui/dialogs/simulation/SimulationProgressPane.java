@@ -14,7 +14,6 @@ import com.groupesan.project.java.scrumsimulator.mainpackage.impl.BurndownChart;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager.SprintStateEnum;
-import org.jfree.chart.ChartPanel;
 
 
 public class SimulationProgressPane {
@@ -394,8 +393,7 @@ public class SimulationProgressPane {
                     }
                     break;
                 case "Ready for test":
-                    if((userStoryState instanceof UserStoryNewState) || (userStoryState instanceof UserStoryCompletedState)
-                    || (userStoryState instanceof UserStoryTestState)) {
+                    if((userStoryState instanceof UserStoryNewState) || (userStoryState instanceof UserStoryCompletedState)) {
                         return false;
                     }
                     break;
@@ -445,7 +443,7 @@ public class SimulationProgressPane {
                             case "Ready for test":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
 
-                                    SimulationProgressPane.this.setMessage("User Story can be set to In Progress from Blocked or Spiked");
+                                    SimulationProgressPane.this.setMessage("Ready for Test can be activated from In Progress, Blocked, or Spiked");
                                     break;
 
                                 } else {
@@ -454,9 +452,8 @@ public class SimulationProgressPane {
                                     }
                                     userStory.changeState(new UserStoryTestState(userStory));
                                     tabModel.setValueAt("Ready for test", row, 1);
-
-                                    SimulationProgressPane.this.setMessage("");
                                 }
+                                SimulationProgressPane.this.setMessage("");
                                 break;
                             case "Completed":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
