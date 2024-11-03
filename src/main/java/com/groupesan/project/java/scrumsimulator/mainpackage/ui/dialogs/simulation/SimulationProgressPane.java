@@ -413,7 +413,7 @@ public class SimulationProgressPane {
         protected void fireEditingStopped() {
             if(isPushed) {
                 super.fireEditingStopped();
-                Object c1 = tabModel.getValueAt(row, 0);
+                Object c1 = tabModel.getValueAt(row, 2);
                 Object c3 = tabModel.getValueAt(row, column);
 
 
@@ -424,7 +424,7 @@ public class SimulationProgressPane {
                 Simulation currentSimulation = stateManager.getCurrentSimulation();
                 int currentSprint = stateManager.getSprintNum();
                 for (UserStory userStory : currentSimulation.getSprints().get(currentSprint-1).getUserStories()) {
-                    if(userStory.getName().equals(c1)) {
+                    if(userStory.getId().equals(c1)) {
                         switch (c3.toString()) {
                             case "In Progress":
                                 if(!stateChecker(userStory.getUserStoryState(), c3.toString())) {
@@ -471,6 +471,8 @@ public class SimulationProgressPane {
                                 System.out.println("Points " + userStory.getPointValue());
 
                                 System.out.println("Day " + simPane.getCurrentDay());
+                                System.out.println("User Story Checked " + userStory.getName());
+                                System.out.println("User Story Checked " + userStory.getId());
                                 tabModel.setValueAt("Completed", row, 1);
                                 simPane.setChart(simPane.currentDay, userStory.getPointValue());
                                 SimulationProgressPane.this.setMessage("");
