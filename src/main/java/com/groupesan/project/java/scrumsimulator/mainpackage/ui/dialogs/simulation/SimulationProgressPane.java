@@ -96,11 +96,6 @@ public class SimulationProgressPane {
     }
 
     private void setLinearVelocity(int totalDays) {
-//        SimulationStateManager stateManager = SimulationStateManager.getInstance();
-//        Simulation currentSimulation = stateManager.getCurrentSimulation();
-//        int currentSprint = stateManager.getSprintNum();
-//        int totalDays = currentSimulation.getSprints().get(currentSprint-1).getLength();
-
         for(int i = 0; i <= totalDays; i++) {
             double points = calculateTotal() * (1 - (double)i / totalDays);
             burndownChart.setLinearLine(i, points);
