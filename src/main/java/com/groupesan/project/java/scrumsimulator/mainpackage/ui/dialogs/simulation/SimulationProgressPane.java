@@ -29,8 +29,6 @@ public class SimulationProgressPane {
     private Double totalPoints;
     private int currentDay;
 
-
-
     public SimulationProgressPane() {
         simPan = new JPanel();
         simPan.setLayout(new BoxLayout(simPan, BoxLayout.Y_AXIS));
@@ -49,10 +47,6 @@ public class SimulationProgressPane {
         totalPoints = calculateTotal();
         burndownChart.setBurndown(0, totalPoints);
         burndownChart.updateChart();
-
-
-
-
 
         String[] userStoryColumnNames = { "User Story Name", "Status", "UUID", "Set In Progress", "Set Ready For Test", "Set Blocked" , "Set Spiked", "Set Completed"};
         model = new DefaultTableModel(userStoryColumnNames, 0) {

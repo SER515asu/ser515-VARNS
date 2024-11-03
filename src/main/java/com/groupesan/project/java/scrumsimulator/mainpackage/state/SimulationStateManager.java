@@ -29,7 +29,7 @@ public class SimulationStateManager {
     private Integer sprint;
     private Integer progressValue;
 
-    private final double WORK_RATE_PER_DAY = 2.3;
+    private static final double WORK_RATE_PER_DAY = 2.3;
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -265,17 +265,15 @@ public class SimulationStateManager {
             for (UserStory selectedStory : userStoriesToProgress) {
                 if (selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
                     selectedStory.changeState(new UserStoryNewState(selectedStory));
-                    notifyStoryStatusChange(selectedStory);
                 } else if (selectedStory.getUserStoryState() instanceof UserStoryNewState) {
                     selectedStory.changeState(new UserStoryInProgressState(selectedStory));
-                    notifyStoryStatusChange(selectedStory);
+                } else if (selectedStory.getUserStoryState() instanceof UserStoryTestState) {
+                    selectedStory.changeState(new UserStoryCompletedState(selectedStory));
                 } else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
                         !(selectedStory.getUserStoryState() instanceof UserStoryBlockedState)) {
                     selectedStory.changeState(new UserStoryCompletedState(selectedStory));
-                    notifyStoryStatusChange(selectedStory);
-                } else {
-                    notifyStoryStatusChange(selectedStory);
                 }
+                notifyStoryStatusChange(selectedStory);
             }
         } catch (IllegalArgumentException ie) {
             // The code should detect the lack of assigned user stories from the backlog and
