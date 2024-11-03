@@ -2,6 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryCompletedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryNewState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
@@ -100,6 +101,17 @@ public class Simulation {
 
     public int getSprintDuration() {
         return sprintDuration;
+    }
+
+    public List<UserStory> getPreviousSprintUserStories(int sprintIndex) {
+        List<UserStory> userStories = new ArrayList<>();
+        for (int i = 0; i < sprintIndex; i++) {
+            userStories.addAll(sprints.get(i).getUserStories());
+        }
+
+        userStories.removeIf(userStory -> userStory.getUserStoryState() instanceof UserStoryCompletedState);
+
+        return userStories;
     }
 
     public List<Sprint> getSprints() {

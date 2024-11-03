@@ -146,7 +146,7 @@ public class SimulationStateManager {
      * @param selectedStory
      */
     private void notifyChartChange(UserStory selectedStory) {
-
+        
 
         for (SimulationListener listener : listeners) {
             listener.onChartChange(day, selectedStory.getPointValue());
@@ -166,6 +166,7 @@ public class SimulationStateManager {
         for (Sprint sprint : currentSimulation.getSprints()) {
             for (UserStory userStory : sprint.getUserStories()) {
                 userStory.removeAllBlockers();
+                userStory.changeState(new UserStoryUnselectedState(userStory));
             }
         }
 
@@ -241,7 +242,7 @@ public class SimulationStateManager {
     }
 
     private void addUserStory() {
-        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
+        for (UserStory userStory : currentSimulation.getPreviousSprintUserStories(sprint)) {
             userStory.changeState(new UserStoryNewState(userStory));
             notifyUserStory(userStory);
         }
@@ -298,7 +299,7 @@ public class SimulationStateManager {
         }
     }
 
-
+    
     /**
      * Detect the state of all user stories as the simulation is in progress.
      */
