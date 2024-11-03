@@ -72,8 +72,6 @@ public class SimulationProgressPane {
 
 
     public void addUserStory(UserStory USText) {
-        System.out.println("State when added: " + USText.getUserStoryState());
-
         model.addRow(new Object[] { USText.getName(), "New", USText.getId(), "In Progress", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();

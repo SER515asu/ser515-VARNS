@@ -32,6 +32,8 @@ public class SimulationStateManager {
     private Integer sprint;
     private Integer progressValue;
 
+    private final double WORK_RATE_PER_DAY = 2.3;
+
     private final SecureRandom rand = new SecureRandom();
 
     private static SimulationStateManager instance;
@@ -150,7 +152,6 @@ public class SimulationStateManager {
         }
     }
 
-
     public void startSimulation() {
         if (currentSimulation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
@@ -185,9 +186,7 @@ public class SimulationStateManager {
         notifySimulationStopped();
         SimulationSingleton.getInstance().saveSimulationDetails();
 
-
     }
-
 
     private void runSimulation() {
         addUserStory();
@@ -208,15 +207,13 @@ public class SimulationStateManager {
             if (state == SprintStateEnum.PAUSED) {
                 continue;
             }
-            setRandomStates();
-            System.out.println("Day: " + day + " Sprint: " + sprint);
             progressValue = (int) Math.round(100.0 / currentSimulation.getSprintDuration() * day);
-            notifyProgressUpdate();
 
+            progressStories();
+            notifyProgressUpdate();
 
             resolveBlockers();
             detectBlockers();
-
 
             if (sprint >= currentSimulation.getSprintCount() && day >= currentSimulation.getSprintDuration()) {
 
@@ -224,10 +221,11 @@ public class SimulationStateManager {
             } else {
                 day++;
                 if (day > currentSimulation.getSprintDuration()) {
-                    // 
+                    //
                     day = 1;
                     sprint++;
-                    resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if they're completed or not.
+                    resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if
+                                  // they're completed or not.
                     addUserStory(); // Add the user stories from the new sprint
                     detectInProgressUserStory(); // Get the stories and detect if they're in progress
                 }
@@ -239,43 +237,62 @@ public class SimulationStateManager {
         notifyResetUserStoryPanel();
     }
 
-
-    private void addUserStory(){
+    private void addUserStory() {
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
             userStory.changeState(new UserStoryNewState(userStory));
             notifyUserStory(userStory);
         }
     }
 
-    public void setRandomStates() {
+    public void progressStories() {
 
-        // TODO - Figure out a random or linear way of setting the status of the user story.
-
+        int numStories = currentSimulation.getSprints().get(sprint - 1).getUserStories().size();
+        int numDays = currentSimulation.getSprintDuration();
+        int numSelectedStories = (int) Math.round((numStories * WORK_RATE_PER_DAY) / numDays);
 
         try {
+            List<UserStory> usList = currentSimulation.getSprints().get(sprint - 1).getUserStories();
 
-            int x = currentSimulation.getSprints().get(sprint - 1).getUserStories().size();
-            int randNumb =  rand.nextInt(x);
-            UserStory selectedStory = currentSimulation.getSprints().get(sprint - 1).getUserStories().get(randNumb);
+            // Prioritze the user stories that do not have the new or completed state
 
-            if (selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
-                selectedStory.changeState(new UserStoryNewState(selectedStory));
-                notifyStoryStatusChange(selectedStory);
-            } else if(selectedStory.getUserStoryState() instanceof UserStoryNewState) {
-                selectedStory.changeState(new UserStoryInProgressState(selectedStory));
-                notifyStoryStatusChange(selectedStory);
-            }  else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
-                    !(selectedStory.getUserStoryState() instanceof UserStoryBlockedState)) {
-                selectedStory.changeState(new UserStoryCompletedState(selectedStory));
-                notifyStoryStatusChange(selectedStory);
-            } else {
-                notifyStoryStatusChange(selectedStory);
+            List<UserStory> userStoriesToProgress = new ArrayList<>();
+            for (UserStory userStory : usList) {
+                if (!(userStory.getUserStoryState() instanceof UserStoryNewState)
+                        && !(userStory.getUserStoryState() instanceof UserStoryCompletedState)
+                        && userStoriesToProgress.size() < numSelectedStories) {
+                    userStoriesToProgress.add(userStory);
+                }
+            }
+
+            if (userStoriesToProgress.size() < numSelectedStories) {
+                for (UserStory userStory : usList) {
+                    if (userStory.getUserStoryState() instanceof UserStoryNewState
+                            && userStoriesToProgress.size() < numSelectedStories) {
+                        userStoriesToProgress.add(userStory);
+                    }
+                }
+            }
+
+            for (UserStory selectedStory : userStoriesToProgress) {
+                if (selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
+                    selectedStory.changeState(new UserStoryNewState(selectedStory));
+                    notifyStoryStatusChange(selectedStory);
+                } else if (selectedStory.getUserStoryState() instanceof UserStoryNewState) {
+                    selectedStory.changeState(new UserStoryInProgressState(selectedStory));
+                    notifyStoryStatusChange(selectedStory);
+                } else if (selectedStory.getUserStoryState() instanceof UserStoryInProgressState &&
+                        !(selectedStory.getUserStoryState() instanceof UserStoryBlockedState)) {
+                    selectedStory.changeState(new UserStoryCompletedState(selectedStory));
+                    notifyStoryStatusChange(selectedStory);
+                } else {
+                    notifyStoryStatusChange(selectedStory);
+                }
             }
         } catch (IllegalArgumentException ie) {
-            // The code should detect the lack of assigned user stories from the backlog and send a message, before closing the simulation
-            //ie.printStackTrace();
+            // The code should detect the lack of assigned user stories from the backlog and
+            // send a message, before closing the simulation
+            // ie.printStackTrace();
         }
-
     }
 
     /**
@@ -285,11 +302,24 @@ public class SimulationStateManager {
         notifyInProgressUserStory();
     }
 
-
     private void detectBlockers() {
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
-            boolean alreadyCompleted = !(userStory.getUserStoryState() instanceof UserStoryCompletedState); // check if the user story is completed. Blockers cannot be reintroduced if it's completed
-            boolean inProgress = (userStory.getUserStoryState() instanceof UserStoryInProgressState); // check if the user story is in progress. A new user story cannot immediately have a blocker
+            boolean alreadyCompleted = !(userStory.getUserStoryState() instanceof UserStoryCompletedState); // check if
+                                                                                                            // the user
+                                                                                                            // story is
+                                                                                                            // completed.
+                                                                                                            // Blockers
+                                                                                                            // cannot be
+                                                                                                            // reintroduced
+                                                                                                            // if it's
+                                                                                                            // completed
+            boolean inProgress = (userStory.getUserStoryState() instanceof UserStoryInProgressState); // check if the
+                                                                                                      // user story is
+                                                                                                      // in progress. A
+                                                                                                      // new user story
+                                                                                                      // cannot
+                                                                                                      // immediately
+                                                                                                      // have a blocker
             if (alreadyCompleted && inProgress) {
                 BlockerObject blocker = SimulationStateManager.getInstance().getCurrentSimulation().rollForBlocker();
                 if (blocker != null) {
@@ -312,12 +342,11 @@ public class SimulationStateManager {
 
                 if (blocker.attemptResolve()) {
                     blocker.resolve();
-                    System.out.println("Blocker resolved: " + blocker.getType().getName() + " by " + blocker.getSolution().getName());
                     userStory.changeState(new UserStoryInProgressState(userStory));
                     notifyStoryStatusChange(userStory);
                     notifyBlockerResolved(blocker);
                 }
-                if(blocker.getState() == BlockerObject.BlockerState.SPIKED) {
+                if (blocker.getState() == BlockerObject.BlockerState.SPIKED) {
                     userStory.changeState(new UserStorySpikedState(userStory));
                     notifyStoryStatusChange(userStory);
                 }
@@ -334,7 +363,7 @@ public class SimulationStateManager {
     }
 
     public BlockerSolution getRandomBlockerSolution() {
-        int totalWeight =  currentSimulation.getBlockerSolutions().stream().mapToInt(BlockerSolution::getChance).sum();
+        int totalWeight = currentSimulation.getBlockerSolutions().stream().mapToInt(BlockerSolution::getChance).sum();
         int randomValue = RandomUtils.getInstance().getRandomInt(totalWeight);
 
         int cumulativeWeight = 0;
