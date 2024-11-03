@@ -40,7 +40,7 @@ public class SimulationPane extends JFrame implements SimulationListener, BaseCo
 
     @Override
     public void init() {
-        setSize(800, 600);
+        setSize(1000, 800);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
