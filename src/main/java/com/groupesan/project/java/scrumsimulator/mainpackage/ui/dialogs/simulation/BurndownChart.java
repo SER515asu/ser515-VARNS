@@ -1,5 +1,6 @@
-package com.groupesan.project.java.scrumsimulator.mainpackage.impl;
+package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulation;
 
+import com.groupesan.project.java.scrumsimulator.mainpackage.ui.widgets.BaseComponent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -22,7 +23,7 @@ import java.awt.*;
  * https://steemit.com/visualization/@datatreemap/visualize-a-multiple-lines-graph-with-jfreechart-in-java
  * http://www.java2s.com/Code/Java/Chart/JFreeChartCombinedXYPlotDemo1.htm
  */
-public class BurndownChart extends JPanel {
+public class BurndownChart extends JPanel implements BaseComponent {
 
 
     private XYSeries linear;
@@ -35,25 +36,16 @@ public class BurndownChart extends JPanel {
         linear = new XYSeries("Linear Chart");
         defaultDataset = new XYSeriesCollection();
         lineChart = ChartFactory.createXYLineChart("Burndown Chart", "Time", "Velocity", defaultDataset, PlotOrientation.VERTICAL, false, false, false);
-
-
-        XYPlot plot = lineChart.getXYPlot();
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-
-        renderer.setSeriesPaint(0, Color.RED);
-        renderer.setSeriesPaint(1, Color.BLUE);
-
-        plot.setRenderer(renderer);
-        ChartPanel chartPanel = new ChartPanel(lineChart);
-        chartPanel.setPreferredSize(new Dimension(800,600));
-
-        this.setLayout(new BorderLayout());
-        this.add(chartPanel, BorderLayout.CENTER);
-
+        this.init();
     }
 
     public XYSeriesCollection getDefaultDataset() {
         return defaultDataset;
+    }
+
+    public void resetData() {
+        burndown.clear();
+        linear.clear();
     }
 
     public XYSeries getLinear(){
@@ -81,4 +73,21 @@ public class BurndownChart extends JPanel {
     }
 
 
+    @Override
+    public void init() {
+
+        XYPlot plot = lineChart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+
+        renderer.setSeriesPaint(0, Color.RED);
+        renderer.setSeriesPaint(1, Color.BLUE);
+
+        plot.setRenderer(renderer);
+        ChartPanel chartPanel = new ChartPanel(lineChart);
+        chartPanel.setPreferredSize(new Dimension(800,600));
+
+        this.setLayout(new BorderLayout());
+        this.add(chartPanel, BorderLayout.CENTER);
+
+    }
 }
