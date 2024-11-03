@@ -1,10 +1,7 @@
 package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import javax.swing.*;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
@@ -33,8 +30,6 @@ public class SimulationStateManager {
     private Integer progressValue;
 
     private final double WORK_RATE_PER_DAY = 2.3;
-
-    private final SecureRandom rand = new SecureRandom();
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -146,12 +141,6 @@ public class SimulationStateManager {
         }
     }
 
-    private void notifyUserStoryStatusUpdatePanel() {
-        for (SimulationListener listener : listeners) {
-            listener.onSprintCompletion();
-        }
-    }
-
     public void startSimulation() {
         if (currentSimulation == null) {
             JOptionPane.showMessageDialog(null, "No simulation selected");
@@ -191,6 +180,7 @@ public class SimulationStateManager {
     private void runSimulation() {
         addUserStory();
         detectInProgressUserStory();
+        //getTotalPointValue();
         while (true) {
 
             try {
@@ -228,6 +218,7 @@ public class SimulationStateManager {
                                   // they're completed or not.
                     addUserStory(); // Add the user stories from the new sprint
                     detectInProgressUserStory(); // Get the stories and detect if they're in progress
+                    //getTotalPointValue(); // Get total point value
                 }
             }
         }
@@ -252,8 +243,6 @@ public class SimulationStateManager {
 
         try {
             List<UserStory> usList = currentSimulation.getSprints().get(sprint - 1).getUserStories();
-
-            // Prioritze the user stories that do not have the new or completed state
 
             List<UserStory> userStoriesToProgress = new ArrayList<>();
             for (UserStory userStory : usList) {
@@ -295,6 +284,7 @@ public class SimulationStateManager {
         }
     }
 
+
     /**
      * Detect the state of all user stories as the simulation is in progress.
      */
@@ -322,7 +312,7 @@ public class SimulationStateManager {
                                                                                                       // have a blocker
             if (alreadyCompleted && inProgress) {
                 BlockerObject blocker = SimulationStateManager.getInstance().getCurrentSimulation().rollForBlocker();
-                if (blocker != null) {
+                if (blocker != null && !(userStory.getUserStoryState() instanceof UserStorySpikedState)) {
                     notifyBlockerDetected(blocker);
                     userStory.setBlocker(blocker);
                     userStory.changeState(new UserStoryBlockedState(userStory));
@@ -342,7 +332,7 @@ public class SimulationStateManager {
 
                 if (blocker.attemptResolve()) {
                     blocker.resolve();
-                    userStory.changeState(new UserStoryInProgressState(userStory));
+                    userStory.changeState(new UserStoryTestState(userStory));
                     notifyStoryStatusChange(userStory);
                     notifyBlockerResolved(blocker);
                 }
