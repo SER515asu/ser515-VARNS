@@ -31,7 +31,6 @@ public class SimulationStateManager {
     private Integer day;
     private Integer sprint;
     private Integer progressValue;
-    private double totalPointValue;
 
     private final SecureRandom rand = new SecureRandom();
 
@@ -248,7 +247,7 @@ public class SimulationStateManager {
     private void resetPanel() {
         notifyResetUserStoryPanel();
     }
-    
+
 
     private void addUserStory(){
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
