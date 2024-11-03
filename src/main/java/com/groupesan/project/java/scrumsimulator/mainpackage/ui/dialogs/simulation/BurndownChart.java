@@ -44,8 +44,10 @@ public class BurndownChart extends JPanel implements BaseComponent {
     }
 
     public void resetData() {
-        burndown.clear();
-        linear.clear();
+        if(!burndown.isEmpty() && !linear.isEmpty()) {
+            burndown.clear();
+            linear.clear();
+        }
     }
 
     public XYSeries getLinear(){
