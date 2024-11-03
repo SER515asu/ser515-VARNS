@@ -200,7 +200,7 @@ public class SimulationStateManager {
     private void runSimulation() {
         addUserStory();
         detectInProgressUserStory();
-        getTotalPointValue();
+        //getTotalPointValue();
         while (true) {
 
             try {
@@ -239,7 +239,7 @@ public class SimulationStateManager {
                     resetPanel(); // Reset the panels to clear out stories from previous sprints, regardless if they're completed or not.
                     addUserStory(); // Add the user stories from the new sprint
                     detectInProgressUserStory(); // Get the stories and detect if they're in progress
-                    getTotalPointValue(); // Get total point value
+                    //getTotalPointValue(); // Get total point value
                 }
             }
         }
@@ -248,14 +248,7 @@ public class SimulationStateManager {
     private void resetPanel() {
         notifyResetUserStoryPanel();
     }
-
-
-    public Double getTotalPointValue() {
-        for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
-            totalPointValue += userStory.getPointValue();
-        }
-        return totalPointValue;
-    }
+    
 
     private void addUserStory(){
         for (UserStory userStory : currentSimulation.getSprints().get(sprint - 1).getUserStories()) {
