@@ -252,6 +252,9 @@ public class SimulationStateManager {
         int numStories = currentSimulation.getSprints().get(sprint - 1).getUserStories().size();
         int numDays = currentSimulation.getSprintDuration();
         int numSelectedStories = (int) Math.round((numStories * WORK_RATE_PER_DAY) / numDays);
+        if (numSelectedStories == 0) {
+            numSelectedStories = 1;
+        }
 
         try {
             List<UserStory> usList = currentSimulation.getSprints().get(sprint - 1).getUserStories();
