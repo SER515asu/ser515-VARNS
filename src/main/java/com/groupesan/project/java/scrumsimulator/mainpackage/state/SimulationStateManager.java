@@ -32,7 +32,7 @@ public class SimulationStateManager {
     private Integer sprint;
     private Integer progressValue;
 
-    private final SecureRandom rand = new SecureRandom();
+
 
     private static SimulationStateManager instance;
     private final List<SimulationListener> listeners = new ArrayList<>();
@@ -264,7 +264,7 @@ public class SimulationStateManager {
         try {
 
             int x = currentSimulation.getSprints().get(sprint - 1).getUserStories().size();
-            int randNumb =  rand.nextInt(x);
+            int randNumb = RandomUtils.getInstance().getRandomInt(x); // Randomisation fixed
             UserStory selectedStory = currentSimulation.getSprints().get(sprint - 1).getUserStories().get(randNumb);
 
             if (selectedStory.getUserStoryState() instanceof UserStoryUnselectedState) {
