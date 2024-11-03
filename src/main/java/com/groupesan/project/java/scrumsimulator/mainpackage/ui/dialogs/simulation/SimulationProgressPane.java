@@ -3,7 +3,6 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.ui.dialogs.simulat
 import java.awt.event.ActionEvent;
 import java.util.*;
 import java.awt.*;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;

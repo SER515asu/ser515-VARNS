@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
-import com.groupesan.project.java.scrumsimulator.mainpackage.core.Player;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryNewState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
@@ -37,16 +36,11 @@ public class UserStory {
     @JsonIgnore
     private UserStoryState state;
 
-    @JsonIgnore
-    private Player owner;
-
     @JsonProperty
     private int businessValuePoint;
 
     @JsonProperty
     private List<BlockerObject> blockers = new ArrayList<>();
-
-    // private ArrayList<Task> tasks; TODO: implement tasks
 
     /**
      * Creates a user story. Leaves the description as an empty string.
