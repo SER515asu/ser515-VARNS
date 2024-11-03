@@ -2,7 +2,7 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.core;
 
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.*;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.SimulationStateManager;
-import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryAddedState;
+import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryNewState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.state.UserStoryUnselectedState;
 import com.groupesan.project.java.scrumsimulator.mainpackage.utils.RandomUtils;
 
@@ -164,7 +164,7 @@ public class Simulation {
                 .toList()
                 .getFirst();
         userStoryToBeAdded.updateStatus(UserStory.UserStoryStatus.ADDED);
-        userStoryToBeAdded.changeState(new UserStoryAddedState(userStoryToBeAdded));
+        userStoryToBeAdded.changeState(new UserStoryNewState(userStoryToBeAdded));
         sprint.addUserStory(userStoryToBeAdded);
     }
 
@@ -252,6 +252,7 @@ public class Simulation {
             userStory.updateStatus(UserStory.UserStoryStatus.ADDED);
         }
     }
+
 
     public Simulation deepClone() {
         // Clone sprints and added user stories

@@ -18,7 +18,7 @@ public class BlockerObject {
     }
 
     @JsonProperty
-    private BlockerState state;
+    private volatile BlockerState state;
 
     @JsonProperty
     private BlockerSolution solution;
@@ -82,6 +82,6 @@ public class BlockerObject {
     }
 
     public BlockerState getState() {
-        return state;
+        return this.state;
     }
 }

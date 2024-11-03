@@ -3,6 +3,9 @@ package com.groupesan.project.java.scrumsimulator.mainpackage.state;
 import com.groupesan.project.java.scrumsimulator.mainpackage.core.BlockerObject;
 import com.groupesan.project.java.scrumsimulator.mainpackage.impl.UserStory;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 /**
  * Interface for the simulation listener
  */

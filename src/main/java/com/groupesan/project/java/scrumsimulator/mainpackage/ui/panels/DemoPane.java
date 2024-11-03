@@ -14,15 +14,12 @@ import javax.swing.border.EmptyBorder;
 public class DemoPane extends JFrame implements BaseComponent {
     private JPanel myJpanel;
     private JButton userStoriesButton, startSimulationButton, potentialBlockersButton,
-            simulationButton, sprintBacklogsButton, simulationConfigButton,
-            potentialBlockerSolutionsButton;
+            sprintBacklogsButton, simulationConfigButton, potentialBlockerSolutionsButton;
 
     private JPanel bottomPanel;
 
     public DemoPane() {
         this.init();
-        Player player = new Player("bob", new ScrumRole("demo"));
-        player.doRegister();
     }
 
     public void init() {
@@ -89,10 +86,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         potentialBlockerSolutionsButton.addActionListener(
                 e -> handleButtonAction(new PotentialBlockerSolutionsPane(this)));
 
-        simulationButton = new JButton("Add User");
-        simulationButton.addActionListener(
-                e -> handleButtonAction(new AddUserPane(this)));
-
         sprintBacklogsButton = new JButton("Assign Sprint Backlogs");
         sprintBacklogsButton.addActionListener(
                 e -> handleButtonAction(new SprintBacklogPane(this)));
@@ -103,8 +96,7 @@ public class DemoPane extends JFrame implements BaseComponent {
                 .addComponent(startSimulationButton, 2, 0)
                 .addComponent(potentialBlockersButton, 3, 0)
                 .addComponent(potentialBlockerSolutionsButton, 4, 0)
-                .addComponent(simulationButton, 6, 0)
-                .addComponent(sprintBacklogsButton, 7, 0)
+                .addComponent(sprintBacklogsButton, 5, 0)
                 .buildPanel();
 
         add(myJpanel);
@@ -156,9 +148,6 @@ public class DemoPane extends JFrame implements BaseComponent {
                 panel.add(createButton("Potential Blocker Solutions", this::onPotentialSolutionsClick));
                 break;
         }
-
-        // TODO: Potentially remove below buttons
-        // panel.add(createButton("Sprints", () -> handleButtonAction(new SprintListPane(this))));
         return panel;
     }
 
@@ -181,11 +170,8 @@ public class DemoPane extends JFrame implements BaseComponent {
             case SCRUM_ADMIN:
                 panel.add(createButton("Simulation Configuration", () -> handleButtonAction(new SimulationConfigurationPane(this))));
                 panel.add(createButton("Start Simulation", this::onStartSimulationClick));
-                // TODO: Add Show Simulation History Button here
                 break;
         }
-        panel.add(createButton("Add User", () -> handleButtonAction(new AddUserPane(this))));
-
         return panel;
     }
 
@@ -237,7 +223,6 @@ public class DemoPane extends JFrame implements BaseComponent {
         startSimulationButton.setEnabled(enabled);
         potentialBlockersButton.setEnabled(enabled);
         potentialBlockerSolutionsButton.setEnabled(enabled);
-        simulationButton.setEnabled(enabled);
         sprintBacklogsButton.setEnabled(enabled);
     }
 
