@@ -39,7 +39,7 @@ public class SimulationSingleton {
 
     public void addSimulation(Simulation simulation) {
         simulations.add(simulation);
-
+        SimulationStateManager.getInstance().setCurrentSimulation(simulation);
         saveSimulationDetails();
     }
 
@@ -175,7 +175,7 @@ public class SimulationSingleton {
     private static JSONObject simulationToJson(Simulation simulation) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ID", simulation.getSimulationId());
-        jsonObject.put("Name", simulation.getSimulationName());
+        jsonObject.put("Name", simulation.getName());
         jsonObject.put("Seed", simulation.getRandomSeed());
         jsonObject.put("Status", "New");
         jsonObject.put("DurationDays", simulation.getSprintDuration());
