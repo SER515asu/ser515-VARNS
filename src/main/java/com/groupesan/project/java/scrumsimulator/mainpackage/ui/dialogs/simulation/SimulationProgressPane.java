@@ -30,6 +30,7 @@ public class SimulationProgressPane {
     private int currentDay;
 
 
+
     public SimulationProgressPane() {
         simPan = new JPanel();
         simPan.setLayout(new BoxLayout(simPan, BoxLayout.Y_AXIS));
@@ -43,12 +44,10 @@ public class SimulationProgressPane {
 
 
         burndownChart = new BurndownChart();
-        burndownChart.resetData();
         pauseSimulationButton = new JButton("Pause Simulation");
         pauseSimulationButton.addActionListener(this::handlePauseSimulation);
         totalPoints = calculateTotal();
         burndownChart.setBurndown(0, totalPoints);
-        setLinearVelocity();
         burndownChart.updateChart();
 
 
@@ -96,11 +95,11 @@ public class SimulationProgressPane {
         return num;
     }
 
-    private void setLinearVelocity() {
-        SimulationStateManager stateManager = SimulationStateManager.getInstance();
-        Simulation currentSimulation = stateManager.getCurrentSimulation();
-        int currentSprint = stateManager.getSprintNum();
-        int totalDays = currentSimulation.getSprints().get(currentSprint-1).getLength();
+    private void setLinearVelocity(int totalDays) {
+//        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+//        Simulation currentSimulation = stateManager.getCurrentSimulation();
+//        int currentSprint = stateManager.getSprintNum();
+//        int totalDays = currentSimulation.getSprints().get(currentSprint-1).getLength();
 
         for(int i = 0; i <= totalDays; i++) {
             double points = calculateTotal() * (1 - (double)i / totalDays);
@@ -126,7 +125,6 @@ public class SimulationProgressPane {
 
         totalPoints-= points;
         burndownChart.setBurndown(day, totalPoints);
-        setLinearVelocity();
         burndownChart.updateChart();
 
         userStoryContainer.revalidate();
@@ -208,11 +206,12 @@ public class SimulationProgressPane {
     public void resetPanel() {
         // Had to remove SwingUtilities to be able to refresh the panel.
 
-        burndownChart.getBurndown().clear();
-        burndownChart.getLinear().clear();
-
+        burndownChart.resetData();
         totalPoints = calculateTotal();
-        setLinearVelocity();
+//        SimulationStateManager stateManager = SimulationStateManager.getInstance();
+//        Simulation currentSimulation = stateManager.getCurrentSimulation();
+//        int currentSprint = stateManager.getSprintNum();
+//        int y = currentSimulation.getSprints().get(currentSprint-1).getLength();
         burndownChart.setBurndown(0, totalPoints);
         burndownChart.updateChart();
         for(int i = model.getRowCount()-1; i >= 0; i--) {
@@ -265,6 +264,13 @@ public class SimulationProgressPane {
 
     public void updateProgress(int progressValue, int day, int sprint, int sprintDuration) {
         SwingUtilities.invokeLater(() -> {
+            try {
+                if(day < sprintDuration)
+                setLinearVelocity(sprintDuration);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             currentDay = day;
             jimPan.setText("Running simulation for day " + day + " of " + sprintDuration + " of sprint " + sprint);
             currentProgressValue.setText("Progress: " + progressValue + "%");
