@@ -207,8 +207,6 @@ public class SimulationProgressPane {
         for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
-        userStoryContainer.revalidate();
-        userStoryContainer.repaint();
     }
 
     private void setStatus(UserStory US, String status) {
