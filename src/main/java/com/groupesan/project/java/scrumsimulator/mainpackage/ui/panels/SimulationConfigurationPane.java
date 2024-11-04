@@ -87,7 +87,7 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
     private JButton initializeAddSimulationButton() {
         JButton addSimulationButton = new JButton("Add Simulation");
         addSimulationButton.addActionListener(e -> {
-            NewSimulationPane newSimulationPane = new NewSimulationPane(this);
+            ModifySimulationPane newSimulationPane = new ModifySimulationPane(this);
             newSimulationPane.setVisible(true);
             newSimulationPane.setAlwaysOnTop(true);
             newSimulationPane.addWindowListener(new WindowAdapter() {
@@ -122,7 +122,7 @@ public class SimulationConfigurationPane extends JFrame implements BaseComponent
         SimulationSingleton.getInstance().getAllSimulations().forEach(simulation -> {
             Object[] rowData = {
                     simulation.getSimulationId(),
-                    simulation.getSimulationName(),
+                    simulation.getName(),
                     simulation.getRandomSeed(),
                     simulation.getSprintCount(),
                     simulation.getSprintDuration(),
