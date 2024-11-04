@@ -12,7 +12,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 public class SimulationFileHandler {
-    private static String SIMULATION_JSON_FILE_PATH = "data/simulation.json";
+    private static String SIMULATION_JSON_FILE_PATH = "simulation.json";
 
     public static void setSimulationJsonFilePath(String filePath) {
         SIMULATION_JSON_FILE_PATH = filePath;
