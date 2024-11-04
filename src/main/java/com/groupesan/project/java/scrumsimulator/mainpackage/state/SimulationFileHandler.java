@@ -22,7 +22,6 @@ public class SimulationFileHandler {
     private static File getSimulationJsonFile() {
         File file = new File(SIMULATION_JSON_FILE_PATH);
         if (!file.exists()) {
-            System.out.println("Creating new simulation.json file in " + SIMULATION_JSON_FILE_PATH);
             try {
                 if (file.createNewFile()) {
                     try (OutputStreamWriter writer = new OutputStreamWriter(
@@ -51,7 +50,6 @@ public class SimulationFileHandler {
         try (OutputStreamWriter writer = new OutputStreamWriter(
                 new FileOutputStream(getSimulationJsonFile()), StandardCharsets.UTF_8)) {
             writer.write(updatedData.toString(4));
-            System.out.println("Simulation data successfully written to " + SIMULATION_JSON_FILE_PATH);
         } catch (IOException e) {
             System.err.println("Error writing to " + SIMULATION_JSON_FILE_PATH);
             JOptionPane.showMessageDialog(null, "Error writing to " + SIMULATION_JSON_FILE_PATH);

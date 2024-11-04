@@ -32,7 +32,7 @@ public class SprintBacklogPane extends JFrame implements BaseComponent {
 
     @Override
     public void init() {
-        setSize(800, 600);
+        setSize(1000, 600);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

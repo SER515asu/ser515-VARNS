@@ -107,7 +107,6 @@ public class SimulationProgressPane {
     }
 
     public void addUserStory(UserStory USText) {
-        System.out.println("State when added: " + USText.getUserStoryState());
         model.addRow(new Object[] { USText.getName(), "Added", USText.getId(), "In Progress", "Ready for test", "Blocked" , "Spiked", "Completed"});
         userStoryContainer.revalidate();
         userStoryContainer.repaint();
@@ -115,9 +114,6 @@ public class SimulationProgressPane {
 
 
     public void setChart(Integer day, Double points) {
-        System.out.println("Total points: " + totalPoints);
-        System.out.println("Day: " + day);
-
         totalPoints-= points;
         burndownChart.setBurndown(day, totalPoints);
         burndownChart.updateChart();
@@ -134,7 +130,6 @@ public class SimulationProgressPane {
         else if(userStoryState instanceof UserStoryBlockedState) {
             int recentBlocker = userStory.getBlockers().size();
             String blocker = String.valueOf(userStory.getBlockers().get(recentBlocker-1));
-            System.out.println(blocker.substring(20));
             setStatus(userStory, "Blocked - " + blocker.substring(20));
         }
         else if(userStoryState instanceof UserStoryTestState) {
@@ -212,8 +207,6 @@ public class SimulationProgressPane {
         for(int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);
         }
-        userStoryContainer.revalidate();
-        userStoryContainer.repaint();
     }
 
     private void setStatus(UserStory US, String status) {
@@ -467,12 +460,6 @@ public class SimulationProgressPane {
                                     userStory.resolveBlockers();
                                 }
                                 userStory.changeState(new UserStoryCompletedState(userStory));
-                                System.out.println("Total Points " + simPane.totalPoints);
-                                System.out.println("Points " + userStory.getPointValue());
-
-                                System.out.println("Day " + simPane.getCurrentDay());
-                                System.out.println("User Story Checked " + userStory.getName());
-                                System.out.println("User Story Checked " + userStory.getId());
                                 tabModel.setValueAt("Completed", row, 1);
                                 simPane.setChart(simPane.currentDay, userStory.getPointValue());
                                 SimulationProgressPane.this.setMessage("");
