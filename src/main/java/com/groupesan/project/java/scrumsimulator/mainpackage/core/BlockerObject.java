@@ -44,7 +44,6 @@ public class BlockerObject {
         } else {
 
             if (RandomUtils.getInstance().getRandomInt(100) < type.getSpikeChance()) {
-                System.out.println("Blocker " + this + " has been spiked.");
                 state = BlockerState.SPIKED;
             }
 

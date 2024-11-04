@@ -48,8 +48,6 @@ public class SimulationSingleton {
      *
      */
     public void saveSimulationDetails() {
-        System.out.println("Saving simulation details");
-
         JSONArray simulationsArray = new JSONArray();
         simulations.forEach(simulation -> simulationsArray.put(simulationToJson(simulation)));
 

@@ -114,7 +114,6 @@ public class DemoPane extends JFrame implements BaseComponent {
             String selectedRole = (String) roleComboBox.getSelectedItem();
             UserRole role = UserRoleSingleton.getUserRoleValueFromLabel(selectedRole);
             UserRoleSingleton.getInstance().setUserRole(role);
-            System.out.println("Selected role: " + UserRoleSingleton.getInstance().getUserRole());
             redrawUIBasedOnRole();
         });
 
